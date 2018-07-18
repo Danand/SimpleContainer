@@ -10,6 +10,11 @@ namespace SimpleContainer
     {
         private readonly Dictionary<Type, Resolver> bindings = new Dictionary<Type, Resolver>();
 
+        public static SimpleContainer Create()
+        {
+            return new SimpleContainer();
+        }
+
         public void Register(
             Type            contractType,
             Type            resultType,
