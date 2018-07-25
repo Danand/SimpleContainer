@@ -1,4 +1,4 @@
 ﻿namespace SimpleContainer.Tests.DummyTypes
 {
-    public class CelebrityCat : ICelebrityCat { }
+    public interface ITimeMachine { }
 }

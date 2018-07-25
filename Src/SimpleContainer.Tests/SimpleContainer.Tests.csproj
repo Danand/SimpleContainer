@@ -54,12 +54,17 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
-    <Compile Include="DummyTypes\CatFactory.cs" />
-    <Compile Include="DummyTypes\GingerCat.cs" />
-    <Compile Include="DummyTypes\CelebrityCat.cs" />
-    <Compile Include="DummyTypes\ICelebrityCat.cs" />
-    <Compile Include="DummyTypes\ICat.cs" />
-    <Compile Include="DummyTypes\MaineCoonCat.cs" />
+    <Compile Include="DummyTypes\CarFactory.cs" />
+    <Compile Include="DummyTypes\CarFourWheelDrive.cs" />
+    <Compile Include="DummyTypes\CarTruck.cs" />
+    <Compile Include="DummyTypes\EngineBig.cs" />
+    <Compile Include="DummyTypes\EngineMedium.cs" />
+    <Compile Include="DummyTypes\ICar.cs" />
+    <Compile Include="DummyTypes\IEngine.cs" />
+    <Compile Include="DummyTypes\IPhysics.cs" />
+    <Compile Include="DummyTypes\ITimeMachine.cs" />
+    <Compile Include="DummyTypes\PhysicsPlanetEarth.cs" />
+    <Compile Include="DummyTypes\TimeMachineDelorean.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SimpleContainerTests.cs" />
   </ItemGroup>

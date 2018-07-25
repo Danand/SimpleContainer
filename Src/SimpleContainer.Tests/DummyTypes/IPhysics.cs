@@ -1,4 +1,4 @@
 ﻿namespace SimpleContainer.Tests.DummyTypes
 {
-    public interface ICat { }
+    public interface IPhysics { }
 }
