@@ -1,11 +1,10 @@
-﻿using SimpleContainer;
-using SimpleContainer.Tests.DummyTypes;
-
-using Container = SimpleContainer.SimpleContainer;
+﻿using SimpleContainer.Tests.DummyTypes;
 
 using NUnit.Framework;
 
-namespace SoundSystem.DI.Tests
+using Container = SimpleContainer.SimpleContainer;
+
+namespace SimpleContainer.Tests
 {
     [TestFixture]
     public class SimpleContainerTests
@@ -24,7 +23,7 @@ namespace SoundSystem.DI.Tests
         }
 
         [Test]
-        public void Resolve_Singleton()
+        public void Resolve_Singleton_Contract()
         {
             var container = new Container();
 
@@ -32,6 +31,19 @@ namespace SoundSystem.DI.Tests
 
             var machineFirst = container.Resolve<ITimeMachine>();
             var machineSecond = container.Resolve<ITimeMachine>();
+
+            Assert.AreSame(machineFirst, machineSecond);
+        }
+
+        [Test]
+        public void Resolve_Singleton_Result()
+        {
+            var container = new Container();
+
+            container.Register<TimeMachineDelorean>(Scope.Singleton);
+
+            var machineFirst = container.Resolve<TimeMachineDelorean>();
+            var machineSecond = container.Resolve<TimeMachineDelorean>();
 
             Assert.AreSame(machineFirst, machineSecond);
         }
@@ -91,6 +103,26 @@ namespace SoundSystem.DI.Tests
             var car = factory.Create(typeof(CarFourWheelDrive));
 
             Assert.IsInstanceOf<EngineBig>(car.Engine);
+        }
+
+        [Test]
+        public void SubscribeTest()
+        {
+            var container = new Container();
+
+            container.Register<ICustomEventHandler, CustomEventHandler>(Scope.Singleton);
+            container.Register<DummyInvoker>(Scope.Singleton);
+
+            container.RegisterEvent<ICustomEventHandler, CustomEventArgs>((handler, args) => handler.OnCustomEvent(args));
+
+            var invoker = container.Resolve<DummyInvoker>();
+            var eventHandler = container.Resolve<ICustomEventHandler>();
+
+            invoker.RaiseEvent();
+
+            var result = eventHandler.ReceivedEventArgs;
+
+            Assert.NotNull(result);
         }
     }
 }

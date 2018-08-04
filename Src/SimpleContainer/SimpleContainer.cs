@@ -8,6 +8,7 @@ namespace SimpleContainer
 {
     public sealed partial class SimpleContainer
     {
+        private readonly Dispatcher dispatcher = new Dispatcher();
         private readonly Dictionary<Type, Resolver> bindings = new Dictionary<Type, Resolver>();
 
         public static SimpleContainer Create()
@@ -41,6 +42,11 @@ namespace SimpleContainer
             Register<TFactoryContract, TFactoryResult>(Scope.Singleton);
             var factory = Resolve<TFactoryContract>();
             factory.Container = this;
+        }
+
+        public void RegisterEvent<TEventHandler, TEventArgs>(Action<TEventHandler, TEventArgs> action)
+        {
+            dispatcher.RegisterEvent(this, action);
         }
 
         public bool CheckRegistered<TContract>()
