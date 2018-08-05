@@ -25,7 +25,17 @@ namespace SimpleContainer
             if (!events.ContainsKey(eventArgsType))
                 events.Add(eventArgsType, new List<Action<object>>());
 
-            events[eventArgsType].Add(args => { action.Invoke(container.Resolve<TEventHandler>(), (TEventArgs)args); });
+            events[eventArgsType].Add(args => Invoke(container, action, args));
+        }
+
+        private static void Invoke<TEventHandler, TEventArgs>(
+            SimpleContainer                     container,
+            Action<TEventHandler, TEventArgs>   action,
+            object                              args)
+        {
+            // TODO: replace `Resolve<>()` with something like `GetCached<>()`.
+            var eventHandler = container.Resolve<TEventHandler>();
+            action.Invoke(eventHandler, (TEventArgs)args);
         }
     }
 }

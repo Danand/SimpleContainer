@@ -11,12 +11,14 @@ namespace SimpleContainer.Factories
         public TResult Create(params object[] args)
         {
             var factory = (IFactory)this;
+
+            var contractType = typeof(TResult);
             var resultType = GetResultType(typeof(TResult), args);
 
-            if (!factory.Container.CheckRegistered(resultType))
-                factory.Container.Register(resultType);
+            if (!factory.Container.CheckRegistered(contractType))
+                factory.Container.Register(contractType, resultType);
 
-            return (TResult)factory.Container.Resolve(resultType, args);
+            return (TResult)factory.Container.Resolve(contractType, args);
         }
     }
 }
