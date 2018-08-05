@@ -27,14 +27,6 @@ namespace SimpleContainer
                 bindings.Add(contractType, new Resolver(this, resultType, scope, instance, args));
         }
 
-        public void RegisterFactory<TFactory>()
-            where TFactory : IFactory
-        {
-            Register<TFactory>(Scope.Singleton);
-            var factory = Resolve<TFactory>();
-            factory.Container = this;
-        }
-
         public void RegisterFactory<TFactoryContract, TFactoryResult>()
             where TFactoryContract : IFactory
             where TFactoryResult : TFactoryContract
@@ -49,24 +41,9 @@ namespace SimpleContainer
             dispatcher.RegisterEvent(this, action);
         }
 
-        public bool CheckRegistered<TContract>()
-        {
-            return CheckRegistered(typeof(TContract));
-        }
-
         public bool CheckRegistered(Type contractType)
         {
             return bindings.ContainsKey(contractType);
-        }
-
-        public TResult Resolve<TResult>()
-        {
-            return (TResult)Resolve(typeof(TResult));
-        }
-
-        public object Resolve(Type contractType)
-        {
-            return Resolve(contractType, new object[0]);
         }
 
         public object Resolve(Type contractType, params object[] args)

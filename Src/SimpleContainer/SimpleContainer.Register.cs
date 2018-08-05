@@ -1,5 +1,7 @@
 ﻿using System;
 
+using SimpleContainer.Factories;
+
 namespace SimpleContainer
 {
     public sealed partial class SimpleContainer
@@ -56,6 +58,19 @@ namespace SimpleContainer
         public void Register(Type resultType, Type contractType, Scope scope)
         {
             Register(resultType, contractType, scope, null);
+        }
+
+        public void RegisterFactory<TFactory>()
+            where TFactory : IFactory
+        {
+            Register<TFactory>(Scope.Singleton);
+            var factory = Resolve<TFactory>();
+            factory.Container = this;
+        }
+
+        public bool CheckRegistered<TContract>()
+        {
+            return CheckRegistered(typeof(TContract));
         }
     }
 }

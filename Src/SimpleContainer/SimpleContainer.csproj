@@ -48,7 +48,8 @@
     <Compile Include="Scope.cs" />
     <Compile Include="SimpleContainer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SimpleContainer.Overloads.Register.cs" />
+    <Compile Include="SimpleContainer.Register.cs" />
+    <Compile Include="SimpleContainer.Resolve.cs" />
     <Compile Include="TypeNotRegisteredException.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
