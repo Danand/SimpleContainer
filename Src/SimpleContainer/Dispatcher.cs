@@ -33,9 +33,10 @@ namespace SimpleContainer
             Action<TEventHandler, TEventArgs>   action,
             object                              args)
         {
-            // TODO: replace `Resolve<>()` with something like `GetCached<>()`.
-            var eventHandler = container.Resolve<TEventHandler>();
-            action.Invoke(eventHandler, (TEventArgs)args);
+            var eventHandlers = container.GetAllCached<TEventHandler>();
+
+            foreach (var eventHandler in eventHandlers)
+                action.Invoke((TEventHandler)eventHandler, (TEventArgs)args);
         }
     }
 }

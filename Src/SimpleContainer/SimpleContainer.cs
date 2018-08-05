@@ -87,6 +87,16 @@ namespace SimpleContainer
                 resolver.DisposeInstances();
         }
 
+        internal object[] GetAllCached<TContract>()
+        {
+            var contractType = typeof(TContract);
+
+            if (!bindings.TryGetValue(contractType, out var resolver))
+                throw new TypeNotRegisteredException(contractType);
+
+            return resolver.GetCachedInstances();
+        }
+
         private void Initialize(object result)
         {
             if (result is IInitializible initializible)

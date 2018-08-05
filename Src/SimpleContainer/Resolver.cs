@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace SimpleContainer
@@ -59,6 +60,21 @@ namespace SimpleContainer
                 case Scope.Singleton:
                     DisposeInstance(singleInstance);
                     break;
+
+                default:
+                    throw new ArgumentException(nameof(scope));
+            }
+        }
+
+        internal object[] GetCachedInstances()
+        {
+            switch (scope)
+            {
+                case Scope.Transient:
+                    return transientInstances.ToArray();
+
+                case Scope.Singleton:
+                    return new [] { singleInstance };
 
                 default:
                     throw new ArgumentException(nameof(scope));

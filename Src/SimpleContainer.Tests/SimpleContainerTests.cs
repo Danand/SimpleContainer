@@ -1,6 +1,4 @@
-﻿using System;
-
-using SimpleContainer.Tests.DummyTypes;
+﻿using SimpleContainer.Tests.DummyTypes;
 
 using NUnit.Framework;
 
