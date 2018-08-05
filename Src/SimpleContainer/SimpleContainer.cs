@@ -71,14 +71,14 @@ namespace SimpleContainer
 
         public object Resolve(Type contractType, params object[] args)
         {
-            if (bindings.TryGetValue(contractType, out var resolver))
-            {
-                var result = resolver.GetInstance(args);
-                Initialize(result);
-                return result;
-            }
+            if (!bindings.TryGetValue(contractType, out var resolver))
+                throw new TypeNotRegisteredException(contractType);
 
-            throw new ArgumentOutOfRangeException(nameof(contractType));
+            var result = resolver.GetInstance(args);
+
+            Initialize(result);
+
+            return result;
         }
 
         public void Dispose()

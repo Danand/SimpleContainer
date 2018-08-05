@@ -1,4 +1,6 @@
-﻿using SimpleContainer.Tests.DummyTypes;
+﻿using System;
+
+using SimpleContainer.Tests.DummyTypes;
 
 using NUnit.Framework;
 
@@ -46,6 +48,19 @@ namespace SimpleContainer.Tests
             var machineSecond = container.Resolve<TimeMachineDelorean>();
 
             Assert.AreSame(machineFirst, machineSecond);
+        }
+
+        [Test]
+        public void Resolve_Singleton_Result_Throws_TypeNotRegisteredException()
+        {
+            var container = new Container();
+
+            container.Register<ITimeMachine, TimeMachineDelorean>(Scope.Singleton);
+
+            Assert.Throws(typeof(TypeNotRegisteredException), () =>
+            {
+                container.Resolve<TimeMachineDelorean>();
+            });
         }
 
         [Test]
