@@ -9,14 +9,9 @@
             this.dispatcher = dispatcher;
         }
 
-        public void RaiseEvent()
+        public void RaiseEvent(CustomEventArgs eventArgs)
         {
-            dispatcher.Send(new CustomEventArgs
-            {
-                flag = true,
-                id = 9,
-                name = "shine"
-            });
+            dispatcher.Send(eventArgs);
         }
     }
 }

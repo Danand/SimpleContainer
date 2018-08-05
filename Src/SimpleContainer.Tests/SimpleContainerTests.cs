@@ -121,7 +121,7 @@ namespace SimpleContainer.Tests
         }
 
         [Test]
-        public void SubscribeTest()
+        public void Dispatcher_Send_Singleton()
         {
             var container = new Container();
 
@@ -133,11 +133,46 @@ namespace SimpleContainer.Tests
             var invoker = container.Resolve<DummyInvoker>();
             var eventHandler = container.Resolve<ICustomEventHandler>();
 
-            invoker.RaiseEvent();
+            var expectedValue = new CustomEventArgs
+            {
+                flag = true,
+                id = 9,
+                name = "shine"
+            };
 
-            var result = eventHandler.ReceivedEventArgs;
+            invoker.RaiseEvent(expectedValue);
 
-            Assert.NotNull(result);
+            var actualValue = eventHandler.ReceivedEventArgs;
+
+            Assert.AreEqual(expectedValue, actualValue);
+        }
+
+        [Test]
+        public void Dispatcher_Send_Factory()
+        {
+            var container = new Container();
+
+            container.Register<DummyInvoker>(Scope.Singleton);
+            container.RegisterFactory<CustomEventHandlerFactory>();
+            container.RegisterEvent<ICustomEventHandler, CustomEventArgs>((handler, args) => handler.OnCustomEvent(args));
+
+            var invoker = container.Resolve<DummyInvoker>();
+            var factory = container.Resolve<CustomEventHandlerFactory>();
+
+            var eventHandler = factory.Create();
+
+            var expectedValue = new CustomEventArgs
+            {
+                flag = true,
+                id = 9,
+                name = "shine"
+            };
+
+            invoker.RaiseEvent(expectedValue);
+
+            var actualValue = eventHandler.ReceivedEventArgs;
+
+            Assert.AreEqual(expectedValue, actualValue);
         }
     }
 }

@@ -59,6 +59,7 @@
     <Compile Include="DummyTypes\CarTruck.cs" />
     <Compile Include="DummyTypes\CustomEventArgs.cs" />
     <Compile Include="DummyTypes\CustomEventHandler.cs" />
+    <Compile Include="DummyTypes\CustomEventHandlerFactory.cs" />
     <Compile Include="DummyTypes\EngineBig.cs" />
     <Compile Include="DummyTypes\EngineMedium.cs" />
     <Compile Include="DummyTypes\ICar.cs" />
