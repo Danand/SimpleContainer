@@ -7,7 +7,7 @@ namespace SimpleContainer
 {
     internal sealed class Resolver
     {
-        private readonly SimpleContainer container;
+        private readonly Container container;
         private readonly Type resultType;
         private readonly Scope scope;
         private readonly object[] prePassedArgs;
@@ -16,7 +16,7 @@ namespace SimpleContainer
         private object singleInstance;
 
         public Resolver(
-            SimpleContainer container,
+            Container       container,
             Type            resultType,
             Scope           scope,
             object          instance,
@@ -25,6 +25,7 @@ namespace SimpleContainer
             this.container = container;
             this.resultType = resultType;
             this.scope = scope;
+
             singleInstance = instance;
             prePassedArgs = args;
         }

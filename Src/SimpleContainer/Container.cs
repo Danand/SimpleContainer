@@ -6,14 +6,14 @@ using SimpleContainer.Interfaces;
 
 namespace SimpleContainer
 {
-    public sealed partial class SimpleContainer
+    public sealed partial class Container
     {
         private readonly Dispatcher dispatcher = new Dispatcher();
         private readonly Dictionary<Type, Resolver> bindings = new Dictionary<Type, Resolver>();
 
-        public static SimpleContainer Create()
+        public static Container Create()
         {
-            return new SimpleContainer();
+            return new Container();
         }
 
         public void Register(
@@ -62,6 +62,12 @@ namespace SimpleContainer
         {
             foreach (var resolver in bindings.Values)
                 resolver.DisposeInstances();
+        }
+
+        public void Install(params IInstaller[] installers)
+        {
+            foreach (var installer in installers)
+                installer.Install(this);
         }
 
         internal object[] GetAllCached<TContract>()

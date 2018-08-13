@@ -2,8 +2,6 @@
 
 using NUnit.Framework;
 
-using Container = SimpleContainer.SimpleContainer;
-
 namespace SimpleContainer.Tests
 {
     [TestFixture]

@@ -4,7 +4,7 @@ namespace SimpleContainer.Factories
 {
     public interface IFactory
     {
-        SimpleContainer Container { get; set; }
+        Container Container { get; set; }
         Type GetResultType(Type resultType, params object[] args);
     }
 }

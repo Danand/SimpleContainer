@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 
-using MyContainer = SimpleContainer.SimpleContainer;
-
 using MicroResolver;
 
 namespace SimpleContainer.Benchmark
@@ -26,11 +24,11 @@ namespace SimpleContainer.Benchmark
 
             stopwatch.Start();
 
-            var simpleContainer = new MyContainer();
+            var simpleContainer = new Container();
 
             stopwatch.Stop();
 
-            Console.WriteLine($"{nameof(SimpleContainer)}: creating: {stopwatch.ElapsedMilliseconds} ms");
+            Console.WriteLine($"{nameof(Container)}: creating: {stopwatch.ElapsedMilliseconds} ms");
 
             stopwatch.Restart();
 
@@ -38,7 +36,7 @@ namespace SimpleContainer.Benchmark
 
             stopwatch.Stop();
 
-            Console.WriteLine($"{nameof(SimpleContainer)}: register transient: {stopwatch.ElapsedMilliseconds} ms");
+            Console.WriteLine($"{nameof(Container)}: register transient: {stopwatch.ElapsedMilliseconds} ms");
 
             stopwatch.Restart();
 
@@ -46,7 +44,7 @@ namespace SimpleContainer.Benchmark
 
             stopwatch.Stop();
 
-            Console.WriteLine($"{nameof(SimpleContainer)}: resolve transient: {stopwatch.ElapsedMilliseconds} ms");
+            Console.WriteLine($"{nameof(Container)}: resolve transient: {stopwatch.ElapsedMilliseconds} ms");
         }
 
         private static void RunMicroResolverBenchmark()

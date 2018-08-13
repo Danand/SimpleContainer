@@ -4,7 +4,7 @@ using SimpleContainer.Factories;
 
 namespace SimpleContainer
 {
-    public sealed partial class SimpleContainer
+    public sealed partial class Container
     {
         public void Register<TResult>()
         {

@@ -15,7 +15,7 @@ namespace SimpleContainer
                 callback.Invoke(eventArgs);
         }
 
-        internal void RegisterEvent<TEventHandler, TEventArgs>(SimpleContainer container, Action<TEventHandler, TEventArgs> action)
+        internal void RegisterEvent<TEventHandler, TEventArgs>(Container container, Action<TEventHandler, TEventArgs> action)
         {
             if (!container.CheckRegistered<Dispatcher>())
                 container.Register(Scope.Singleton, this);
@@ -29,7 +29,7 @@ namespace SimpleContainer
         }
 
         private static void Invoke<TEventHandler, TEventArgs>(
-            SimpleContainer                     container,
+            Container                           container,
             Action<TEventHandler, TEventArgs>   action,
             object                              args)
         {

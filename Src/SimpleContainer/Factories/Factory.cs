@@ -4,7 +4,7 @@ namespace SimpleContainer.Factories
 {
     public abstract class Factory<TResult> : IFactory
     {
-        SimpleContainer IFactory.Container { get; set; }
+        Container IFactory.Container { get; set; }
 
         public abstract Type GetResultType(Type resultType, params object[] args);
 

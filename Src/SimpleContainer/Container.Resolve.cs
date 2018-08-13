@@ -2,7 +2,7 @@
 
 namespace SimpleContainer
 {
-    public sealed partial class SimpleContainer
+    public sealed partial class Container
     {
         public TResult Resolve<TResult>()
         {

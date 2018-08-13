@@ -44,12 +44,13 @@
     <Compile Include="Factories\Factory.cs" />
     <Compile Include="Factories\IFactory.cs" />
     <Compile Include="Interfaces\IInitializible.cs" />
+    <Compile Include="Interfaces\IInstaller.cs" />
     <Compile Include="Resolver.cs" />
     <Compile Include="Scope.cs" />
-    <Compile Include="SimpleContainer.cs" />
+    <Compile Include="Container.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SimpleContainer.Register.cs" />
-    <Compile Include="SimpleContainer.Resolve.cs" />
+    <Compile Include="Container.Register.cs" />
+    <Compile Include="Container.Resolve.cs" />
     <Compile Include="TypeNotRegisteredException.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
