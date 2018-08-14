@@ -8,7 +8,7 @@ namespace SimpleContainer.Tests
     public class SimpleContainerTests
     {
         [Test]
-        public void Resolve_Transient()
+        public void Resolve_Transient_SingleResult()
         {
             var container = Container.Create();
 
@@ -18,6 +18,21 @@ namespace SimpleContainer.Tests
             var carSecond = container.Resolve<ICar>();
 
             Assert.AreNotSame(carFirst, carSecond);
+        }
+
+        [Test]
+        public void Resolve_Transient_MultipleResult()
+        {
+            const int EXPECTED_COUNT = 2;
+
+            var container = Container.Create();
+
+            container.Register<IColor>(typeof(ColorRed), typeof(ColorBlue));
+
+            var colors = container.Resolve<IColor[]>();
+            var actualCount = colors.Length;
+
+            Assert.AreEqual(EXPECTED_COUNT, actualCount);
         }
 
         [Test]

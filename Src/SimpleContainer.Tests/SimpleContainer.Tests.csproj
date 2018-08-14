@@ -57,12 +57,15 @@
     <Compile Include="DummyTypes\CarFactory.cs" />
     <Compile Include="DummyTypes\CarFourWheelDrive.cs" />
     <Compile Include="DummyTypes\CarTruck.cs" />
+    <Compile Include="DummyTypes\ColorBlue.cs" />
+    <Compile Include="DummyTypes\ColorRed.cs" />
     <Compile Include="DummyTypes\CustomEventArgs.cs" />
     <Compile Include="DummyTypes\CustomEventHandler.cs" />
     <Compile Include="DummyTypes\CustomEventHandlerFactory.cs" />
     <Compile Include="DummyTypes\EngineBig.cs" />
     <Compile Include="DummyTypes\EngineMedium.cs" />
     <Compile Include="DummyTypes\ICar.cs" />
+    <Compile Include="DummyTypes\IColor.cs" />
     <Compile Include="DummyTypes\ICustomEventHandler.cs" />
     <Compile Include="DummyTypes\IEngine.cs" />
     <Compile Include="DummyTypes\DummyInvoker.cs" />

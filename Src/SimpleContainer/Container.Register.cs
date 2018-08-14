@@ -21,6 +21,11 @@ namespace SimpleContainer
             Register(typeof(TResult), typeof(TResult), scope, instance);
         }
 
+        public void Register<TContract>(params Type[] resultTypes)
+        {
+            Register(typeof(TContract), Scope.Transient, resultTypes);
+        }
+
         public void Register<TContract, TResult>()
             where TResult : TContract
         {
@@ -50,14 +55,19 @@ namespace SimpleContainer
             Register(resultType, resultType, Scope.Transient, null);
         }
 
-        public void Register(Type resultType, Type contractType)
+        public void Register(Type type, Scope scope, params Type[] resultTypes)
         {
-            Register(resultType, contractType, Scope.Transient, null);
+            throw new NotImplementedException();
         }
 
-        public void Register(Type resultType, Type contractType, Scope scope)
+        public void Register(Type contractType, Type resultType)
         {
-            Register(resultType, contractType, scope, null);
+            Register(contractType, resultType, Scope.Transient, null);
+        }
+
+        public void Register(Type contractType, Type resultType, Scope scope)
+        {
+            Register(contractType, resultType, scope, null);
         }
 
         public void RegisterFactory<TFactory>()
