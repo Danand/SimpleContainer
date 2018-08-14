@@ -55,19 +55,29 @@ namespace SimpleContainer
             Register(resultType, resultType, Scope.Transient, null);
         }
 
-        public void Register(Type type, Scope scope, params Type[] resultTypes)
-        {
-            throw new NotImplementedException();
-        }
-
         public void Register(Type contractType, Type resultType)
         {
             Register(contractType, resultType, Scope.Transient, null);
         }
 
+        public void Register(Type contractType, Scope scope, params Type[] resultTypes)
+        {
+            RegisterInner(contractType, scope, null, resultTypes, new object[0]);
+        }
+
         public void Register(Type contractType, Type resultType, Scope scope)
         {
             Register(contractType, resultType, scope, null);
+        }
+
+        public void Register(
+            Type            contractType,
+            Type            resultType,
+            Scope           scope,
+            object          instance,
+            params object[] args)
+        {
+            RegisterInner(contractType, scope, instance, new [] { resultType }, args);
         }
 
         public void RegisterFactory<TFactory>()

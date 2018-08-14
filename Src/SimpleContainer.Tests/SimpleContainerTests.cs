@@ -21,7 +21,7 @@ namespace SimpleContainer.Tests
         }
 
         [Test]
-        public void Resolve_Transient_MultipleResult()
+        public void Resolve_Transient_MultipleResult_Generic()
         {
             const int EXPECTED_COUNT = 2;
 
@@ -29,7 +29,38 @@ namespace SimpleContainer.Tests
 
             container.Register<IColor>(typeof(ColorRed), typeof(ColorBlue));
 
-            var colors = container.Resolve<IColor[]>();
+            var colors = container.ResolveMultiple<IColor>();
+            var actualCount = colors.Length;
+
+            Assert.AreEqual(EXPECTED_COUNT, actualCount);
+        }
+
+        [Test]
+        public void Resolve_Transient_MultipleResult_Type_Explicit()
+        {
+            const int EXPECTED_COUNT = 2;
+
+            var container = Container.Create();
+
+            container.Register<IColor>(typeof(ColorRed), typeof(ColorBlue));
+
+            var colors = container.ResolveMultiple(typeof(IColor));
+            var actualCount = colors.Length;
+
+            Assert.AreEqual(EXPECTED_COUNT, actualCount);
+        }
+
+        [Test]
+        public void Resolve_Transient_MultipleResult_Type_Implicit()
+        {
+            const int EXPECTED_COUNT = 2;
+
+            var container = Container.Create();
+
+            container.Register<IColor>(typeof(ColorRed), typeof(ColorBlue));
+
+            var colorsObject = container.Resolve(typeof(IColor[]));
+            var colors = (object[])colorsObject;
             var actualCount = colors.Length;
 
             Assert.AreEqual(EXPECTED_COUNT, actualCount);
@@ -88,7 +119,7 @@ namespace SimpleContainer.Tests
         }
 
         [Test]
-        public void Inject_Transient()
+        public void Inject_Transient_SingleResult()
         {
             var container = Container.Create();
 
@@ -99,6 +130,22 @@ namespace SimpleContainer.Tests
             var carSecond = container.Resolve<ICar>();
 
             Assert.AreNotSame(carFirst.Engine, carSecond.Engine);
+        }
+
+        [Test]
+        public void Inject_Transient_MultipleResult()
+        {
+            const int EXPECTED_COUNT = 2;
+
+            var container = Container.Create();
+
+            container.Register<IColor>(typeof(ColorRed), typeof(ColorBlue));
+            container.Register<IColorPalette, ColorPalette>(Scope.Singleton);
+
+            var palette = container.Resolve<IColorPalette>();
+            var actualCount = palette.Colors.Length;
+
+            Assert.AreEqual(EXPECTED_COUNT, actualCount);
         }
 
         [Test]

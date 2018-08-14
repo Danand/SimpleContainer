@@ -8,41 +8,46 @@ namespace SimpleContainer
     internal sealed class Resolver
     {
         private readonly Container container;
-        private readonly Type resultType;
+        private readonly Type[] resultTypes;
         private readonly Scope scope;
         private readonly object[] prePassedArgs;
         private readonly HashSet<object> transientInstances = new HashSet<object>();
 
-        private object singleInstance;
+        private object[] singleInstances;
 
         public Resolver(
             Container       container,
-            Type            resultType,
+            Type[]          resultTypes,
             Scope           scope,
             object          instance,
             params object[] args)
         {
             this.container = container;
-            this.resultType = resultType;
+            this.resultTypes = resultTypes;
             this.scope = scope;
 
-            singleInstance = instance;
+            if (instance != null)
+                singleInstances = new [] { instance };
+
             prePassedArgs = args;
         }
 
-        public object GetInstance(object[] args)
+        public object[] GetInstances(object[] args)
         {
             var resultArgs = prePassedArgs.Length > args.Length ? prePassedArgs : args;
 
             switch (scope)
             {
                 case Scope.Transient:
-                    var newInstance = CreateInstance(resultType, resultArgs);
-                    transientInstances.Add(newInstance);
-                    return newInstance;
+                    var newInstances = CreateInstances(resultTypes, resultArgs);
+
+                    foreach (var newInstance in newInstances)
+                        transientInstances.Add(newInstance);
+
+                    return newInstances;
 
                 case Scope.Singleton:
-                    return singleInstance = (singleInstance ?? CreateInstance(resultType, resultArgs));
+                    return singleInstances = (singleInstances ?? CreateInstances(resultTypes, resultArgs));
 
                 default:
                     throw new ArgumentException(nameof(scope));
@@ -59,7 +64,8 @@ namespace SimpleContainer
                     break;
 
                 case Scope.Singleton:
-                    DisposeInstance(singleInstance);
+                    foreach (var singleInstance in singleInstances)
+                        DisposeInstance(singleInstance);
                     break;
 
                 default:
@@ -75,7 +81,7 @@ namespace SimpleContainer
                     return transientInstances.ToArray();
 
                 case Scope.Singleton:
-                    return new [] { singleInstance };
+                    return singleInstances;
 
                 default:
                     throw new ArgumentException(nameof(scope));
@@ -125,14 +131,23 @@ namespace SimpleContainer
                 disposable.Dispose();
         }
 
-        private object CreateInstance(Type type, object[] args)
+        private object[] CreateInstances(Type[] types, object[] args)
         {
-            var constructors = type.GetConstructors();
-            var suitableConstructor = constructors[0];
+            var typesLength = types.Length;
+            var result = new object[typesLength];
 
-            var resolvedArgs = ResolveArgs(suitableConstructor, args);
+            for (var i = 0; i < typesLength; i++)
+            {
+                var type = types[i];
+                var constructors = type.GetConstructors();
+                var suitableConstructor = constructors[0];
+                var resolvedArgs = ResolveArgs(suitableConstructor, args);
+                var instance = suitableConstructor.Invoke(resolvedArgs);
 
-            return suitableConstructor.Invoke(resolvedArgs);
+                result[i] = instance;
+            }
+
+            return result;
         }
     }
 }

@@ -13,18 +13,7 @@ namespace SimpleContainer
 
         public static Container Create()
         {
-            return Container.Create();
-        }
-
-        public void Register(
-            Type            contractType,
-            Type            resultType,
-            Scope           scope,
-            object          instance,
-            params object[] args)
-        {
-            if (!bindings.ContainsKey(contractType))
-                bindings.Add(contractType, new Resolver(this, resultType, scope, instance, args));
+            return new Container();
         }
 
         public void RegisterFactory<TFactoryContract, TFactoryResult>()
@@ -51,12 +40,12 @@ namespace SimpleContainer
             return bindings.ContainsKey(contractType);
         }
 
-        public object Resolve(Type contractType, params object[] args)
+        public object[] ResolveMultiple(Type contractType, params object[] args)
         {
             if (!bindings.TryGetValue(contractType, out var resolver))
                 throw new TypeNotRegisteredException(contractType);
 
-            var result = resolver.GetInstance(args);
+            var result = resolver.GetInstances(args);
 
             Initialize(result);
 
@@ -83,6 +72,17 @@ namespace SimpleContainer
                 throw new TypeNotRegisteredException(contractType);
 
             return resolver.GetCachedInstances();
+        }
+
+        private void RegisterInner(
+            Type        contractType,
+            Scope       scope,
+            object      instance,
+            Type[]      resultTypes,
+            object[]    args)
+        {
+            if (!bindings.ContainsKey(contractType))
+                bindings.Add(contractType, new Resolver(this, resultTypes, scope, instance, args));
         }
 
         private void Initialize(object result)
