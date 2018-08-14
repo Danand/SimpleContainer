@@ -24,7 +24,7 @@ namespace SimpleContainer.Benchmark
 
             stopwatch.Start();
 
-            var simpleContainer = new Container();
+            var simpleContainer = Container.Create();
 
             stopwatch.Stop();
 

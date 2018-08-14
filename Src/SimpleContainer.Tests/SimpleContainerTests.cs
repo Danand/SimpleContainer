@@ -10,7 +10,7 @@ namespace SimpleContainer.Tests
         [Test]
         public void Resolve_Transient()
         {
-            var container = new Container();
+            var container = Container.Create();
 
             container.Register<ICar, CarTruck>(Scope.Transient);
 
@@ -23,7 +23,7 @@ namespace SimpleContainer.Tests
         [Test]
         public void Resolve_Singleton_Contract()
         {
-            var container = new Container();
+            var container = Container.Create();
 
             container.Register<ITimeMachine, TimeMachineDelorean>(Scope.Singleton);
 
@@ -36,7 +36,7 @@ namespace SimpleContainer.Tests
         [Test]
         public void Resolve_Singleton_Result()
         {
-            var container = new Container();
+            var container = Container.Create();
 
             container.Register<TimeMachineDelorean>(Scope.Singleton);
 
@@ -49,7 +49,7 @@ namespace SimpleContainer.Tests
         [Test]
         public void Resolve_Singleton_Result_Throws_TypeNotRegisteredException()
         {
-            var container = new Container();
+            var container = Container.Create();
 
             container.Register<ITimeMachine, TimeMachineDelorean>(Scope.Singleton);
 
@@ -62,7 +62,7 @@ namespace SimpleContainer.Tests
         [Test]
         public void Resolve_Factory()
         {
-            var container = new Container();
+            var container = Container.Create();
 
             container.RegisterFactory<CarFactory>();
 
@@ -75,7 +75,7 @@ namespace SimpleContainer.Tests
         [Test]
         public void Inject_Transient()
         {
-            var container = new Container();
+            var container = Container.Create();
 
             container.Register<IEngine, EngineBig>(Scope.Transient);
             container.Register<ICar, CarFourWheelDrive>(Scope.Transient);
@@ -89,7 +89,7 @@ namespace SimpleContainer.Tests
         [Test]
         public void Inject_Singleton()
         {
-            var container = new Container();
+            var container = Container.Create();
 
             container.Register<IPhysics, PhysicsPlanetEarth>(Scope.Singleton);
             container.Register<IEngine, EngineMedium>(Scope.Transient);
@@ -103,7 +103,7 @@ namespace SimpleContainer.Tests
         [Test]
         public void Inject_Factory()
         {
-            var container = new Container();
+            var container = Container.Create();
 
             container.Register<IEngine, EngineBig>(Scope.Transient);
             container.Register<ICar, CarFourWheelDrive>(Scope.Transient);
@@ -119,7 +119,7 @@ namespace SimpleContainer.Tests
         [Test]
         public void Dispatcher_Send_Singleton()
         {
-            var container = new Container();
+            var container = Container.Create();
 
             container.Register<ICustomEventHandler, CustomEventHandler>(Scope.Singleton);
             container.Register<DummyInvoker>(Scope.Singleton);
@@ -146,7 +146,7 @@ namespace SimpleContainer.Tests
         [Test]
         public void Dispatcher_Send_Factory()
         {
-            var container = new Container();
+            var container = Container.Create();
 
             container.Register<DummyInvoker>(Scope.Singleton);
             container.RegisterFactory<CustomEventHandlerFactory>();

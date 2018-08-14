@@ -13,7 +13,7 @@ namespace SimpleContainer
 
         public static Container Create()
         {
-            return new Container();
+            return Container.Create();
         }
 
         public void Register(
