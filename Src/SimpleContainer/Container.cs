@@ -41,6 +41,11 @@ namespace SimpleContainer
             dispatcher.RegisterEvent(this, action);
         }
 
+        public void SendEvent<TEventArgs>(TEventArgs eventArgs)
+        {
+            dispatcher.Send(eventArgs);
+        }
+
         public bool CheckRegistered(Type contractType)
         {
             return bindings.ContainsKey(contractType);
