@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SimpleContainer
 {
@@ -33,7 +34,9 @@ namespace SimpleContainer
             Action<TEventHandler, TEventArgs>   action,
             object                              args)
         {
-            var eventHandlers = container.GetAllCached<TEventHandler>();
+            var eventHandlerType = typeof(TEventHandler);
+            var allCachedInstances = container.GetAllCached();
+            var eventHandlers = allCachedInstances.Where(instance => eventHandlerType.IsInstanceOfType(instance)).ToArray();
 
             foreach (var eventHandler in eventHandlers)
                 action.Invoke((TEventHandler)eventHandler, (TEventArgs)args);

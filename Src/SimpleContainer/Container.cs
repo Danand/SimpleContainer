@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using SimpleContainer.Interfaces;
 
@@ -27,14 +28,9 @@ namespace SimpleContainer
                 installer.Install(this);
         }
 
-        internal object[] GetAllCached<TContract>()
+        internal object[] GetAllCached()
         {
-            var contractType = typeof(TContract);
-
-            if (!bindings.TryGetValue(contractType, out var resolver))
-                throw new TypeNotRegisteredException(contractType);
-
-            return resolver.GetCachedInstances();
+            return bindings.SelectMany(resolver => resolver.Value.GetCachedInstances()).ToArray();
         }
 
         private void Initialize(object result)
