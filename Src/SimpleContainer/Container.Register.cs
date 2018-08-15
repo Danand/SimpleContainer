@@ -115,10 +115,7 @@ namespace SimpleContainer
             object[]    args)
         {
             if (!bindings.ContainsKey(contractType))
-            {
-                var argConverter = new ArrayArgumentConverter(contractType);
-                bindings.Add(contractType, new Resolver(this, resultTypes, scope, instance, argConverter, args));
-            }
+                bindings.Add(contractType, new Resolver(this, resultTypes, scope, instance, args));
         }
     }
 }

@@ -10,24 +10,22 @@ namespace SimpleContainer
         private readonly Container container;
         private readonly Type[] resultTypes;
         private readonly Scope scope;
-        private readonly ArrayArgumentConverter argConverter;
         private readonly object[] prePassedArgs;
+        private readonly ArrayArgumentConverter argConverter = new ArrayArgumentConverter();
         private readonly HashSet<object> transientInstances = new HashSet<object>();
 
         private object[] singleInstances;
 
         public Resolver(
-            Container               container,
-            Type[]                  resultTypes,
-            Scope                   scope,
-            object                  instance,
-            ArrayArgumentConverter  argConverter,
-            params object[]         args)
+            Container       container,
+            Type[]          resultTypes,
+            Scope           scope,
+            object          instance,
+            params object[] args)
         {
             this.container = container;
             this.resultTypes = resultTypes;
             this.scope = scope;
-            this.argConverter = argConverter;
 
             if (instance != null)
                 singleInstances = new [] { instance };
@@ -103,26 +101,27 @@ namespace SimpleContainer
             for (var i = 0; i < parameters.Length; i++)
             {
                 var parameterInfo = parameters[i];
+                var parameterType = parameterInfo.ParameterType;
                 var lessArgs = i >= args.Length;
 
                 if (lessArgs)
                 {
-                    result[i] = container.Resolve(parameterInfo.ParameterType);
+                    result[i] = container.Resolve(parameterType);
                 }
                 else
                 {
                     var arg = args[i];
 
-                    if (CheckAssignable(parameterInfo.ParameterType, arg.GetType()))
+                    if (CheckAssignable(parameterType, arg.GetType()))
                         result[i] = arg;
                     else
-                        result[i] = container.Resolve(parameterInfo.ParameterType);
+                        result[i] = container.Resolve(parameterType);
                 }
+
+                result = argConverter.Convert(parameterType, result);
             }
 
-            var convertedResult = argConverter.GetConvertedArgs(result);
-
-            return convertedResult;
+            return result;
         }
 
         private bool CheckAssignable(Type parentType, Type childType)

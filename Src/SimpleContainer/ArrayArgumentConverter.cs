@@ -6,20 +6,18 @@ namespace SimpleContainer
 {
     internal class ArrayArgumentConverter
     {
-        private readonly Type contractType; // TODO: must be constructor argument type, not type itself!
-
-        public ArrayArgumentConverter(Type contractType)
+        public object[] Convert(Type contractType, object[] args)
         {
-            this.contractType = contractType;
-        }
+            if (!contractType.IsArray)
+                return args;
 
-        public object[] GetConvertedArgs(object[] args)
-        {
-            var convertMethod = GetType().GetMethod(nameof(Convert), BindingFlags.NonPublic | BindingFlags.Instance)?.MakeGenericMethod(contractType);
+            var elementType = contractType.GetElementType();
+            var convertMethod = GetType().GetMethod(nameof(GetConvertedArgs), BindingFlags.NonPublic | BindingFlags.Instance)?.MakeGenericMethod(elementType);
+
             return (object[])convertMethod?.Invoke(this, new object[] { args });
         }
 
-        private object[] Convert<TContract>(object[] args)
+        private object[] GetConvertedArgs<TContract>(object[] args)
         {
             var argsCount = args.Length;
             var result = new object[argsCount];
