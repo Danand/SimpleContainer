@@ -10,21 +10,24 @@ namespace SimpleContainer
         private readonly Container container;
         private readonly Type[] resultTypes;
         private readonly Scope scope;
+        private readonly ArrayArgumentConverter argConverter;
         private readonly object[] prePassedArgs;
         private readonly HashSet<object> transientInstances = new HashSet<object>();
 
         private object[] singleInstances;
 
         public Resolver(
-            Container       container,
-            Type[]          resultTypes,
-            Scope           scope,
-            object          instance,
-            params object[] args)
+            Container               container,
+            Type[]                  resultTypes,
+            Scope                   scope,
+            object                  instance,
+            ArrayArgumentConverter  argConverter,
+            params object[]         args)
         {
             this.container = container;
             this.resultTypes = resultTypes;
             this.scope = scope;
+            this.argConverter = argConverter;
 
             if (instance != null)
                 singleInstances = new [] { instance };
@@ -117,7 +120,9 @@ namespace SimpleContainer
                 }
             }
 
-            return result;
+            var convertedResult = argConverter.GetConvertedArgs(result);
+
+            return convertedResult;
         }
 
         private bool CheckAssignable(Type parentType, Type childType)
