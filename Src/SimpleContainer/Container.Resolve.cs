@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 
 namespace SimpleContainer
 {
@@ -8,11 +7,6 @@ namespace SimpleContainer
         public TContract Resolve<TContract>()
         {
             return (TContract)Resolve(typeof(TContract));
-        }
-
-        public TContract[] ResolveMultiple<TContract>()
-        {
-            return ResolveMultiple(typeof(TContract)).Cast<TContract>().ToArray();
         }
 
         public object Resolve(Type contractType)
@@ -31,6 +25,18 @@ namespace SimpleContainer
                 return instances;
 
             return instances[0];
+        }
+
+        public object[] ResolveMultiple(Type contractType, params object[] args)
+        {
+            if (!bindings.TryGetValue(contractType, out var resolver))
+                throw new TypeNotRegisteredException(contractType);
+
+            var result = resolver.GetInstances(args);
+
+            Initialize(result);
+
+            return result;
         }
     }
 }

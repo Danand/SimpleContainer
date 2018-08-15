@@ -29,7 +29,7 @@ namespace SimpleContainer.Tests
 
             container.Register<IColor>(typeof(ColorRed), typeof(ColorBlue));
 
-            var colors = container.ResolveMultiple<IColor>();
+            var colors = container.Resolve<IColor[]>();
             var actualCount = colors.Length;
 
             Assert.AreEqual(EXPECTED_COUNT, actualCount);

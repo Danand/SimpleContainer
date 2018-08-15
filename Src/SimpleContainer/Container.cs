@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using SimpleContainer.Factories;
 using SimpleContainer.Interfaces;
 
 namespace SimpleContainer
@@ -14,42 +13,6 @@ namespace SimpleContainer
         public static Container Create()
         {
             return new Container();
-        }
-
-        public void RegisterFactory<TFactoryContract, TFactoryResult>()
-            where TFactoryContract : IFactory
-            where TFactoryResult : TFactoryContract
-        {
-            Register<TFactoryContract, TFactoryResult>(Scope.Singleton);
-            var factory = Resolve<TFactoryContract>();
-            factory.Container = this;
-        }
-
-        public void RegisterEvent<TEventHandler, TEventArgs>(Action<TEventHandler, TEventArgs> action)
-        {
-            dispatcher.RegisterEvent(this, action);
-        }
-
-        public void SendEvent<TEventArgs>(TEventArgs eventArgs)
-        {
-            dispatcher.Send(eventArgs);
-        }
-
-        public bool CheckRegistered(Type contractType)
-        {
-            return bindings.ContainsKey(contractType);
-        }
-
-        public object[] ResolveMultiple(Type contractType, params object[] args)
-        {
-            if (!bindings.TryGetValue(contractType, out var resolver))
-                throw new TypeNotRegisteredException(contractType);
-
-            var result = resolver.GetInstances(args);
-
-            Initialize(result);
-
-            return result;
         }
 
         public void Dispose()
@@ -72,17 +35,6 @@ namespace SimpleContainer
                 throw new TypeNotRegisteredException(contractType);
 
             return resolver.GetCachedInstances();
-        }
-
-        private void RegisterInner(
-            Type        contractType,
-            Scope       scope,
-            object      instance,
-            Type[]      resultTypes,
-            object[]    args)
-        {
-            if (!bindings.ContainsKey(contractType))
-                bindings.Add(contractType, new Resolver(this, resultTypes, scope, instance, args));
         }
 
         private void Initialize(object result)

@@ -88,9 +88,34 @@ namespace SimpleContainer
             factory.Container = this;
         }
 
+        public void RegisterFactory<TFactoryContract, TFactoryResult>()
+            where TFactoryContract : IFactory
+            where TFactoryResult : TFactoryContract
+        {
+            Register<TFactoryContract, TFactoryResult>(Scope.Singleton);
+            var factory = Resolve<TFactoryContract>();
+            factory.Container = this;
+        }
+
         public bool CheckRegistered<TContract>()
         {
             return CheckRegistered(typeof(TContract));
+        }
+
+        public bool CheckRegistered(Type contractType)
+        {
+            return bindings.ContainsKey(contractType);
+        }
+
+        private void RegisterInner(
+            Type        contractType,
+            Scope       scope,
+            object      instance,
+            Type[]      resultTypes,
+            object[]    args)
+        {
+            if (!bindings.ContainsKey(contractType))
+                bindings.Add(contractType, new Resolver(this, resultTypes, scope, instance, args));
         }
     }
 }
