@@ -33,10 +33,13 @@ namespace SimpleContainer
             return bindings.SelectMany(resolver => resolver.Value.GetCachedInstances()).ToArray();
         }
 
-        private void Initialize(object result)
+        private void Initialize(object[] results)
         {
-            if (result is IInitializible initializible)
-                initializible.Initialize();
+            foreach (var result in results)
+            {
+                if (result is IInitializible initializible)
+                    initializible.Initialize();
+            }
         }
     }
 }
