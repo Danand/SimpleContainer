@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net461;net35</TargetFrameworks>
+    <AssemblyName>SimpleContainer</AssemblyName>
+    <Authors>Danand</Authors>
+    <AssemblyVersion>0.0.5.0</AssemblyVersion>
+    <FileVersion>1.0.5.0</FileVersion>
+    <Version>0.5.0</Version>
+    <RootNamespace>SimpleContainer</RootNamespace>
+  </PropertyGroup>
+
+</Project>

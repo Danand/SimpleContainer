@@ -84,12 +84,11 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SimpleContainer\SimpleContainer.csproj">
-      <Project>{FC8AD41A-0D6B-428B-8BC5-E91A1CE34BB4}</Project>
-      <Name>SimpleContainer</Name>
+    <ProjectReference Include="..\SimpleContainer.Core\SimpleContainer.Core.csproj">
+      <Project>{5cc30d3c-3289-4414-abab-0b5e48192a8d}</Project>
+      <Name>SimpleContainer.Core</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>
