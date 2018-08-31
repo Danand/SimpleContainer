@@ -2,16 +2,16 @@
 {
     public sealed class CarFourWheelDrive : ICar
     {
-        private readonly IEngine _engine;
+        private readonly IEngine engine;
 
         public CarFourWheelDrive(IEngine engine)
         {
-            _engine = engine;
+            this.engine = engine;
         }
 
         IEngine ICar.Engine
         {
-            get { return _engine; }
+            get { return engine; }
         }
     }
 }

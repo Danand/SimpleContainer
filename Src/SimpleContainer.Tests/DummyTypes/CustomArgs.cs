@@ -1,6 +1,6 @@
 ﻿namespace SimpleContainer.Tests.DummyTypes
 {
-    public class CustomEventArgs
+    public class CustomArgs
     {
         public bool flag;
         public int id;

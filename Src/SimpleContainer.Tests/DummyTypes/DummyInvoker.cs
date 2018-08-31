@@ -9,7 +9,7 @@
             this.dispatcher = dispatcher;
         }
 
-        public void RaiseEvent(CustomEventArgs eventArgs)
+        public void RaiseEvent(CustomArgs eventArgs)
         {
             dispatcher.Send(eventArgs);
         }

@@ -2,16 +2,16 @@
 {
     public sealed class EngineMedium : IEngine
     {
-        private readonly IPhysics _physics;
+        private readonly IPhysics physics;
 
         public EngineMedium(IPhysics physics)
         {
-            _physics = physics;
+            this.physics = physics;
         }
 
         IPhysics IEngine.Physics
         {
-            get { return _physics; }
+            get { return physics; }
         }
     }
 }

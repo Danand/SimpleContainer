@@ -12,14 +12,14 @@ namespace SimpleContainer.Tests
         {
             var container = Container.Create();
 
-            container.Register<ICustomEventHandler, CustomEventHandler>(Scope.Singleton);
+            container.Register<ICustomHandler, CustomHandler>(Scope.Singleton);
             container.Register<DummyInvoker>(Scope.Singleton);
-            container.RegisterEvent<ICustomEventHandler, CustomEventArgs>((handler, args) => handler.OnCustomEvent(args));
+            container.RegisterEvent<ICustomHandler, CustomArgs>((handler, args) => handler.OnCustomEvent(args));
 
             var invoker = container.Resolve<DummyInvoker>();
-            var eventHandler = container.Resolve<ICustomEventHandler>();
+            var eventHandler = container.Resolve<ICustomHandler>();
 
-            var expectedValue = new CustomEventArgs
+            var expectedValue = new CustomArgs
             {
                 flag = true,
                 id = 9,
@@ -28,7 +28,7 @@ namespace SimpleContainer.Tests
 
             invoker.RaiseEvent(expectedValue);
 
-            var actualValue = eventHandler.ReceivedEventArgs;
+            var actualValue = eventHandler.ReceivedArgs;
 
             Assert.AreEqual(expectedValue, actualValue);
         }
@@ -38,14 +38,14 @@ namespace SimpleContainer.Tests
         {
             var container = Container.Create();
 
-            container.Register<ICustomEventHandler, CustomEventHandler>(Scope.Singleton);
+            container.Register<ICustomHandler, CustomHandler>(Scope.Singleton);
             container.Register<DummyInvoker>(Scope.Singleton);
-            container.RegisterEvent<ICustomEventHandler, CustomEventArgs>();
+            container.RegisterEvent<ICustomHandler, CustomArgs>();
 
             var invoker = container.Resolve<DummyInvoker>();
-            var eventHandler = container.Resolve<ICustomEventHandler>();
+            var eventHandler = container.Resolve<ICustomHandler>();
 
-            var expectedValue = new CustomEventArgs
+            var expectedValue = new CustomArgs
             {
                 flag = true,
                 id = 9,
@@ -54,7 +54,7 @@ namespace SimpleContainer.Tests
 
             invoker.RaiseEvent(expectedValue);
 
-            var actualValue = eventHandler.ReceivedEventArgs;
+            var actualValue = eventHandler.ReceivedArgs;
 
             Assert.AreEqual(expectedValue, actualValue);
         }
@@ -65,15 +65,15 @@ namespace SimpleContainer.Tests
             var container = Container.Create();
 
             container.Register<DummyInvoker>(Scope.Singleton);
-            container.RegisterFactory<CustomEventHandlerFactory>();
-            container.RegisterEvent<ICustomEventHandler, CustomEventArgs>((handler, args) => handler.OnCustomEvent(args));
+            container.RegisterFactory<CustomHandlerFactory>();
+            container.RegisterEvent<ICustomHandler, CustomArgs>((handler, args) => handler.OnCustomEvent(args));
 
             var invoker = container.Resolve<DummyInvoker>();
-            var factory = container.Resolve<CustomEventHandlerFactory>();
+            var factory = container.Resolve<CustomHandlerFactory>();
 
             var eventHandler = factory.Create();
 
-            var expectedValue = new CustomEventArgs
+            var expectedValue = new CustomArgs
             {
                 flag = true,
                 id = 9,
@@ -82,7 +82,7 @@ namespace SimpleContainer.Tests
 
             invoker.RaiseEvent(expectedValue);
 
-            var actualValue = eventHandler.ReceivedEventArgs;
+            var actualValue = eventHandler.ReceivedArgs;
 
             Assert.AreEqual(expectedValue, actualValue);
         }
@@ -93,13 +93,13 @@ namespace SimpleContainer.Tests
             var container = Container.Create();
 
             container.Register<DummyInvoker>(Scope.Singleton);
-            container.Register<CustomEventHandler>(Scope.Singleton);
-            container.RegisterEvent<ICustomEventHandler, CustomEventArgs>((handler, args) => handler.OnCustomEvent(args));
+            container.Register<CustomHandler>(Scope.Singleton);
+            container.RegisterEvent<ICustomHandler, CustomArgs>((handler, args) => handler.OnCustomEvent(args));
 
             var invoker = container.Resolve<DummyInvoker>();
-            var eventHandler = container.Resolve<CustomEventHandler>();
+            var eventHandler = container.Resolve<CustomHandler>();
 
-            var expectedValue = new CustomEventArgs
+            var expectedValue = new CustomArgs
             {
                 flag = true,
                 id = 9,
@@ -108,7 +108,7 @@ namespace SimpleContainer.Tests
 
             invoker.RaiseEvent(expectedValue);
 
-            var actualValue = eventHandler.ReceivedEventArgs;
+            var actualValue = eventHandler.ReceivedArgs;
 
             Assert.AreEqual(expectedValue, actualValue);
         }
