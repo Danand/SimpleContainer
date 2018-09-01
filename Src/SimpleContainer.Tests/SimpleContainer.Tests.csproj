@@ -61,8 +61,11 @@
     <Compile Include="DummyTypes\ColorPalette.cs" />
     <Compile Include="DummyTypes\ColorRed.cs" />
     <Compile Include="DummyTypes\CustomArgs.cs" />
+    <Compile Include="DummyTypes\CustomContractArgs.cs" />
+    <Compile Include="DummyTypes\CustomContractHandler.cs" />
     <Compile Include="DummyTypes\CustomHandler.cs" />
     <Compile Include="DummyTypes\CustomHandlerFactory.cs" />
+    <Compile Include="DummyTypes\DummyContractInvoker.cs" />
     <Compile Include="DummyTypes\EngineBig.cs" />
     <Compile Include="DummyTypes\EngineMedium.cs" />
     <Compile Include="DummyTypes\ICar.cs" />

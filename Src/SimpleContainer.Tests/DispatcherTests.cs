@@ -60,6 +60,32 @@ namespace SimpleContainer.Tests
         }
 
         [Test]
+        public void Dispatcher_Send_Singleton_Contract()
+        {
+            var container = Container.Create();
+
+            container.Register<CustomContractHandler>(Scope.Singleton);
+            container.Register<DummyContractInvoker>(Scope.Singleton);
+            container.RegisterEvent<CustomContractArgs>();
+
+            var invoker = container.Resolve<DummyContractInvoker>();
+            var eventHandler = container.Resolve<CustomContractHandler>();
+
+            var expectedValue = new CustomContractArgs
+            {
+                flag = true,
+                id = 9,
+                name = "shine"
+            };
+
+            invoker.RaiseEvent(expectedValue);
+
+            var actualValue = eventHandler.ReceivedArgs;
+
+            Assert.AreEqual(expectedValue, actualValue);
+        }
+
+        [Test]
         public void Dispatcher_Send_Factory()
         {
             var container = Container.Create();
