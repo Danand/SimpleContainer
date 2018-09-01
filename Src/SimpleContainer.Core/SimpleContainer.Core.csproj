@@ -4,8 +4,8 @@
     <TargetFrameworks>net461;net45;net40;net35</TargetFrameworks>
     <AssemblyName>SimpleContainer</AssemblyName>
     <Authors>Danand</Authors>
-    <AssemblyVersion>0.0.5.2</AssemblyVersion>
-    <FileVersion>0.0.5.2</FileVersion>
+    <AssemblyVersion>0.5.2.1</AssemblyVersion>
+    <FileVersion>0.5.2.1</FileVersion>
     <Version>0.5.2</Version>
     <RootNamespace>SimpleContainer</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
