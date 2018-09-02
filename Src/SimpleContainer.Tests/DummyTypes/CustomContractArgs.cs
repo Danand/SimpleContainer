@@ -11,10 +11,5 @@ namespace SimpleContainer.Tests.DummyTypes
         public bool flag;
         public int id;
         public string name;
-
-        public Type HandlerType
-        {
-            get { return typeof(ICustomHandler); }
-        }
     }
 }

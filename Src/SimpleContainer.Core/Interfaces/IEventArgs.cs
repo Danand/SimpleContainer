@@ -1,9 +1,4 @@
-﻿using System;
-
-namespace SimpleContainer.Interfaces
+﻿namespace SimpleContainer.Interfaces
 {
-    public interface IEventArgs
-    {
-        Type HandlerType { get; }
-    }
+    public interface IEventArgs { }
 }
