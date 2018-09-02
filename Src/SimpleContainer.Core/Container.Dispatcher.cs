@@ -11,12 +11,9 @@ namespace SimpleContainer
         public void RegisterEvent<TEventArgs>()
             where TEventArgs : IEventArgs
         {
-            Action<object, TEventArgs> action = (handler, args) =>
+            Action<IEventHandler<TEventArgs>, TEventArgs> action = (handler, args) =>
             {
-                // TODO: remove type checking and replace with reflecting generic method 
-                // for passing `TEventHandler` instead of `object`.
-                if (handler is IEventHandler<TEventArgs> eventHandler)
-                    eventHandler.OnEvent(args);
+                handler.OnEvent(args);
             };
 
             dispatcher.RegisterEvent(this, action);

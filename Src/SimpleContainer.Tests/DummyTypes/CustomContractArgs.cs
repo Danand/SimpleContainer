@@ -1,6 +1,4 @@
-﻿using System;
-
-using SimpleContainer.Interfaces;
+﻿using SimpleContainer.Interfaces;
 
 namespace SimpleContainer.Tests.DummyTypes
 {
