@@ -79,7 +79,7 @@ namespace SimpleContainer.Tests
             container.RegisterFactory<CarFactory>();
 
             var factory = container.Resolve<CarFactory>();
-            var car = factory.Create(typeof(CarFourWheelDrive));
+            var car = factory.Create<CarFourWheelDrive>();
 
             Assert.IsInstanceOf<EngineBig>(car.Engine);
         }

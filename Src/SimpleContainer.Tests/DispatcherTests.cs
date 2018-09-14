@@ -97,7 +97,7 @@ namespace SimpleContainer.Tests
             var invoker = container.Resolve<DummyInvoker>();
             var factory = container.Resolve<CustomHandlerFactory>();
 
-            var eventHandler = factory.Create();
+            var eventHandler = factory.Create<CustomHandler>();
 
             var expectedValue = new CustomArgs
             {

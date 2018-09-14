@@ -113,7 +113,7 @@ namespace SimpleContainer.Tests
             container.RegisterFactory<CarFactory>();
 
             var factory = container.Resolve<CarFactory>();
-            var result = factory.Create();
+            var result = factory.Create<CarTruck>();
 
             Assert.IsInstanceOf<ICar>(result);
         }
