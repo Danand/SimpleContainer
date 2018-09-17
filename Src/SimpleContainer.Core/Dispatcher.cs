@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using SimpleContainer.Interfaces;
+
 namespace SimpleContainer
 {
     public class Dispatcher
@@ -29,17 +31,26 @@ namespace SimpleContainer
             events[eventArgsType].Add(args => Invoke(container, action, args));
         }
 
-        private static void Invoke<TEventHandler, TEventArgs>(
+        private void Invoke<TEventHandler, TEventArgs>(
             Container                           container,
             Action<TEventHandler, TEventArgs>   action,
             object                              args)
         {
             var eventHandlerType = typeof(TEventHandler);
+            var eventHandlerAnyType = typeof(IEventHandlerAny);
+            var anyArgs = new AnyArgs((IEventArgs)args);
             var allCachedInstances = container.GetAllCached();
-            var eventHandlers = allCachedInstances.Where(instance => eventHandlerType.IsInstanceOfType(instance)).ToArray();
 
-            foreach (var eventHandler in eventHandlers)
+            var eventHandlersConcrete = allCachedInstances.Where(instance => eventHandlerType.IsInstanceOfType(instance));
+
+            var eventHandlersAny = allCachedInstances.Where(instance => eventHandlerAnyType.IsInstanceOfType(instance) &&
+                                                                        !eventHandlersConcrete.Contains(instance));
+
+            foreach (var eventHandler in eventHandlersConcrete)
                 action.Invoke((TEventHandler)eventHandler, (TEventArgs)args);
+
+            foreach (var eventHandler in eventHandlersAny)
+                ((IEventHandlerAny)eventHandler).OnEvent(anyArgs);
         }
     }
 }

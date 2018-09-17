@@ -138,5 +138,38 @@ namespace SimpleContainer.Tests
 
             Assert.AreEqual(expectedValue, actualValue);
         }
+
+        [Test]
+        public void Dispatcher_Handle_Any()
+        {
+            var container = Container.Create();
+
+            container.Register<CustomAnyEventHandler>(Scope.Singleton);
+            container.Register<DummyContractInvoker>(Scope.Singleton);
+            container.RegisterEvent<CustomContractArgs>();
+
+            var invoker = container.Resolve<DummyContractInvoker>();
+            var eventHandler = container.Resolve<CustomAnyEventHandler>();
+
+            var expectedValue = new CustomContractArgs
+            {
+                flag = true,
+                id = 9,
+                name = "shine"
+            };
+
+            var expectedEventType = typeof(CustomContractArgs);
+
+            invoker.RaiseEvent(expectedValue);
+
+            var actualValue = eventHandler.ReceivedArgs;
+            var actualEventType = eventHandler.EventType;
+
+            Assert.Multiple(() =>
+            {
+                Assert.AreEqual(expectedValue, actualValue);
+                Assert.AreEqual(expectedEventType, actualEventType);
+            });
+        }
     }
 }

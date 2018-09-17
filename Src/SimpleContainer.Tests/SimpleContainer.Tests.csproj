@@ -60,6 +60,7 @@
     <Compile Include="DummyTypes\ColorBlue.cs" />
     <Compile Include="DummyTypes\ColorPalette.cs" />
     <Compile Include="DummyTypes\ColorRed.cs" />
+    <Compile Include="DummyTypes\CustomAnyEventHandler.cs" />
     <Compile Include="DummyTypes\CustomArgs.cs" />
     <Compile Include="DummyTypes\CustomContractArgs.cs" />
     <Compile Include="DummyTypes\CustomContractHandler.cs" />
