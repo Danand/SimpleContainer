@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
+using SimpleContainer.Interfaces;
+
 namespace SimpleContainer
 {
     internal sealed class Resolver
     {
         private readonly Container container;
+        private readonly IActivator activator;
         private readonly Type[] resultTypes;
         private readonly Scope scope;
         private readonly object[] prePassedArgs;
@@ -18,12 +21,14 @@ namespace SimpleContainer
 
         public Resolver(
             Container       container,
+            IActivator      activator,
             Type[]          resultTypes,
             Scope           scope,
             object          instance,
             params object[] args)
         {
             this.container = container;
+            this.activator = activator;
             this.resultTypes = resultTypes;
             this.scope = scope;
 
@@ -146,7 +151,7 @@ namespace SimpleContainer
                 var constructors = type.GetConstructors();
                 var suitableConstructor = constructors[0];
                 var resolvedArgs = ResolveArgs(suitableConstructor, args);
-                var instance = suitableConstructor.Invoke(resolvedArgs);
+                var instance = activator.CreateInstance(suitableConstructor, resolvedArgs);
 
                 result[i] = instance;
             }

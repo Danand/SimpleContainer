@@ -1,5 +1,6 @@
 ﻿using System;
 
+using SimpleContainer.Activators;
 using SimpleContainer.Factories;
 
 namespace SimpleContainer
@@ -115,7 +116,7 @@ namespace SimpleContainer
             object[]    args)
         {
             if (!bindings.ContainsKey(contractType))
-                bindings.Add(contractType, new Resolver(this, resultTypes, scope, instance, args));
+                bindings.Add(contractType, new Resolver(this, new ActivatorExpression(), resultTypes, scope, instance, args));
         }
     }
 }
