@@ -2,6 +2,7 @@
 using System.Linq;
 
 using SimpleContainer.Activators;
+using SimpleContainer.Exceptions;
 using SimpleContainer.Interfaces;
 
 namespace SimpleContainer

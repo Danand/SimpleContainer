@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SimpleContainer
+namespace SimpleContainer.Exceptions
 {
     public class TypeNotRegisteredException : Exception
     {

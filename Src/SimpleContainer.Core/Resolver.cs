@@ -17,7 +17,7 @@ namespace SimpleContainer
         private readonly ArrayArgumentConverter argConverter = new ArrayArgumentConverter();
         private readonly HashSet<object> transientInstances = new HashSet<object>();
 
-        private object[] singleInstances;
+        private object[] singleInstances = new object[0];
 
         public Resolver(
             Container       container,
@@ -53,7 +53,10 @@ namespace SimpleContainer
                     return newInstances;
 
                 case Scope.Singleton:
-                    return singleInstances = (singleInstances ?? CreateInstances(resultTypes, resultArgs));
+                    if (singleInstances.Length > 0)
+                        return singleInstances;
+
+                    return singleInstances = CreateInstances(resultTypes, resultArgs);
 
                 default:
                     throw new ArgumentException(nameof(scope));

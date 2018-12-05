@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
+using SimpleContainer.Exceptions;
 using SimpleContainer.Interfaces;
 
 namespace SimpleContainer
@@ -48,6 +49,36 @@ namespace SimpleContainer
                 installer.Install(this);
             }
         }
+
+#if NET35
+        public void ThrowIfNotResolved()
+        {
+            foreach (var binding in bindings)
+            {
+                var cachedInstances = binding.Value.GetCachedInstances();
+
+                if (cachedInstances.Length == 0)
+                    throw new TypeNotResolvedException(binding.Key);
+            }
+        }
+#else
+        public void ThrowIfNotResolved()
+        {
+            var exceptions = new List<Exception>();
+
+            foreach (var binding in bindings)
+            {
+                var cachedInstances = binding.Value.GetCachedInstances();
+
+                if (cachedInstances.Length == 0)
+                    exceptions.Add(new TypeNotResolvedException(binding.Key));
+            }
+
+            if (exceptions.Count > 0)
+                throw new AggregateException(exceptions);
+        }
+#endif
+
         internal object[] GetAllCached()
         {
             return bindings.SelectMany(resolver => resolver.Value.GetCachedInstances()).ToArray();
