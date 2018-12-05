@@ -1,4 +1,5 @@
 ﻿using SimpleContainer.Tests.DummyTypes;
+using SimpleContainer.Exceptions;
 
 using NUnit.Framework;
 
@@ -116,6 +117,17 @@ namespace SimpleContainer.Tests
             var result = factory.Create<CarTruck>();
 
             Assert.IsInstanceOf<ICar>(result);
+        }
+
+        [Test]
+        public void Resolve_Installer_FromString()
+        {
+            var container = Container.Create();
+
+            var installerName = typeof(InstallerDummy).FullName;
+            var assembly = typeof(InstallerDummy).Assembly;
+
+            container.Install(assembly, installerName);
         }
     }
 }

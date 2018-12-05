@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Linq;
 
+using SimpleContainer.Activators;
+using SimpleContainer.Interfaces;
+
 namespace SimpleContainer
 {
     public sealed partial class Container
@@ -43,6 +46,14 @@ namespace SimpleContainer
             Initialize(result);
 
             return result;
+        }
+
+        private IInstaller ResolveInstaller(Type installerType)
+        {
+            IActivator activator = new ActivatorExpression();
+            var constructor = installerType.GetConstructor(new Type[0]);
+
+            return (IInstaller)activator.CreateInstance(constructor, new object[0]);
         }
     }
 }

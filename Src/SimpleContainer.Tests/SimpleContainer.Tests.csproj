@@ -75,6 +75,7 @@
     <Compile Include="DummyTypes\ICustomHandler.cs" />
     <Compile Include="DummyTypes\IEngine.cs" />
     <Compile Include="DummyTypes\DummyInvoker.cs" />
+    <Compile Include="DummyTypes\InstallerDummy.cs" />
     <Compile Include="DummyTypes\IPhysics.cs" />
     <Compile Include="DummyTypes\ITimeMachine.cs" />
     <Compile Include="DummyTypes\PhysicsPlanetEarth.cs" />

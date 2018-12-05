@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 using SimpleContainer.Interfaces;
 
@@ -28,6 +29,25 @@ namespace SimpleContainer
                 installer.Install(this);
         }
 
+        public void Install(params Type[] installerTypes)
+        {
+            foreach (var installerType in installerTypes)
+            {
+                var installer = ResolveInstaller(installerType);
+                installer.Install(this);
+            }
+        }
+
+        public void Install(Assembly assembly, params string[] installerNames)
+        {
+            foreach (var installerName in installerNames)
+            {
+                var installerType = assembly.GetType(installerName, true);
+                var installer = ResolveInstaller(installerType);
+
+                installer.Install(this);
+            }
+        }
         internal object[] GetAllCached()
         {
             return bindings.SelectMany(resolver => resolver.Value.GetCachedInstances()).ToArray();
