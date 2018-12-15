@@ -171,5 +171,33 @@ namespace SimpleContainer.Tests
                 Assert.AreEqual(expectedEventType, actualEventType);
             });
         }
+
+        [Test]
+        public void Dispatcher_Handle_YieldInstruction()
+        {
+            var container = Container.Create();
+
+            container.RegisterEvent<CustomArgs>();
+
+            var dispatcher = container.Resolve<Dispatcher>();
+            var instruction = dispatcher.CreateYieldInstruction<CustomArgs>();
+
+            var expectedValue = new CustomArgs
+            {
+                flag = true,
+                id = 9,
+                name = "shine"
+            };
+
+            instruction.MoveNext();
+
+            dispatcher.Send(expectedValue);
+
+            instruction.MoveNext();
+
+            var actualValue = instruction.Current;
+
+            Assert.AreEqual(expectedValue, actualValue);
+        }
     }
 }

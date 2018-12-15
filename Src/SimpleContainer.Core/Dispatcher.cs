@@ -63,25 +63,10 @@ namespace SimpleContainer
             if (!events.ContainsKey(eventArgsType))
                 events.Add(eventArgsType, new List<Action<object>>());
 
-            events[eventArgsType].Add(args => {});
+            events[eventArgsType].Add(dynamicEventHandler.Handle);
 
-            while (!dynamicEventHandler.IsCompleted)
-                yield return null;
-        }
-
-        public IEnumerator CreateYieldInstruction<TEventArgs>(Action<TEventArgs> callback)
-            where TEventArgs : IEventArgs
-        {
-            var dynamicEventHandler = new DynamicEventHandler<TEventArgs>();
-            var eventArgsType = typeof(TEventArgs);
-
-            if (!events.ContainsKey(eventArgsType))
-                events.Add(eventArgsType, new List<Action<object>>());
-
-            events[eventArgsType].Add(args => callback((TEventArgs)args));
-
-            while (!dynamicEventHandler.IsCompleted)
-                yield return null;
+            do yield return dynamicEventHandler.Result;
+            while (!dynamicEventHandler.IsCompleted);
         }
     }
 }
