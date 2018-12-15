@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -51,6 +52,36 @@ namespace SimpleContainer
 
             foreach (var eventHandler in eventHandlersAny)
                 ((IEventHandlerAny)eventHandler).OnEvent(anyArgs);
+        }
+
+        public IEnumerator CreateYieldInstruction<TEventArgs>()
+            where TEventArgs : IEventArgs
+        {
+            var dynamicEventHandler = new DynamicEventHandler<TEventArgs>();
+            var eventArgsType = typeof(TEventArgs);
+
+            if (!events.ContainsKey(eventArgsType))
+                events.Add(eventArgsType, new List<Action<object>>());
+
+            events[eventArgsType].Add(args => {});
+
+            while (!dynamicEventHandler.IsCompleted)
+                yield return null;
+        }
+
+        public IEnumerator CreateYieldInstruction<TEventArgs>(Action<TEventArgs> callback)
+            where TEventArgs : IEventArgs
+        {
+            var dynamicEventHandler = new DynamicEventHandler<TEventArgs>();
+            var eventArgsType = typeof(TEventArgs);
+
+            if (!events.ContainsKey(eventArgsType))
+                events.Add(eventArgsType, new List<Action<object>>());
+
+            events[eventArgsType].Add(args => callback((TEventArgs)args));
+
+            while (!dynamicEventHandler.IsCompleted)
+                yield return null;
         }
     }
 }
