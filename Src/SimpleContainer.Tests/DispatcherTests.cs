@@ -189,15 +189,87 @@ namespace SimpleContainer.Tests
                 name = "shine"
             };
 
+            Assert.IsNull(instruction.Current);
+
             instruction.MoveNext();
 
+            Assert.IsNull(instruction.Current);
+
             dispatcher.Send(expectedValue);
+
+            Assert.IsNull(instruction.Current);
 
             instruction.MoveNext();
 
             var actualValue = instruction.Current;
 
             Assert.AreEqual(expectedValue, actualValue);
+        }
+
+        [Test]
+        public void Dispatcher_Handle_Callback()
+        {
+            var container = Container.Create();
+
+            container.RegisterEvent<CustomArgs>();
+
+            var dispatcher = container.Resolve<Dispatcher>();
+
+            var expectedValue = new CustomArgs
+            {
+                flag = true,
+                id = 9,
+                name = "shine"
+            };
+
+            CustomArgs actualValue = null;
+
+            dispatcher.Subscribe<CustomArgs>(eventArgs =>
+            {
+                actualValue = eventArgs;
+            });
+
+            dispatcher.Send(expectedValue);
+
+            Assert.AreEqual(expectedValue, actualValue);
+        }
+
+        [Test]
+        public void Dispatcher_Handle_Callback_Once()
+        {
+            var container = Container.Create();
+
+            container.RegisterEvent<CustomArgs>();
+
+            var dispatcher = container.Resolve<Dispatcher>();
+
+            var expectedValue = new CustomArgs
+            {
+                flag = true,
+                id = 9,
+                name = "shine"
+            };
+
+            CustomArgs actualValue = null;
+            int invokeCount = 0;
+
+            dispatcher.SubscribeOnce<CustomArgs>(eventArgs =>
+            {
+                actualValue = eventArgs;
+                invokeCount++;
+            });
+
+            dispatcher.Send(expectedValue);
+
+            dispatcher.Send(new CustomArgs
+            {
+                flag = false,
+                id = 10,
+                name = "shutdown"
+            });
+
+            Assert.AreEqual(expectedValue, actualValue);
+            Assert.AreEqual(1, invokeCount);
         }
     }
 }

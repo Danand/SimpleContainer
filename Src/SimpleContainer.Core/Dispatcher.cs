@@ -15,7 +15,10 @@ namespace SimpleContainer
         {
             var eventArgsType = typeof(TEventArgs);
 
-            foreach (var callback in events[eventArgsType])
+            // Copy callbacks to prevent modifying.
+            var callbacks = events[eventArgsType].ToList();
+
+            foreach (var callback in callbacks)
                 callback.Invoke(eventArgs);
         }
 
@@ -67,6 +70,32 @@ namespace SimpleContainer
 
             do yield return dynamicEventHandler.Result;
             while (!dynamicEventHandler.IsCompleted);
+        }
+
+        public void Subscribe<TEventArgs>(Action<TEventArgs> callback)
+            where TEventArgs : IEventArgs
+        {
+            var dynamicEventHandler = new DynamicEventHandler<TEventArgs>(callback);
+            var eventArgsType = typeof(TEventArgs);
+
+            if (!events.ContainsKey(eventArgsType))
+                events.Add(eventArgsType, new List<Action<object>>());
+
+            events[eventArgsType].Add(dynamicEventHandler.Handle);
+        }
+
+        public void SubscribeOnce<TEventArgs>(Action<TEventArgs> callback)
+            where TEventArgs : IEventArgs
+        {
+            var dynamicEventHandler = new DynamicEventHandler<TEventArgs>(callback);
+            var eventArgsType = typeof(TEventArgs);
+
+            if (!events.ContainsKey(eventArgsType))
+                events.Add(eventArgsType, new List<Action<object>>());
+
+            dynamicEventHandler.SubscribeOnce(
+                handle => events[eventArgsType].Add(handle),
+                handle => events[eventArgsType].Remove(handle));
         }
     }
 }
