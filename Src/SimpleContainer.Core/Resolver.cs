@@ -159,6 +159,7 @@ namespace SimpleContainer
 
                 ResolveFields(instance);
                 ResolveProperties(instance);
+                ResolveMethods(instance);
 
                 result[i] = instance;
             }
@@ -189,6 +190,27 @@ namespace SimpleContainer
             {
                 var value = container.Resolve(property.PropertyType);
                 property.SetValue(instance, value);
+            }
+        }
+
+        private void ResolveMethods(object instance)
+        {
+            var type = instance.GetType();
+            var methods = type.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+            var injectableMethods = methods.Where(method => method.GetCustomAttributes(typeof(InjectAttribute)).Any()).ToArray();
+
+            foreach (var method in injectableMethods)
+            {
+                var values = new List<object>();
+                var parameters = method.GetParameters();
+
+                foreach (var parameter in parameters)
+                {
+                    var value = container.Resolve(parameter.ParameterType);
+                    values.Add(value);
+                }
+
+                method.Invoke(instance, values.ToArray());
             }
         }
     }

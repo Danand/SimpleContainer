@@ -28,5 +28,15 @@ namespace SimpleContainer.Tests.DummyTypes
         {
             get { throw new NotImplementedException(); }
         }
+
+        IPhysics IEngine.PhysicsFromMethodPublic
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        IPhysics IEngine.PhysicsFromMethodPrivate
+        {
+            get { throw new NotImplementedException(); }
+        }
     }
 }

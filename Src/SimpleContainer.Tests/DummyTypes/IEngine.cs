@@ -7,5 +7,7 @@
         IPhysics PhysicsFromFieldPrivate { get; }
         IPhysics PhysicsFromPropertyPublic { get; }
         IPhysics PhysicsFromPropertyPrivate { get; }
+        IPhysics PhysicsFromMethodPublic { get; }
+        IPhysics PhysicsFromMethodPrivate { get; }
     }
 }
