@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
+using SimpleContainer.Attributes;
 using SimpleContainer.Interfaces;
 
 namespace SimpleContainer
@@ -156,10 +157,39 @@ namespace SimpleContainer
                 var resolvedArgs = ResolveArgs(suitableConstructor, args);
                 var instance = activator.CreateInstance(suitableConstructor, resolvedArgs);
 
+                ResolveFields(instance);
+                ResolveProperties(instance);
+
                 result[i] = instance;
             }
 
             return result;
+        }
+
+        private void ResolveFields(object instance)
+        {
+            var type = instance.GetType();
+            var fields = type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+            var injectableFields = fields.Where(field => field.GetCustomAttributes(typeof(InjectAttribute)).Any()).ToArray();
+
+            foreach (var field in injectableFields)
+            {
+                var value = container.Resolve(field.FieldType);
+                field.SetValue(instance, value);
+            }
+        }
+
+        private void ResolveProperties(object instance)
+        {
+            var type = instance.GetType();
+            var properties = type.GetProperties(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+            var injectableProperties = properties.Where(field => field.GetCustomAttributes(typeof(InjectAttribute)).Any()).ToArray();
+
+            foreach (var property in injectableProperties)
+            {
+                var value = container.Resolve(property.PropertyType);
+                property.SetValue(instance, value);
+            }
         }
     }
 }

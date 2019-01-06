@@ -8,5 +8,25 @@ namespace SimpleContainer.Tests.DummyTypes
         {
             get { throw new NotImplementedException(); }
         }
+
+        IPhysics IEngine.PhysicsFromFieldPublic
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        IPhysics IEngine.PhysicsFromFieldPrivate
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        IPhysics IEngine.PhysicsFromPropertyPublic
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        IPhysics IEngine.PhysicsFromPropertyPrivate
+        {
+            get { throw new NotImplementedException(); }
+        }
     }
 }
