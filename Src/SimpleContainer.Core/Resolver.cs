@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 
 using SimpleContainer.Attributes;
+using SimpleContainer.Exceptions;
 using SimpleContainer.Interfaces;
 
 namespace SimpleContainer
@@ -17,6 +18,7 @@ namespace SimpleContainer
         private readonly object[] prePassedArgs;
         private readonly ArrayArgumentConverter argConverter = new ArrayArgumentConverter();
         private readonly HashSet<object> transientInstances = new HashSet<object>();
+        private readonly HashSet<object> injectedInstances = new HashSet<object>();
 
         private object[] singleInstances = new object[0];
 
@@ -55,7 +57,15 @@ namespace SimpleContainer
 
                 case Scope.Singleton:
                     if (singleInstances.Length > 0)
+                    {
+                        foreach (var instance in singleInstances)
+                        {
+                            if (CheckNeedsInjectInto(instance))
+                                InjectInto(instance);
+                        }
+
                         return singleInstances;
+                    }
 
                     return singleInstances = CreateInstances(resultTypes, resultArgs);
 
@@ -157,14 +167,27 @@ namespace SimpleContainer
                 var resolvedArgs = ResolveArgs(suitableConstructor, args);
                 var instance = activator.CreateInstance(suitableConstructor, resolvedArgs);
 
-                ResolveFields(instance);
-                ResolveProperties(instance);
-                ResolveMethods(instance);
+                InjectInto(instance);
 
                 result[i] = instance;
             }
 
             return result;
+        }
+
+        private bool CheckNeedsInjectInto(object instance)
+        {
+            return !injectedInstances.Contains(instance);
+        }
+
+        private void InjectInto(object instance)
+        {
+            if (!injectedInstances.Add(instance))
+                throw new DuplicateInjectionException(instance);
+
+            ResolveFields(instance);
+            ResolveProperties(instance);
+            ResolveMethods(instance);
         }
 
         private void ResolveFields(object instance)

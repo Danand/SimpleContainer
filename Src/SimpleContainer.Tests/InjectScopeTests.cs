@@ -4,6 +4,10 @@ using NUnit.Framework;
 
 namespace SimpleContainer.Tests
 {
+    /// <summary>
+    /// Injection tests grouped by scope.
+    /// Uses classic constructor injection in every case.
+    /// </summary>
     [TestFixture]
     public class InjectScopeTests
     {
