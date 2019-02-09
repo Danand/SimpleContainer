@@ -1,6 +1,7 @@
 ﻿using System;
 
 using SimpleContainer.Activators;
+using SimpleContainer.Exceptions;
 using SimpleContainer.Factories;
 
 namespace SimpleContainer
@@ -19,6 +20,9 @@ namespace SimpleContainer
 
         public void Register<TResult>(Scope scope, TResult instance)
         {
+            if (instance == null)
+                throw new NullInstanceException(typeof(TResult));
+
             Register(typeof(TResult), typeof(TResult), scope, instance);
         }
 
@@ -42,6 +46,9 @@ namespace SimpleContainer
         public void Register<TContract, TResult>(Scope scope, TResult instance)
             where TResult : TContract
         {
+            if (instance == null)
+                throw new NullInstanceException(typeof(TResult));
+
             Register(typeof(TContract), typeof(TResult), scope, instance);
         }
 
