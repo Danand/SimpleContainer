@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
+using SimpleContainer.Exceptions;
 using SimpleContainer.Interfaces;
 
 namespace SimpleContainer
@@ -15,8 +16,11 @@ namespace SimpleContainer
         {
             var eventArgsType = typeof(TEventArgs);
 
+            if (!events.TryGetValue(eventArgsType, out var specifiedEvents))
+                throw new EventNotRegisteredException(eventArgsType);
+
             // Copy callbacks to prevent modifying.
-            var callbacks = events[eventArgsType].ToList();
+            var callbacks = specifiedEvents.ToList();
 
             foreach (var callback in callbacks)
                 callback.Invoke(eventArgs);
