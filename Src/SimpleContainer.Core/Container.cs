@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
+using SimpleContainer.Attributes;
 using SimpleContainer.Exceptions;
 using SimpleContainer.Interfaces;
 
@@ -10,6 +11,8 @@ namespace SimpleContainer
 {
     public sealed partial class Container
     {
+        internal Type injectAttributeType = typeof(InjectAttribute);
+
         private readonly Dispatcher dispatcher = new Dispatcher();
         private readonly Dictionary<Type, Resolver> bindings = new Dictionary<Type, Resolver>();
 

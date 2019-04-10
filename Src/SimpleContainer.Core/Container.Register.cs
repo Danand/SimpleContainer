@@ -105,6 +105,12 @@ namespace SimpleContainer
             factory.Container = this;
         }
 
+        public void RegisterAttribute<TInjectAttribute>()
+            where TInjectAttribute : Attribute
+        {
+            injectAttributeType = typeof(TInjectAttribute);
+        }
+
         public bool CheckRegistered<TContract>()
         {
             return CheckRegistered(typeof(TContract));
