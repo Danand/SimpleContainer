@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 using SimpleContainer.Exceptions;
 using SimpleContainer.Interfaces;
@@ -17,7 +18,7 @@ namespace SimpleContainer
         private readonly object[] prePassedArgs;
         private readonly ArrayArgumentConverter argConverter = new ArrayArgumentConverter();
         private readonly HashSet<object> transientInstances = new HashSet<object>();
-        private readonly HashSet<object> injectedInstances = new HashSet<object>();
+        private readonly HashSet<MemberInfo> injectedIntoMembers = new HashSet<MemberInfo>();
 
         private List<object> singleInstances = new List<object>();
 
@@ -58,10 +59,7 @@ namespace SimpleContainer
                     if (singleInstances.Count > 0)
                     {
                         foreach (var instance in singleInstances)
-                        {
-                            if (CheckNeedsInjectInto(instance))
-                                InjectInto(instance);
-                        }
+                            InjectIntoInstance(instance);
 
                         return singleInstances.ToArray();
                     }
@@ -173,7 +171,7 @@ namespace SimpleContainer
                 var resolvedArgs = ResolveArgs(suitableConstructor, args);
                 var instance = activator.CreateInstance(suitableConstructor, resolvedArgs);
 
-                InjectInto(instance);
+                InjectIntoInstance(instance);
 
                 result[i] = instance;
             }
@@ -181,16 +179,18 @@ namespace SimpleContainer
             return result;
         }
 
-        private bool CheckNeedsInjectInto(object instance)
+        private bool CheckNeedsInjectIntoMember(MemberInfo member)
         {
-            return !injectedInstances.Contains(instance);
+            return !injectedIntoMembers.Contains(member);
         }
 
-        private void InjectInto(object instance)
+        private void MarkMemberInjectedInto(MemberInfo member)
         {
-            if (!injectedInstances.Add(instance))
-                throw new DuplicateInjectionException(instance);
+            injectedIntoMembers.Add(member);
+        }
 
+        private void InjectIntoInstance(object instance)
+        {
             ResolveFields(instance);
             ResolveProperties(instance);
             ResolveMethods(instance);
@@ -204,8 +204,12 @@ namespace SimpleContainer
 
             foreach (var field in injectableFields)
             {
-                var value = container.Resolve(field.FieldType);
-                field.SetValue(instance, value);
+                if (CheckNeedsInjectIntoMember(field))
+                {
+                    var value = container.Resolve(field.FieldType);
+                    field.SetValue(instance, value);
+                    MarkMemberInjectedInto(field);
+                }
             }
         }
 
@@ -217,8 +221,12 @@ namespace SimpleContainer
 
             foreach (var property in injectableProperties)
             {
-                var value = container.Resolve(property.PropertyType);
-                property.SetValue(instance, value);
+                if (CheckNeedsInjectIntoMember(property))
+                {
+                    var value = container.Resolve(property.PropertyType);
+                    property.SetValue(instance, value);
+                    MarkMemberInjectedInto(property);
+                }
             }
         }
 
@@ -230,16 +238,21 @@ namespace SimpleContainer
 
             foreach (var method in injectableMethods)
             {
-                var values = new List<object>();
-                var parameters = method.GetParameters();
-
-                foreach (var parameter in parameters)
+                if (CheckNeedsInjectIntoMember(method))
                 {
-                    var value = container.Resolve(parameter.ParameterType);
-                    values.Add(value);
-                }
+                    var values = new List<object>();
+                    var parameters = method.GetParameters();
 
-                method.Invoke(instance, values.ToArray());
+                    foreach (var parameter in parameters)
+                    {
+                        var value = container.Resolve(parameter.ParameterType);
+                        values.Add(value);
+                    }
+
+                    method.Invoke(instance, values.ToArray());
+
+                    MarkMemberInjectedInto(method);
+                }
             }
         }
     }
