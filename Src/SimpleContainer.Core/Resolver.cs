@@ -19,7 +19,7 @@ namespace SimpleContainer
         private readonly HashSet<object> transientInstances = new HashSet<object>();
         private readonly HashSet<object> injectedInstances = new HashSet<object>();
 
-        private object[] singleInstances = new object[0];
+        private List<object> singleInstances = new List<object>();
 
         public Resolver(
             Container       container,
@@ -35,7 +35,7 @@ namespace SimpleContainer
             this.scope = scope;
 
             if (instance != null)
-                singleInstances = new [] { instance };
+                singleInstances = new List<object> { instance };
 
             prePassedArgs = args;
         }
@@ -55,7 +55,7 @@ namespace SimpleContainer
                     return newInstances;
 
                 case Scope.Singleton:
-                    if (singleInstances.Length > 0)
+                    if (singleInstances.Count > 0)
                     {
                         foreach (var instance in singleInstances)
                         {
@@ -63,10 +63,14 @@ namespace SimpleContainer
                                 InjectInto(instance);
                         }
 
-                        return singleInstances;
+                        return singleInstances.ToArray();
                     }
 
-                    return singleInstances = CreateInstances(resultTypes, resultArgs);
+                    var singleInstancesArray = CreateInstances(resultTypes, resultArgs);
+
+                    singleInstances = singleInstancesArray.ToList();
+
+                    return singleInstancesArray;
 
                 default:
                     throw new ArgumentException(nameof(scope));
@@ -79,12 +83,12 @@ namespace SimpleContainer
             {
                 case Scope.Transient:
                     foreach (var transientInstance in transientInstances)
-                        DisposeInstance(transientInstance);
+                        DisposeInstance(transientInstance, transientInstances);
                     break;
 
                 case Scope.Singleton:
                     foreach (var singleInstance in singleInstances)
-                        DisposeInstance(singleInstance);
+                        DisposeInstance(singleInstance, singleInstances);
                     break;
 
                 default:
@@ -100,7 +104,7 @@ namespace SimpleContainer
                     return transientInstances.ToArray();
 
                 case Scope.Singleton:
-                    return singleInstances;
+                    return singleInstances.ToArray();
 
                 default:
                     throw new ArgumentException(nameof(scope));
@@ -147,10 +151,13 @@ namespace SimpleContainer
             return parentType.IsAssignableFrom(childType);
         }
 
-        private void DisposeInstance(object instance)
+        private void DisposeInstance(object instance, ICollection<object> instances)
         {
             if (instance is IDisposable disposable)
+            {
+                instances.Remove(instance);
                 disposable.Dispose();
+            }
         }
 
         private object[] CreateInstances(Type[] types, object[] args)

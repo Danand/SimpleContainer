@@ -9,7 +9,7 @@ using SimpleContainer.Interfaces;
 
 namespace SimpleContainer
 {
-    public sealed partial class Container
+    public sealed partial class Container : IDisposable
     {
         internal Type injectAttributeType = typeof(InjectAttribute);
 
@@ -19,12 +19,6 @@ namespace SimpleContainer
         public static Container Create()
         {
             return new Container();
-        }
-
-        public void Dispose()
-        {
-            foreach (var resolver in bindings.Values)
-                resolver.DisposeInstances();
         }
 
         public void Install(params IInstaller[] installers)
@@ -85,6 +79,12 @@ namespace SimpleContainer
         internal object[] GetAllCached()
         {
             return bindings.SelectMany(resolver => resolver.Value.GetCachedInstances()).ToArray();
+        }
+
+        void IDisposable.Dispose()
+        {
+            foreach (var resolver in bindings.Values)
+                resolver.DisposeInstances();
         }
 
         private void Initialize(object[] results)
