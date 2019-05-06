@@ -94,15 +94,15 @@ namespace SimpleContainer
             }
         }
 
-        internal object[] GetCachedInstances()
+        internal IEnumerable<object> GetCachedInstances()
         {
             switch (scope)
             {
                 case Scope.Transient:
-                    return transientInstances.ToArray();
+                    return transientInstances;
 
                 case Scope.Singleton:
-                    return singleInstances.ToArray();
+                    return singleInstances;
 
                 default:
                     throw new ArgumentException(nameof(scope));

@@ -49,16 +49,13 @@ namespace SimpleContainer
             var anyArgs = new AnyArgs((IEventArgs)args);
             var allCachedInstances = container.GetAllCached();
 
-            var eventHandlersConcrete = allCachedInstances.Where(instance => eventHandlerType.IsInstanceOfType(instance));
-
-            var eventHandlersAny = allCachedInstances.Where(instance => eventHandlerAnyType.IsInstanceOfType(instance) &&
-                                                                        !eventHandlersConcrete.Contains(instance));
-
-            foreach (var eventHandler in eventHandlersConcrete)
-                action.Invoke((TEventHandler)eventHandler, (TEventArgs)args);
-
-            foreach (var eventHandler in eventHandlersAny)
-                ((IEventHandlerAny)eventHandler).OnEvent(anyArgs);
+            foreach (var instance in allCachedInstances)
+            {
+                if (eventHandlerType.IsInstanceOfType(instance))
+                    action.Invoke((TEventHandler)instance, (TEventArgs)args);
+                else if (eventHandlerAnyType.IsInstanceOfType(instance))
+                    ((IEventHandlerAny)instance).OnEvent(anyArgs);
+            }
         }
 
         public IEnumerator CreateYieldInstruction<TEventArgs>()

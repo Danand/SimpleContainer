@@ -54,7 +54,7 @@ namespace SimpleContainer
             {
                 var cachedInstances = binding.Value.GetCachedInstances();
 
-                if (cachedInstances.Length == 0)
+                if (!cachedInstances.GetEnumerator().MoveNext())
                     throw new TypeNotResolvedException(binding.Key);
             }
         }
@@ -67,7 +67,7 @@ namespace SimpleContainer
             {
                 var cachedInstances = binding.Value.GetCachedInstances();
 
-                if (cachedInstances.Length == 0)
+                if (!cachedInstances.GetEnumerator().MoveNext())
                     exceptions.Add(new TypeNotResolvedException(binding.Key));
             }
 
@@ -76,9 +76,9 @@ namespace SimpleContainer
         }
 #endif
 
-        internal object[] GetAllCached()
+        internal IEnumerable<object> GetAllCached()
         {
-            return bindings.SelectMany(resolver => resolver.Value.GetCachedInstances()).ToArray();
+            return bindings.SelectMany(resolver => resolver.Value.GetCachedInstances());
         }
 
         void IDisposable.Dispose()
