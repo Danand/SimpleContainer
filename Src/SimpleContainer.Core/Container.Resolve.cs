@@ -42,11 +42,11 @@ namespace SimpleContainer
             if (!bindings.TryGetValue(contractType, out var resolver))
                 throw new TypeNotRegisteredException(contractType);
 
-            var result = resolver.GetInstances(args);
+            var instances = resolver.GetInstances(args);
 
-            Initialize(result);
+            Initialize(instances);
 
-            return result;
+            return instances.Select(instance => instance.Value).ToArray();
         }
 
         private IInstaller ResolveInstaller(Type installerType)

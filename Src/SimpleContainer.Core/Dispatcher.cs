@@ -49,12 +49,16 @@ namespace SimpleContainer
             var anyArgs = new AnyArgs((IEventArgs)args);
             var allCachedInstances = container.GetAllCached();
 
-            foreach (var instance in allCachedInstances)
+            foreach (var cachedInstance in allCachedInstances)
             {
-                if (eventHandlerType.IsInstanceOfType(instance))
-                    action.Invoke((TEventHandler)instance, (TEventArgs)args);
-                else if (eventHandlerAnyType.IsInstanceOfType(instance))
-                    ((IEventHandlerAny)instance).OnEvent(anyArgs);
+                if (eventHandlerType.IsInstanceOfType(cachedInstance.Value))
+                {
+                    action.Invoke((TEventHandler)cachedInstance.Value, (TEventArgs)args);
+                }
+                else if (eventHandlerAnyType.IsInstanceOfType(cachedInstance.Value))
+                {
+                    ((IEventHandlerAny)cachedInstance.Value).OnEvent(anyArgs);
+                }
             }
         }
 

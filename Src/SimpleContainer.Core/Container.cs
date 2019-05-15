@@ -76,7 +76,7 @@ namespace SimpleContainer
         }
 #endif
 
-        internal IEnumerable<object> GetAllCached()
+        internal IEnumerable<InstanceWrapper> GetAllCached()
         {
             return bindings.SelectMany(resolver => resolver.Value.GetCachedInstances());
         }
@@ -87,12 +87,15 @@ namespace SimpleContainer
                 resolver.DisposeInstances();
         }
 
-        private void Initialize(object[] results)
+        private void Initialize(InstanceWrapper[] instances)
         {
-            foreach (var result in results)
+            foreach (var instance in instances)
             {
-                if (result is IInitializible initializible)
+                if (instance.Value is IInitializible initializible && !instance.IsInitialized)
+                {
                     initializible.Initialize();
+                    instance.IsInitialized = true;
+                }
             }
         }
     }

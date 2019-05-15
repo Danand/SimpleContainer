@@ -2,9 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.InteropServices;
 
-using SimpleContainer.Exceptions;
 using SimpleContainer.Interfaces;
 
 namespace SimpleContainer
@@ -17,10 +15,10 @@ namespace SimpleContainer
         private readonly Scope scope;
         private readonly object[] prePassedArgs;
         private readonly ArrayArgumentConverter argConverter = new ArrayArgumentConverter();
-        private readonly HashSet<object> transientInstances = new HashSet<object>();
+        private readonly HashSet<InstanceWrapper> transientInstances = new HashSet<InstanceWrapper>();
         private readonly HashSet<MemberInfo> injectedIntoMembers = new HashSet<MemberInfo>();
 
-        private List<object> singleInstances = new List<object>();
+        private List<InstanceWrapper> singleInstances = new List<InstanceWrapper>();
 
         public Resolver(
             Container       container,
@@ -36,12 +34,12 @@ namespace SimpleContainer
             this.scope = scope;
 
             if (instance != null)
-                singleInstances = new List<object> { instance };
+                singleInstances = new List<InstanceWrapper> { new InstanceWrapper(instance) };
 
             prePassedArgs = args;
         }
 
-        public object[] GetInstances(object[] args)
+        public InstanceWrapper[] GetInstances(object[] args)
         {
             var resultArgs = prePassedArgs.Length > args.Length ? prePassedArgs : args;
 
@@ -59,7 +57,7 @@ namespace SimpleContainer
                     if (singleInstances.Count > 0)
                     {
                         foreach (var instance in singleInstances)
-                            InjectIntoInstance(instance);
+                            InjectIntoInstance(instance.Value);
 
                         return singleInstances.ToArray();
                     }
@@ -94,7 +92,7 @@ namespace SimpleContainer
             }
         }
 
-        internal IEnumerable<object> GetCachedInstances()
+        internal IEnumerable<InstanceWrapper> GetCachedInstances()
         {
             switch (scope)
             {
@@ -149,19 +147,19 @@ namespace SimpleContainer
             return parentType.IsAssignableFrom(childType);
         }
 
-        private void DisposeInstance(object instance, ICollection<object> instances)
+        private void DisposeInstance(InstanceWrapper instance, ICollection<InstanceWrapper> instances)
         {
-            if (instance is IDisposable disposable)
+            if (instance.Value is IDisposable disposable)
             {
                 instances.Remove(instance);
                 disposable.Dispose();
             }
         }
 
-        private object[] CreateInstances(Type[] types, object[] args)
+        private InstanceWrapper[] CreateInstances(Type[] types, object[] args)
         {
             var typesLength = types.Length;
-            var result = new object[typesLength];
+            var result = new InstanceWrapper[typesLength];
 
             for (var i = 0; i < typesLength; i++)
             {
@@ -173,7 +171,7 @@ namespace SimpleContainer
 
                 InjectIntoInstance(instance);
 
-                result[i] = instance;
+                result[i] = new InstanceWrapper(instance);
             }
 
             return result;
