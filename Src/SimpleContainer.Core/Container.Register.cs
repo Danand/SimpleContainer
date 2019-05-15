@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 using SimpleContainer.Activators;
 using SimpleContainer.Exceptions;
@@ -128,8 +129,21 @@ namespace SimpleContainer
             Type[]      resultTypes,
             object[]    args)
         {
-            if (!bindings.ContainsKey(contractType))
+            if (bindings.TryGetValue(contractType, out var foundBinding))
+            {
+                var mergedResultTypes = new List<Type>();
+
+                mergedResultTypes.AddRange(foundBinding.ResultTypes);
+                mergedResultTypes.AddRange(resultTypes);
+
+                bindings.Remove(contractType);
+
+                bindings.Add(contractType, new Resolver(this, new ActivatorExpression(), mergedResultTypes.ToArray(), scope, instance, args));
+            }
+            else
+            {
                 bindings.Add(contractType, new Resolver(this, new ActivatorExpression(), resultTypes, scope, instance, args));
+            }
         }
     }
 }

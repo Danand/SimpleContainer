@@ -39,6 +39,11 @@ namespace SimpleContainer
             prePassedArgs = args;
         }
 
+        internal Type[] ResultTypes
+        {
+            get { return resultTypes; }
+        }
+
         public InstanceWrapper[] GetInstances(object[] args)
         {
             var resultArgs = prePassedArgs.Length > args.Length ? prePassedArgs : args;
