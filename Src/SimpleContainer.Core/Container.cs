@@ -11,6 +11,8 @@ namespace SimpleContainer
 {
     public sealed partial class Container : IDisposable
     {
+        internal readonly Dictionary<Type, ConstructorInfo> cachedConstructors = new Dictionary<Type, ConstructorInfo>();
+
         internal Type injectAttributeType = typeof(InjectAttribute);
 
         private readonly Dispatcher dispatcher = new Dispatcher();

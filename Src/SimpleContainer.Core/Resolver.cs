@@ -112,6 +112,19 @@ namespace SimpleContainer
             }
         }
 
+        private ConstructorInfo GetConstructor(Type type)
+        {
+            if (container.cachedConstructors.TryGetValue(type, out var suitableConstructor))
+                return suitableConstructor;
+
+            var constructors = type.GetConstructors();
+            suitableConstructor = constructors[0];
+
+            container.cachedConstructors.Add(type, suitableConstructor);
+
+            return suitableConstructor;
+        }
+
         private object[] ResolveArgs(ConstructorInfo constructorInfo, object[] args)
         {
             var parameters = constructorInfo.GetParameters();
@@ -169,8 +182,7 @@ namespace SimpleContainer
             for (var i = 0; i < typesLength; i++)
             {
                 var type = types[i];
-                var constructors = type.GetConstructors();
-                var suitableConstructor = constructors[0];
+                var suitableConstructor = GetConstructor(type);
                 var resolvedArgs = ResolveArgs(suitableConstructor, args);
                 var instance = activator.CreateInstance(suitableConstructor, resolvedArgs);
 
