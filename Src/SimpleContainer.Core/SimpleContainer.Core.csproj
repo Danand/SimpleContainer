@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net461;net45;netstandard2.0</TargetFrameworks>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>SimpleContainer</AssemblyName>
     <Authors>Danand</Authors>
     <AssemblyVersion>0.6.5.0</AssemblyVersion>
