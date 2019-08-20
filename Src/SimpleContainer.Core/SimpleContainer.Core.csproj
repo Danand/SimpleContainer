@@ -4,9 +4,9 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>SimpleContainer</AssemblyName>
     <Authors>Danand</Authors>
-    <AssemblyVersion>0.6.5.0</AssemblyVersion>
-    <FileVersion>0.6.5.0</FileVersion>
-    <Version>0.6.5</Version>
+    <AssemblyVersion>0.6.6.0</AssemblyVersion>
+    <FileVersion>0.6.6.0</FileVersion>
+    <Version>0.6.6</Version>
     <RootNamespace>SimpleContainer</RootNamespace>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Description>Simple DI container with fair constructor injection, factory resolving and binding events.</Description>
