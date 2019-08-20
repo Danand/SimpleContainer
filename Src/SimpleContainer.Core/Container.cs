@@ -49,6 +49,14 @@ namespace SimpleContainer
             }
         }
 
+        public void OverrideFrom(Container other)
+        {
+            foreach (var binding in other.bindings)
+                bindings[binding.Key] = binding.Value;
+
+            injectAttributeType = other.injectAttributeType;
+        }
+
 #if NET35
         public void ThrowIfNotResolved()
         {
