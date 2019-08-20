@@ -9,5 +9,6 @@
         IPhysics PhysicsFromPropertyPrivate { get; }
         IPhysics PhysicsFromMethodPublic { get; }
         IPhysics PhysicsFromMethodPrivate { get; }
+        IPhysics[] PhysicsFromMethodPublicMultiple { get; }
     }
 }

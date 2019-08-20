@@ -221,8 +221,11 @@ namespace SimpleContainer
             {
                 if (CheckNeedsInjectIntoMember(field))
                 {
-                    var value = container.Resolve(field.FieldType);
-                    field.SetValue(instance, value);
+                    var values = container.ResolveMultiple(field.FieldType);
+                    var collected = CollectValue(field.FieldType, values);
+
+                    field.SetValue(instance, collected.Value);
+
                     MarkMemberInjectedInto(field);
                 }
             }
@@ -238,8 +241,11 @@ namespace SimpleContainer
             {
                 if (CheckNeedsInjectIntoMember(property))
                 {
-                    var value = container.Resolve(property.PropertyType);
-                    property.SetValue(instance, value);
+                    var values = container.ResolveMultiple(property.PropertyType);
+                    var collected = CollectValue(property.PropertyType, values);
+
+                    property.SetValue(instance, collected.Value);
+
                     MarkMemberInjectedInto(property);
                 }
             }
@@ -255,20 +261,27 @@ namespace SimpleContainer
             {
                 if (CheckNeedsInjectIntoMember(method))
                 {
-                    var values = new List<object>();
+                    var args = new List<object>();
                     var parameters = method.GetParameters();
 
                     foreach (var parameter in parameters)
                     {
-                        var value = container.Resolve(parameter.ParameterType);
-                        values.Add(value);
+                        var values = container.ResolveMultiple(parameter.ParameterType);
+                        var collected = CollectValue(parameter.ParameterType, values);
+
+                        args.Add(collected.Value);
                     }
 
-                    method.Invoke(instance, values.ToArray());
+                    method.Invoke(instance, args.ToArray());
 
                     MarkMemberInjectedInto(method);
                 }
             }
+        }
+
+        private CollectedValue CollectValue(Type returnType, object[] values)
+        {
+            return new CollectedValue(returnType, values);
         }
     }
 }

@@ -38,5 +38,10 @@ namespace SimpleContainer.Tests.DummyTypes
         {
             get { throw new NotImplementedException(); }
         }
+
+        IPhysics[] IEngine.PhysicsFromMethodPublicMultiple
+        {
+            get { throw new NotImplementedException(); }
+        }
     }
 }

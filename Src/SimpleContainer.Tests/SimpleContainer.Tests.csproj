@@ -79,6 +79,7 @@
     <Compile Include="DummyTypes\IPhysics.cs" />
     <Compile Include="DummyTypes\ITimeMachine.cs" />
     <Compile Include="DummyTypes\PhysicsPlanetEarth.cs" />
+    <Compile Include="DummyTypes\PhysicsPlanetMars.cs" />
     <Compile Include="DummyTypes\TimeMachineDelorean.cs" />
     <Compile Include="InjectIntoTests.cs" />
     <Compile Include="InjectScopeTests.cs" />

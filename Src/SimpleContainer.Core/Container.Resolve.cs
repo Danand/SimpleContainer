@@ -49,6 +49,15 @@ namespace SimpleContainer
             return instances.Select(instance => instance.Value).ToArray();
         }
 
+        internal object[] ResolveMultiple(Type contractType)
+        {
+            var contractIsArray = contractType.IsArray;
+            var elementType = contractIsArray ? contractType.GetElementType() : contractType;
+            var instances = ResolveAll(elementType);
+
+            return instances;
+        }
+
         private IInstaller ResolveInstaller(Type installerType)
         {
             IActivator activator = new ActivatorExpression();

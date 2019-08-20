@@ -48,8 +48,16 @@ namespace SimpleContainer.Tests.DummyTypes
 
         public IPhysics PhysicsFromMethodPrivate { get; private set; }
 
+        public IPhysics[] PhysicsFromMethodPublicMultiple
+        {
+            get { return PhysicsFromMethodPublicMultipleBacking; }
+        }
+
         [Inject]
         public IPhysics PhysicsFromPropertyPublicBacking { get; set; }
+
+        [Inject]
+        public IPhysics[] PhysicsFromMethodPublicMultipleBacking { get; set; }
 
         [Inject]
         private IPhysics PhysicsFromPropertyPrivateBacking { get; set; }

@@ -68,6 +68,20 @@ namespace SimpleContainer.Tests
         }
 
         [Test]
+        public void Inject_IntoProperty_Public_Multiple()
+        {
+            var container = Container.Create();
+
+            container.Register<IPhysics, PhysicsPlanetEarth>(Scope.Singleton);
+            container.Register<IPhysics, PhysicsPlanetMars>(Scope.Singleton);
+            container.Register<IEngine, EngineMedium>(Scope.Transient);
+
+            var engine = container.Resolve<IEngine>();
+
+            Assert.IsTrue(engine.PhysicsFromMethodPublicMultiple.Length == 2);
+        }
+
+        [Test]
         public void Inject_IntoProperty_Private()
         {
             var container = Container.Create();
