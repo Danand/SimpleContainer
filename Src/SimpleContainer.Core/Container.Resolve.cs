@@ -70,6 +70,16 @@ namespace SimpleContainer
             return (TContract)resolver.GetCachedInstances().First()?.Value;
         }
 
+        public TContract[] GetCachedMultiple<TContract>()
+        {
+            var contractType = typeof(TContract);
+
+            if (!bindings.TryGetValue(contractType, out var resolver))
+                throw new TypeNotRegisteredException(contractType, GetBindingsString(bindings));
+
+            return resolver.GetCachedInstances().Select(wrapper => (TContract)wrapper.Value).ToArray();
+        }
+
         public void InjectInto(object instance)
         {
             foreach (var binding in bindings.Values)

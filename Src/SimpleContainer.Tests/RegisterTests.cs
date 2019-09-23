@@ -32,5 +32,23 @@ namespace SimpleContainer.Tests
 
             Assert.Pass();
         }
+
+        [Test]
+        public void Register_Instances_Transient_Unique()
+        {
+            var container = new Container();
+
+            var instanceRedFirst = new ColorRed();
+            var instanceRedSecond = new ColorRed();
+            var instanceRedThird = new ColorRed();
+
+            container.Register(Scope.Transient, instanceRedFirst);
+            container.Register(Scope.Transient, instanceRedSecond);
+            container.Register(Scope.Transient, instanceRedThird);
+
+            var reds = container.GetCachedMultiple<ColorRed>();
+
+            Assert.AreEqual(3, reds.Length);
+        }
     }
 }
