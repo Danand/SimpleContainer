@@ -11,7 +11,16 @@ namespace SimpleContainer
     {
         public TContract Resolve<TContract>()
         {
-            return (TContract)Resolve(typeof(TContract));
+            var result = Resolve(typeof(TContract));
+
+            try
+            {
+                return (TContract)result;
+            }
+            catch (InvalidCastException exception)
+            {
+                throw new InvalidCastException($"Cannot cast '{result?.GetType().Name}' to '{typeof(TContract).Name}'!", exception);
+            }
         }
 
         public TContract[] ResolveAll<TContract>()
@@ -40,7 +49,9 @@ namespace SimpleContainer
         public object[] ResolveAll(Type contractType, params object[] args)
         {
             if (!bindings.TryGetValue(contractType, out var resolver))
-                throw new TypeNotRegisteredException(contractType);
+            {
+                throw new TypeNotRegisteredException(contractType, GetBindingsString(bindings));
+            }
 
             var instances = resolver.GetInstances(args);
 
@@ -54,7 +65,7 @@ namespace SimpleContainer
             var contractType = typeof(TContract);
 
             if (!bindings.TryGetValue(contractType, out var resolver))
-                throw new TypeNotRegisteredException(contractType);
+                throw new TypeNotRegisteredException(contractType, GetBindingsString(bindings));
 
             return (TContract)resolver.GetCachedInstances().First()?.Value;
         }

@@ -17,6 +17,7 @@ namespace SimpleContainer
         private readonly ArrayArgumentConverter argConverter = new ArrayArgumentConverter();
         private readonly HashSet<InstanceWrapper> transientInstances = new HashSet<InstanceWrapper>();
         private readonly HashSet<MemberInfo> injectedIntoMembers = new HashSet<MemberInfo>();
+        private readonly HashSet<object> injectedIntoInstances = new HashSet<object>();
 
         private List<InstanceWrapper> singleInstances = new List<InstanceWrapper>();
 
@@ -94,12 +95,12 @@ namespace SimpleContainer
             switch (scope)
             {
                 case Scope.Transient:
-                    foreach (var transientInstance in transientInstances)
+                    foreach (var transientInstance in transientInstances.ToArray())
                         DisposeInstance(transientInstance, transientInstances);
                     break;
 
                 case Scope.Singleton:
-                    foreach (var singleInstance in singleInstances)
+                    foreach (var singleInstance in singleInstances.ToArray())
                         DisposeInstance(singleInstance, singleInstances);
                     break;
 
@@ -136,9 +137,12 @@ namespace SimpleContainer
 
         internal void InjectIntoInstance(object instance)
         {
-            ResolveFields(instance);
-            ResolveProperties(instance);
-            ResolveMethods(instance);
+            if (injectedIntoInstances.Add(instance))
+            {
+                ResolveFields(instance);
+                ResolveProperties(instance);
+                ResolveMethods(instance);
+            }
         }
 
         private ConstructorInfo GetConstructor(Type type)
@@ -257,7 +261,7 @@ namespace SimpleContainer
         {
             var type = instance.GetType();
             var properties = type.GetProperties(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
-            var injectableProperties = properties.Where(field => field.GetCustomAttributes(container.injectAttributeType).Any()).ToArray();
+            var injectableProperties = properties.Where(property => property.GetCustomAttributes(container.injectAttributeType).Any()).ToArray();
 
             foreach (var property in injectableProperties)
             {

@@ -119,5 +119,10 @@ namespace SimpleContainer
                 }
             }
         }
+
+        private string GetBindingsString(Dictionary<Type, Resolver> bindings)
+        {
+            return string.Join($",{Environment.NewLine}", bindings.Keys.Select(key => key.Name));
+        }
     }
 }
