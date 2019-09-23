@@ -52,7 +52,7 @@ namespace SimpleContainer
         public void OverrideFrom(Container other)
         {
             foreach (var binding in other.bindings)
-                bindings[binding.Key] = binding.Value;
+                bindings[binding.Key] = binding.Value.CopyToContainer(this);
 
             injectAttributeType = other.injectAttributeType;
         }

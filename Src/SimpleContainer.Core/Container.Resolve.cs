@@ -59,6 +59,12 @@ namespace SimpleContainer
             return (TContract)resolver.GetCachedInstances().First()?.Value;
         }
 
+        public void InjectInto(object instance)
+        {
+            foreach (var binding in bindings.Values)
+                binding.InjectIntoInstance(instance);
+        }
+
         internal object[] ResolveMultiple(Type contractType)
         {
             var contractIsArray = contractType.IsArray;

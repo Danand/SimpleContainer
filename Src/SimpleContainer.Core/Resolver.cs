@@ -108,6 +108,17 @@ namespace SimpleContainer
             }
         }
 
+        public Resolver CopyToContainer(Container other)
+        {
+            return new Resolver(
+                other,
+                activator,
+                resultTypes,
+                scope,
+                singleInstances.FirstOrDefault()?.Value,
+                prePassedArgs);
+        }
+
         internal IEnumerable<InstanceWrapper> GetCachedInstances()
         {
             switch (scope)
