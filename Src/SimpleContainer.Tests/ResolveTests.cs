@@ -37,6 +37,46 @@ namespace SimpleContainer.Tests
         }
 
         [Test]
+        public void Resolve_Transient_All_Instances_Different()
+        {
+            const int EXPECTED_COUNT = 2;
+
+            var container = Container.Create();
+
+            var colorRed = new ColorRed();
+            var colorBlue = new ColorBlue();
+
+            container.Register<IColor, ColorRed>(Scope.Transient, colorRed);
+            container.Register<IColor, ColorBlue>(Scope.Transient, colorBlue);
+
+            var colors = container.ResolveAll<IColor>();
+            var actualCount = colors.Length;
+
+            Assert.AreEqual(EXPECTED_COUNT, actualCount);
+            Assert.AreNotEqual(colors[0], colors[1]);
+        }
+
+        [Test]
+        public void Resolve_Transient_All_Instances_Same()
+        {
+            const int EXPECTED_COUNT = 2;
+
+            var container = Container.Create();
+
+            var colorRedOne = new ColorRed();
+            var colorRedTwo = new ColorRed();
+
+            container.Register(Scope.Transient, colorRedOne);
+            container.Register(Scope.Transient, colorRedTwo);
+
+            var colors = container.ResolveAll<ColorRed>();
+            var actualCount = colors.Length;
+
+            Assert.AreEqual(EXPECTED_COUNT, actualCount);
+            Assert.AreNotEqual(colors[0], colors[1]);
+        }
+
+        [Test]
         public void Resolve_Transient_All_NonGeneric_Explicit()
         {
             const int EXPECTED_COUNT = 2;

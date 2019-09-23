@@ -33,10 +33,21 @@ namespace SimpleContainer
             this.resultTypes = resultTypes;
             this.scope = scope;
 
-            if (instance != null)
-                singleInstances = new List<InstanceWrapper> { new InstanceWrapper(instance) };
-
             prePassedArgs = args;
+
+            if (instance != null)
+            {
+                switch (scope)
+                {
+                    case Scope.Transient:
+                        transientInstances = new HashSet<InstanceWrapper> { new InstanceWrapper(instance) };
+                        break;
+
+                    case Scope.Singleton:
+                        singleInstances = new List<InstanceWrapper> { new InstanceWrapper(instance) };
+                        break;
+                }
+            }
         }
 
         internal Type[] ResultTypes
