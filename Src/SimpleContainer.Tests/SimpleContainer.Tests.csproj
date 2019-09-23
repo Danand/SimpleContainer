@@ -57,6 +57,7 @@
     <Compile Include="DummyTypes\CarFactory.cs" />
     <Compile Include="DummyTypes\CarFourWheelDrive.cs" />
     <Compile Include="DummyTypes\CarTruck.cs" />
+    <Compile Include="DummyTypes\CatFood.cs" />
     <Compile Include="DummyTypes\ColorBlue.cs" />
     <Compile Include="DummyTypes\ColorPalette.cs" />
     <Compile Include="DummyTypes\ColorRed.cs" />
@@ -76,8 +77,10 @@
     <Compile Include="DummyTypes\IEngine.cs" />
     <Compile Include="DummyTypes\DummyInvoker.cs" />
     <Compile Include="DummyTypes\InstallerDummy.cs" />
+    <Compile Include="DummyTypes\IPetFood.cs" />
     <Compile Include="DummyTypes\IPhysics.cs" />
     <Compile Include="DummyTypes\ITimeMachine.cs" />
+    <Compile Include="DummyTypes\Petshop.cs" />
     <Compile Include="DummyTypes\PhysicsPlanetEarth.cs" />
     <Compile Include="DummyTypes\PhysicsPlanetMars.cs" />
     <Compile Include="DummyTypes\TimeMachineDelorean.cs" />

@@ -49,6 +49,16 @@ namespace SimpleContainer
             return instances.Select(instance => instance.Value).ToArray();
         }
 
+        public TContract GetCached<TContract>()
+        {
+            var contractType = typeof(TContract);
+
+            if (!bindings.TryGetValue(contractType, out var resolver))
+                throw new TypeNotRegisteredException(contractType);
+
+            return (TContract)resolver.GetCachedInstances().First()?.Value;
+        }
+
         internal object[] ResolveMultiple(Type contractType)
         {
             var contractIsArray = contractType.IsArray;

@@ -169,5 +169,22 @@ namespace SimpleContainer.Tests
 
             container.Install(assembly, installerName);
         }
+
+        [Test]
+        public void Resolve_IntoRegistered()
+        {
+            var container = Container.Create();
+            var food = new CatFood();
+            var petshop = new Petshop();
+
+            container.Register<IPetFood>(Scope.Singleton, food);
+            container.Register(Scope.Singleton, petshop);
+
+            container.InjectIntoRegistered();
+
+            var cached = container.GetCached<Petshop>();
+
+            Assert.AreEqual(food, cached.Food);
+        }
     }
 }

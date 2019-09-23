@@ -123,6 +123,13 @@ namespace SimpleContainer
             }
         }
 
+        internal void InjectIntoInstance(object instance)
+        {
+            ResolveFields(instance);
+            ResolveProperties(instance);
+            ResolveMethods(instance);
+        }
+
         private ConstructorInfo GetConstructor(Type type)
         {
             if (container.cachedConstructors.TryGetValue(type, out var suitableConstructor))
@@ -213,13 +220,6 @@ namespace SimpleContainer
         private void MarkMemberInjectedInto(MemberInfo member)
         {
             injectedIntoMembers.Add(member);
-        }
-
-        private void InjectIntoInstance(object instance)
-        {
-            ResolveFields(instance);
-            ResolveProperties(instance);
-            ResolveMethods(instance);
         }
 
         private void ResolveFields(object instance)

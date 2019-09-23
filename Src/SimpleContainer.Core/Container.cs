@@ -57,6 +57,17 @@ namespace SimpleContainer
             injectAttributeType = other.injectAttributeType;
         }
 
+        public void InjectIntoRegistered()
+        {
+            foreach (var binding in bindings)
+            {
+                var cachedInstances = binding.Value.GetCachedInstances();
+
+                foreach (var cachedInstance in cachedInstances)
+                    binding.Value.InjectIntoInstance(cachedInstance.Value);
+            }
+        }
+
 #if NET35
         public void ThrowIfNotResolved()
         {
