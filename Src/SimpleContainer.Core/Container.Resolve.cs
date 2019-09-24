@@ -49,13 +49,11 @@ namespace SimpleContainer
         public object[] ResolveAll(Type contractType, params object[] args)
         {
             if (!bindings.TryGetValue(contractType, out var resolver))
-            {
                 throw new TypeNotRegisteredException(contractType, GetBindingsString(bindings));
-            }
 
             var instances = resolver.GetInstances(args);
 
-            Initialize(instances);
+            InitializeInstances(instances);
 
             return instances.Select(instance => instance.Value).ToArray();
         }

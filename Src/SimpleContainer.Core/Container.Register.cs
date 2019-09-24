@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using SimpleContainer.Activators;
 using SimpleContainer.Exceptions;
@@ -131,19 +132,54 @@ namespace SimpleContainer
         {
             if (bindings.TryGetValue(contractType, out var foundBinding))
             {
-                var mergedResultTypes = new List<Type>();
-
-                mergedResultTypes.AddRange(foundBinding.ResultTypes);
-                mergedResultTypes.AddRange(resultTypes);
-
-                bindings.Remove(contractType);
-
-                bindings.Add(contractType, new Resolver(this, new ActivatorExpression(), mergedResultTypes.ToArray(), scope, instance, args));
+                var resolver = MergeResolver(contractType, scope, instance, resultTypes, args, foundBinding);
+                bindings.Add(contractType, resolver);
             }
             else
             {
-                bindings.Add(contractType, new Resolver(this, new ActivatorExpression(), resultTypes, scope, instance, args));
+                var resolver = CreateResolver(scope, instance, resultTypes, args);
+                bindings.Add(contractType, resolver);
             }
+        }
+
+        private Resolver CreateResolver(Scope scope, object instance, Type[] resultTypes, object[] args)
+        {
+            var resolver = new Resolver(
+                container:      this,
+                activator:      new ActivatorExpression(),
+                resultTypes:    resultTypes,
+                scope:          scope,
+                instances:      instance == null ? null : new[] {instance},
+                args:           args);
+
+            return resolver;
+        }
+
+        private Resolver MergeResolver(Type contractType, Scope scope, object instance, Type[] resultTypes, object[] args, Resolver foundBinding)
+        {
+            var mergedResultTypes = new List<Type>();
+
+            mergedResultTypes.AddRange(foundBinding.ResultTypes);
+            mergedResultTypes.AddRange(resultTypes);
+
+            var mergedInstances = new List<object>();
+
+            mergedInstances.AddRange(foundBinding.Instances.Select(wrapper => wrapper.Value));
+
+            if (instance != null)
+                mergedInstances.Add(instance);
+
+            bindings.Remove(contractType);
+
+            var resolver = new Resolver(
+                container:      this,
+                activator:      new ActivatorExpression(),
+                resultTypes:    mergedResultTypes.ToArray(),
+                scope:          scope,
+                instances:      mergedInstances.ToArray(),
+                args:           args);
+
+            return resolver;
         }
     }
 }

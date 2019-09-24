@@ -15,18 +15,16 @@ namespace SimpleContainer
         private readonly Scope scope;
         private readonly object[] prePassedArgs;
         private readonly ArrayArgumentConverter argConverter = new ArrayArgumentConverter();
-        private readonly HashSet<InstanceWrapper> transientInstances = new HashSet<InstanceWrapper>();
+        private readonly HashSet<InstanceWrapper> instances = new HashSet<InstanceWrapper>();
         private readonly HashSet<MemberInfo> injectedIntoMembers = new HashSet<MemberInfo>();
         private readonly HashSet<object> injectedIntoInstances = new HashSet<object>();
-
-        private List<InstanceWrapper> singleInstances = new List<InstanceWrapper>();
 
         public Resolver(
             Container       container,
             IActivator      activator,
             Type[]          resultTypes,
             Scope           scope,
-            object          instance,
+            object[]        instances,
             params object[] args)
         {
             this.container = container;
@@ -36,18 +34,9 @@ namespace SimpleContainer
 
             prePassedArgs = args;
 
-            if (instance != null)
+            if (instances != null)
             {
-                switch (scope)
-                {
-                    case Scope.Transient:
-                        transientInstances = new HashSet<InstanceWrapper> { new InstanceWrapper(instance) };
-                        break;
-
-                    case Scope.Singleton:
-                        singleInstances = new List<InstanceWrapper> { new InstanceWrapper(instance) };
-                        break;
-                }
+                this.instances = new HashSet<InstanceWrapper>(instances.Select(instance => new InstanceWrapper(instance)));
             }
         }
 
@@ -56,7 +45,12 @@ namespace SimpleContainer
             get { return resultTypes; }
         }
 
-        public InstanceWrapper[] GetInstances(object[] args)
+        internal HashSet<InstanceWrapper> Instances
+        {
+            get { return instances; }
+        }
+
+        public ICollection<InstanceWrapper> GetInstances(object[] args)
         {
             var resultArgs = prePassedArgs.Length > args.Length ? prePassedArgs : args;
 
@@ -66,24 +60,20 @@ namespace SimpleContainer
                     var newInstances = CreateInstances(resultTypes, resultArgs);
 
                     foreach (var newInstance in newInstances)
-                        transientInstances.Add(newInstance);
+                        instances.Add(newInstance);
 
                     return newInstances;
 
                 case Scope.Singleton:
-                    if (singleInstances.Count > 0)
-                    {
-                        foreach (var instance in singleInstances)
-                            InjectIntoInstance(instance.Value);
+                    if (instances.Count > 0)
+                        return instances.ToArray();
 
-                        return singleInstances.ToArray();
-                    }
+                    var singleInstances = CreateInstances(resultTypes, resultArgs);
 
-                    var singleInstancesArray = CreateInstances(resultTypes, resultArgs);
+                    foreach (var instanceWrapper in singleInstances)
+                        instances.Add(instanceWrapper);
 
-                    singleInstances = singleInstancesArray.ToList();
-
-                    return singleInstancesArray;
+                    return instances;
 
                 default:
                     throw new ArgumentException(nameof(scope));
@@ -92,21 +82,8 @@ namespace SimpleContainer
 
         public void DisposeInstances()
         {
-            switch (scope)
-            {
-                case Scope.Transient:
-                    foreach (var transientInstance in transientInstances.ToArray())
-                        DisposeInstance(transientInstance, transientInstances);
-                    break;
-
-                case Scope.Singleton:
-                    foreach (var singleInstance in singleInstances.ToArray())
-                        DisposeInstance(singleInstance, singleInstances);
-                    break;
-
-                default:
-                    throw new ArgumentException(nameof(scope));
-            }
+            foreach (var transientInstance in instances.ToArray())
+                DisposeInstance(transientInstance, instances);
         }
 
         public Resolver CopyToContainer(Container other)
@@ -116,23 +93,13 @@ namespace SimpleContainer
                 activator,
                 resultTypes,
                 scope,
-                singleInstances.FirstOrDefault()?.Value,
+                instances.Select(instance => instance.Value).ToArray(),
                 prePassedArgs);
         }
 
         internal IEnumerable<InstanceWrapper> GetCachedInstances()
         {
-            switch (scope)
-            {
-                case Scope.Transient:
-                    return transientInstances;
-
-                case Scope.Singleton:
-                    return singleInstances;
-
-                default:
-                    throw new ArgumentException(nameof(scope));
-            }
+            return instances;
         }
 
         internal void InjectIntoInstance(object instance)

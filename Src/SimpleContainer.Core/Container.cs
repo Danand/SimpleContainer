@@ -108,7 +108,7 @@ namespace SimpleContainer
                 resolver.DisposeInstances();
         }
 
-        private void Initialize(InstanceWrapper[] instances)
+        private void InitializeInstances(IEnumerable<InstanceWrapper> instances)
         {
             foreach (var instance in instances)
             {
