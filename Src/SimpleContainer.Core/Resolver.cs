@@ -16,7 +16,7 @@ namespace SimpleContainer
         private readonly object[] prePassedArgs;
         private readonly ArrayArgumentConverter argConverter = new ArrayArgumentConverter();
         private readonly HashSet<InstanceWrapper> instances = new HashSet<InstanceWrapper>();
-        private readonly HashSet<MemberInfo> injectedIntoMembers = new HashSet<MemberInfo>();
+        private readonly HashSet<int> injectedIntoMembers = new HashSet<int>();
         private readonly HashSet<object> injectedIntoInstances = new HashSet<object>();
 
         public Resolver(
@@ -194,14 +194,14 @@ namespace SimpleContainer
             return result;
         }
 
-        private bool CheckNeedsInjectIntoMember(MemberInfo member)
+        private bool CheckNeedsInjectIntoMember(MemberInfo member, object instance)
         {
-            return !injectedIntoMembers.Contains(member);
+            return !injectedIntoMembers.Contains(member.GetHashCode() + instance.GetHashCode());
         }
 
-        private void MarkMemberInjectedInto(MemberInfo member)
+        private void MarkMemberInjectedInto(MemberInfo member, object instance)
         {
-            injectedIntoMembers.Add(member);
+            injectedIntoMembers.Add(member.GetHashCode() + instance.GetHashCode());
         }
 
         private void ResolveFields(object instance)
@@ -212,14 +212,14 @@ namespace SimpleContainer
 
             foreach (var field in injectableFields)
             {
-                if (CheckNeedsInjectIntoMember(field))
+                if (CheckNeedsInjectIntoMember(field, instance))
                 {
                     var values = container.ResolveMultiple(field.FieldType);
                     var collected = CollectValue(field.FieldType, values);
 
                     field.SetValue(instance, collected.Value);
 
-                    MarkMemberInjectedInto(field);
+                    MarkMemberInjectedInto(field, instance);
                 }
             }
         }
@@ -232,14 +232,14 @@ namespace SimpleContainer
 
             foreach (var property in injectableProperties)
             {
-                if (CheckNeedsInjectIntoMember(property))
+                if (CheckNeedsInjectIntoMember(property, instance))
                 {
                     var values = container.ResolveMultiple(property.PropertyType);
                     var collected = CollectValue(property.PropertyType, values);
 
                     property.SetValue(instance, collected.Value);
 
-                    MarkMemberInjectedInto(property);
+                    MarkMemberInjectedInto(property, instance);
                 }
             }
         }
@@ -252,7 +252,7 @@ namespace SimpleContainer
 
             foreach (var method in injectableMethods)
             {
-                if (CheckNeedsInjectIntoMember(method))
+                if (CheckNeedsInjectIntoMember(method, instance))
                 {
                     var args = new List<object>();
                     var parameters = method.GetParameters();
@@ -267,7 +267,7 @@ namespace SimpleContainer
 
                     method.Invoke(instance, args.ToArray());
 
-                    MarkMemberInjectedInto(method);
+                    MarkMemberInjectedInto(method, instance);
                 }
             }
         }

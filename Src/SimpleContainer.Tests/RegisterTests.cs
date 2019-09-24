@@ -49,6 +49,7 @@ namespace SimpleContainer.Tests
             var reds = container.GetCachedMultiple<ColorRed>();
 
             Assert.AreEqual(3, reds.Length);
+            CollectionAssert.AllItemsAreUnique(reds);
         }
     }
 }

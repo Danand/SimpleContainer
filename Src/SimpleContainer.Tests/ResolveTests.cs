@@ -1,4 +1,6 @@
-﻿using SimpleContainer.Tests.DummyTypes;
+﻿using System.Linq;
+
+using SimpleContainer.Tests.DummyTypes;
 using SimpleContainer.Exceptions;
 
 using NUnit.Framework;
@@ -171,7 +173,7 @@ namespace SimpleContainer.Tests
         }
 
         [Test]
-        public void Resolve_IntoRegistered()
+        public void Resolve_IntoRegistered_Singleton()
         {
             var container = Container.Create();
             var food = new CatFood();
@@ -185,6 +187,27 @@ namespace SimpleContainer.Tests
             var cached = container.GetCached<Petshop>();
 
             Assert.AreEqual(food, cached.Food);
+        }
+
+
+        [Test]
+        public void Resolve_IntoRegistered_Transient()
+        {
+            var container = Container.Create();
+            var food = new CatFood();
+            var petshopOne = new Petshop();
+            var petshopTwo = new Petshop();
+
+            container.Register<IPetFood>(Scope.Singleton, food);
+            container.Register(Scope.Transient, petshopOne);
+            container.Register(Scope.Transient, petshopTwo);
+
+            container.InjectIntoRegistered();
+
+            var cached = container.GetCachedMultiple<Petshop>();
+
+            CollectionAssert.AllItemsAreNotNull(cached.Select(item => item.Food));
+            CollectionAssert.AllItemsAreInstancesOfType(cached.Select(item => item.Food), typeof(IPetFood));
         }
     }
 }

@@ -133,6 +133,7 @@ namespace SimpleContainer
             if (bindings.TryGetValue(contractType, out var foundBinding))
             {
                 var resolver = MergeResolver(contractType, scope, instance, resultTypes, args, foundBinding);
+                bindings.Remove(contractType);
                 bindings.Add(contractType, resolver);
             }
             else
@@ -168,8 +169,6 @@ namespace SimpleContainer
 
             if (instance != null)
                 mergedInstances.Add(instance);
-
-            bindings.Remove(contractType);
 
             var resolver = new Resolver(
                 container:      this,
