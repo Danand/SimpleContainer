@@ -65,13 +65,13 @@ namespace SimpleContainer
                     return newInstances;
 
                 case Scope.Singleton:
-                    if (instances.Count > 0)
-                        return instances.ToArray();
+                    for (var i = 0; i < resultTypes.Length; i++)
+                    {
+                        var resultType = resultTypes[i];
 
-                    var singleInstances = CreateInstances(resultTypes, resultArgs);
-
-                    foreach (var instanceWrapper in singleInstances)
-                        instances.Add(instanceWrapper);
+                        if (i >= instances.Count)
+                            instances.Add(CreateInstance(resultType, args));
+                    }
 
                     return instances;
 
@@ -181,17 +181,22 @@ namespace SimpleContainer
 
             for (var i = 0; i < typesLength; i++)
             {
-                var type = types[i];
-                var suitableConstructor = GetConstructor(type);
-                var resolvedArgs = ResolveArgs(suitableConstructor, args);
-                var instance = activator.CreateInstance(suitableConstructor, resolvedArgs);
-
-                InjectIntoInstance(instance);
-
-                result[i] = new InstanceWrapper(instance);
+                var wrapper = CreateInstance(types[i], args);
+                result[i] = wrapper;
             }
 
             return result;
+        }
+
+        private InstanceWrapper CreateInstance(Type type, object[] args)
+        {
+            var suitableConstructor = GetConstructor(type);
+            var resolvedArgs = ResolveArgs(suitableConstructor, args);
+            var instance = activator.CreateInstance(suitableConstructor, resolvedArgs);
+
+            InjectIntoInstance(instance);
+
+            return new InstanceWrapper(instance);
         }
 
         private bool CheckNeedsInjectIntoMember(MemberInfo member, object instance)
