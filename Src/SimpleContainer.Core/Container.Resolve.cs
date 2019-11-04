@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using SimpleContainer.Activators;
@@ -82,6 +83,11 @@ namespace SimpleContainer
         {
             foreach (var binding in bindings.Values)
                 binding.InjectIntoInstance(instance);
+        }
+
+        public IEnumerable<object> GetAllCachedInstances()
+        {
+            return GetAllCached().Select(wrapper => wrapper.Value);
         }
 
         internal object[] ResolveMultiple(Type contractType)
