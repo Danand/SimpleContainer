@@ -3,6 +3,20 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+
+.DS_Store*
+
+[Tt]humbs.db
+sysinfo.txt
+/.vs
+/Assets/Packages/
+/Assets/Packages.meta
+
 # User-specific files
 *.suo
 *.user
@@ -62,7 +76,6 @@ StyleCopReport.xml
 *_p.c
 *_i.h
 *.ilk
-*.meta
 *.obj
 *.pch
 *.pdb
@@ -319,3 +332,10 @@ ASALocalRun/
 # MSBuild Binary and Structured Log
 *.binlog
 
+# Unity specific
+*.unityproj
+*.userprefs
+*.tmp
+*.pidb
+*.booproj
+*.pidb.meta
