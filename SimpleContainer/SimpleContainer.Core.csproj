@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <Version>0.6.9</Version>
+    <PackageId>SimpleContainer</PackageId>
+    <Authors>Danand</Authors>
+    <Product>SimpleContainer</Product>
+    <Description>Simple DI container with fair constructor injection, factory resolving and binding events.</Description>
+    <PackageProjectUrl>https://gitlab.com/Danand/SimpleContainer.git</PackageProjectUrl>
+    <RepositoryUrl>https://gitlab.com/Danand/SimpleContainer.git</RepositoryUrl>
+    <RepositoryType>Git</RepositoryType>
+    <PackageTags>DI, IoC</PackageTags>
+    <NeutralLanguage>en</NeutralLanguage>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="*.meta" />
+    <None Remove="*.asmdef" />
+    <None Remove="*\*.meta" />
+    <None Remove="*\*.asmdef" />
+  </ItemGroup>
+
+</Project>
