@@ -7,11 +7,11 @@ generate_guid () {
 }
 
 find_cs_src () {
-    find . -name "*.cs" -not -path "./obj*" -not -path "./bin*"
+    find . -name "*.cs"
 }
 
 find_dirs () {
-    find . -type d -not -path "./obj*" -not -path "./bin*" -not -path "."
+    find . -type d -not -path "."
 }
 
 cd $1
@@ -44,4 +44,3 @@ do
         echo "Meta file generated: ${meta_path}"
     fi
 done
-
