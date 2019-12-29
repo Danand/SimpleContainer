@@ -1,0 +1,18 @@
+{
+    "name": "SimpleContainer.Unity",
+    "references": [
+        "GUID:63998e837d4540742963243e626d5985"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [
+        "SimpleContainer.dll",
+        ""
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
