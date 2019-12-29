@@ -14,6 +14,10 @@ find_dirs () {
     find . -type d -not -path "."
 }
 
+cleanup_metas () {
+    find . -type f -not -type d | sed 's/.meta//g' | uniq -u | grep "\.cs"
+}
+
 cd $1
 
 for script in $(find_cs_src)
@@ -43,4 +47,9 @@ do
         echo -e "${meta_content}" > "${meta_path}"
         echo "Meta file generated: ${meta_path}"
     fi
+done
+
+for meta in $(cleanup_metas)
+do
+    rm "${meta}.meta"
 done
