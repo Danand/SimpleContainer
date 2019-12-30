@@ -15,4 +15,9 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="*.meta" />
+    <None Remove="*.asmdef" />
+  </ItemGroup>
+
 </Project>
