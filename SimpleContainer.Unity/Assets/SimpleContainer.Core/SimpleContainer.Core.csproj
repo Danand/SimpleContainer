@@ -22,6 +22,8 @@
   <ItemGroup>
     <None Remove="*.meta" />
     <None Remove="*.asmdef" />
+    <None Remove="*\*.meta" />
+    <None Remove="*\*.asmdef" />
   </ItemGroup>
 
 </Project>
