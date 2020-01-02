@@ -112,19 +112,6 @@ namespace SimpleContainer
             }
         }
 
-        private ConstructorInfo GetConstructor(Type type)
-        {
-            if (container.cachedConstructors.TryGetValue(type, out var suitableConstructor))
-                return suitableConstructor;
-
-            var constructors = type.GetConstructors();
-            suitableConstructor = constructors[0];
-
-            container.cachedConstructors.Add(type, suitableConstructor);
-
-            return suitableConstructor;
-        }
-
         private object[] ResolveArgs(ConstructorInfo constructorInfo, object[] args)
         {
             var parameters = constructorInfo.GetParameters();
@@ -190,7 +177,8 @@ namespace SimpleContainer
 
         private InstanceWrapper CreateInstance(Type type, object[] args)
         {
-            var suitableConstructor = GetConstructor(type);
+            IConstructorCacher constructorCacher = new ConstructorCacher();
+            var suitableConstructor = constructorCacher.GetConstructor(type);
             var resolvedArgs = ResolveArgs(suitableConstructor, args);
             var instance = activator.CreateInstance(suitableConstructor, resolvedArgs);
 

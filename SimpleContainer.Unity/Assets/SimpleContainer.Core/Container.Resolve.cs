@@ -102,9 +102,7 @@ namespace SimpleContainer
         private IInstaller ResolveInstaller(Type installerType)
         {
             IActivator activator = new ActivatorExpression();
-            var constructor = installerType.GetConstructor(new Type[0]);
-
-            return (IInstaller)activator.CreateInstance(constructor, new object[0]);
+            return (IInstaller)activator.CreateInstance(installerType);
         }
     }
 }
