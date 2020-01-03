@@ -10,7 +10,7 @@ namespace SimpleContainer.Tests
         [Test]
         public void Register_Instance_Singleton_NotThrow()
         {
-            var container = new Container();
+            var container = Container.Create();
             var instance = new ColorRed();
 
             container.Register(Scope.Singleton, instance);
@@ -23,7 +23,7 @@ namespace SimpleContainer.Tests
         [Test]
         public void Register_Instance_Transient_NotThrow()
         {
-            var container = new Container();
+            var container = Container.Create();
             var instanceBlue = new ColorBlue();
 
             container.Register(Scope.Transient, instanceBlue);
@@ -36,7 +36,7 @@ namespace SimpleContainer.Tests
         [Test]
         public void Register_Instances_Transient_Unique()
         {
-            var container = new Container();
+            var container = Container.Create();
 
             var instanceRedFirst = new ColorRed();
             var instanceRedSecond = new ColorRed();

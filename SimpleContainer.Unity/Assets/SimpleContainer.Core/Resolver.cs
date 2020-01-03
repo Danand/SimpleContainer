@@ -9,35 +9,23 @@ namespace SimpleContainer
 {
     internal sealed class Resolver
     {
-        private readonly Container container;
         private readonly IActivator activator;
-        private readonly Type[] resultTypes;
-        private readonly Scope scope;
-        private readonly object[] prePassedArgs;
+        private readonly IConstructorCacher constructorCacher;
         private readonly ArrayArgumentConverter argConverter = new ArrayArgumentConverter();
-        private readonly HashSet<InstanceWrapper> instances = new HashSet<InstanceWrapper>();
         private readonly HashSet<int> injectedIntoMembers = new HashSet<int>();
         private readonly HashSet<object> injectedIntoInstances = new HashSet<object>();
 
-        public Resolver(
-            Container       container,
-            IActivator      activator,
-            Type[]          resultTypes,
-            Scope           scope,
-            object[]        instances,
-            params object[] args)
+        private Container container;
+        private Scope scope;
+        private Type[] resultTypes;
+        private object[] prePassedArgs;
+        private HashSet<InstanceWrapper> instances = new HashSet<InstanceWrapper>();
+        private Func<Resolver> method;
+
+        public Resolver(IActivator activator, IConstructorCacher constructorCacher)
         {
-            this.container = container;
             this.activator = activator;
-            this.resultTypes = resultTypes;
-            this.scope = scope;
-
-            prePassedArgs = args;
-
-            if (instances != null)
-            {
-                this.instances = new HashSet<InstanceWrapper>(instances.Select(instance => new InstanceWrapper(instance)));
-            }
+            this.constructorCacher = constructorCacher;
         }
 
         internal Type[] ResultTypes
@@ -48,6 +36,25 @@ namespace SimpleContainer
         internal HashSet<InstanceWrapper> Instances
         {
             get { return instances; }
+        }
+
+        public void Initialize(
+            Container   container,
+            Type[]      resultTypes,
+            Scope       scope,
+            object[]    instances,
+            object[]    args)
+        {
+            this.container = container;
+            this.resultTypes = resultTypes;
+            this.scope = scope;
+
+            prePassedArgs = args;
+
+            if (instances != null)
+            {
+                this.instances = new HashSet<InstanceWrapper>(instances.Select(instance => new InstanceWrapper(instance)));
+            }
         }
 
         public ICollection<InstanceWrapper> GetInstances(object[] args)
@@ -70,7 +77,7 @@ namespace SimpleContainer
                         var resultType = resultTypes[i];
 
                         if (i >= instances.Count)
-                            instances.Add(CreateInstance(resultType, args));
+                            instances.Add(CreateInstanceFromActivator(resultType, args));
                     }
 
                     return instances;
@@ -88,13 +95,16 @@ namespace SimpleContainer
 
         public Resolver CopyToContainer(Container other)
         {
-            return new Resolver(
-                other,
-                activator,
-                resultTypes,
-                scope,
-                instances.Select(instance => instance.Value).ToArray(),
-                prePassedArgs);
+            var resolver = new Resolver(activator, constructorCacher);
+
+            resolver.Initialize(
+                container:      other,
+                resultTypes:    resultTypes,
+                scope:          scope,
+                instances:      instances.Select(instance => instance.Value).ToArray(),
+                args:           prePassedArgs);
+
+            return resolver;
         }
 
         internal IEnumerable<InstanceWrapper> GetCachedInstances()
@@ -110,6 +120,16 @@ namespace SimpleContainer
                 ResolveProperties(instance);
                 ResolveMethods(instance);
             }
+        }
+
+        internal void SetMethod(Func<Resolver> method)
+        {
+            this.method = method;
+        }
+
+        internal void RemoveMethod()
+        {
+            method = null;
         }
 
         private object[] ResolveArgs(ConstructorInfo constructorInfo, object[] args)
@@ -168,22 +188,34 @@ namespace SimpleContainer
 
             for (var i = 0; i < typesLength; i++)
             {
-                var wrapper = CreateInstance(types[i], args);
+                InstanceWrapper wrapper;
+
+                if (method == null)
+                    wrapper = CreateInstanceFromActivator(types[i], args);
+                else
+                    wrapper = CreateInstanceFromMethod();
+
                 result[i] = wrapper;
             }
 
             return result;
         }
 
-        private InstanceWrapper CreateInstance(Type type, object[] args)
+        private InstanceWrapper CreateInstanceFromActivator(Type type, object[] args)
         {
-            IConstructorCacher constructorCacher = new ConstructorCacher();
             var suitableConstructor = constructorCacher.GetConstructor(type);
             var resolvedArgs = ResolveArgs(suitableConstructor, args);
             var instance = activator.CreateInstance(suitableConstructor, resolvedArgs);
 
             InjectIntoInstance(instance);
 
+            return new InstanceWrapper(instance);
+        }
+
+        private InstanceWrapper CreateInstanceFromMethod()
+        {
+            var instance = method.Invoke();
+            InjectIntoInstance(instance);
             return new InstanceWrapper(instance);
         }
 

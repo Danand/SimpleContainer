@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using SimpleContainer.Activators;
 using SimpleContainer.Exceptions;
 using SimpleContainer.Interfaces;
 
@@ -101,7 +100,7 @@ namespace SimpleContainer
 
         private IInstaller ResolveInstaller(Type installerType)
         {
-            IActivator activator = new ActivatorExpression();
+            IActivator activator = Resolve<IActivator>();
             return (IInstaller)activator.CreateInstance(installerType);
         }
     }

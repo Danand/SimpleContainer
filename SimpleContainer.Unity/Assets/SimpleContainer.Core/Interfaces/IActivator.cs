@@ -7,7 +7,7 @@ namespace SimpleContainer.Interfaces
     {
         object CreateInstance(Type type);
 
-        object CreateInstance(Type type, object[] resolvedArgs);
+        object CreateInstance(Type type, object[] args);
 
         object CreateInstance(ConstructorInfo constructor, object[] args);
     }
