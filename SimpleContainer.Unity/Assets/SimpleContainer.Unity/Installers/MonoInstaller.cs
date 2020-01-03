@@ -4,7 +4,7 @@ using SimpleContainer.Interfaces;
 
 using UnityEngine;
 
-namespace SimpleContainer.Unity
+namespace SimpleContainer.Unity.Installers
 {
     public abstract class MonoInstaller : MonoBehaviour, IInstaller
     {
