@@ -17,9 +17,7 @@ namespace SimpleContainer
 
         private Container container;
         private Scope scope;
-        private Type[] resultTypes;
-        private object[] prePassedArgs;
-        private HashSet<object> instances = new HashSet<object>();
+        private IList<object> prePassedArgs;
         private Func<Resolver> method;
 
         public Resolver(IActivator activator, IConstructorCacher constructorCacher)
@@ -28,59 +26,53 @@ namespace SimpleContainer
             this.constructorCacher = constructorCacher;
         }
 
-        internal Type[] ResultTypes
-        {
-            get { return resultTypes; }
-        }
+        internal IList<Type> ResultTypes { get; private set; }
 
-        internal HashSet<object> Instances
-        {
-            get { return instances; }
-        }
+        internal HashSet<object> Instances { get; private set; } = new HashSet<object>();
 
         public void Initialize(
-            Container   container,
-            Type[]      resultTypes,
-            Scope       scope,
-            object[]    instances,
-            object[]    args)
+            Container       container,
+            IList<Type>     resultTypes,
+            Scope           scope,
+            IList<object>   instances,
+            IList<object>   args)
         {
             this.container = container;
-            this.resultTypes = resultTypes;
+            this.ResultTypes = resultTypes;
             this.scope = scope;
 
             prePassedArgs = args;
 
             if (instances != null)
             {
-                this.instances = new HashSet<object>(instances.Select(instance => instance));
+                this.Instances = new HashSet<object>(instances.Select(instance => instance));
             }
         }
 
         public ICollection<object> GetInstances(object[] args)
         {
-            var resultArgs = prePassedArgs.Length > args.Length ? prePassedArgs : args;
+            var resultArgs = prePassedArgs.Count > args.Length ? prePassedArgs : args;
 
             switch (scope)
             {
                 case Scope.Transient:
-                    var newInstances = CreateInstances(resultTypes, resultArgs);
+                    var newInstances = CreateInstances(ResultTypes, resultArgs);
 
                     foreach (var newInstance in newInstances)
-                        instances.Add(newInstance);
+                        Instances.Add(newInstance);
 
                     return newInstances;
 
                 case Scope.Singleton:
-                    for (var i = 0; i < resultTypes.Length; i++)
+                    for (var i = 0; i < ResultTypes.Count; i++)
                     {
-                        var resultType = resultTypes[i];
+                        var resultType = ResultTypes[i];
 
-                        if (i >= instances.Count)
-                            instances.Add(CreateInstanceFromActivator(resultType, args));
+                        if (i >= Instances.Count)
+                            Instances.Add(CreateInstanceFromActivator(resultType, args));
                     }
 
-                    return instances;
+                    return Instances;
 
                 default:
                     throw new ArgumentException(nameof(scope));
@@ -89,8 +81,8 @@ namespace SimpleContainer
 
         public void DisposeInstances()
         {
-            foreach (var transientInstance in instances.ToArray())
-                DisposeInstance(transientInstance, instances);
+            foreach (var transientInstance in Instances.ToArray())
+                DisposeInstance(transientInstance, Instances);
         }
 
         public Resolver CopyToContainer(Container other)
@@ -99,9 +91,9 @@ namespace SimpleContainer
 
             resolver.Initialize(
                 container:      other,
-                resultTypes:    resultTypes,
+                resultTypes:    ResultTypes,
                 scope:          scope,
-                instances:      instances.Select(instance => instance).ToArray(),
+                instances:      Instances.Select(instance => instance).ToArray(),
                 args:           prePassedArgs);
 
             return resolver;
@@ -109,7 +101,7 @@ namespace SimpleContainer
 
         internal IEnumerable<object> GetCachedInstances()
         {
-            return instances;
+            return Instances;
         }
 
         internal void InjectIntoInstance(object instance)
@@ -132,7 +124,7 @@ namespace SimpleContainer
             method = null;
         }
 
-        private object[] ResolveArgs(ConstructorInfo constructorInfo, object[] args)
+        private object[] ResolveArgs(ConstructorInfo constructorInfo, IList<object> args)
         {
             var parameters = constructorInfo.GetParameters();
 
@@ -145,7 +137,7 @@ namespace SimpleContainer
             {
                 var parameterInfo = parameters[i];
                 var parameterType = parameterInfo.ParameterType;
-                var lessArgs = i >= args.Length;
+                var lessArgs = i >= args.Count;
 
                 if (lessArgs)
                 {
@@ -181,9 +173,9 @@ namespace SimpleContainer
             }
         }
 
-        private object[] CreateInstances(Type[] types, object[] args)
+        private object[] CreateInstances(IList<Type> types, IList<object> args)
         {
-            var typesLength = types.Length;
+            var typesLength = types.Count;
             var result = new object[typesLength];
 
             for (var i = 0; i < typesLength; i++)
@@ -201,7 +193,7 @@ namespace SimpleContainer
             return result;
         }
 
-        private object CreateInstanceFromActivator(Type type, object[] args)
+        private object CreateInstanceFromActivator(Type type, IList<object> args)
         {
             var suitableConstructor = constructorCacher.GetConstructor(type);
             var resolvedArgs = ResolveArgs(suitableConstructor, args);
@@ -233,7 +225,7 @@ namespace SimpleContainer
         {
             var type = instance.GetType();
             var fields = type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
-            var injectableFields = fields.Where(field => field.GetCustomAttributes(container.injectAttributeType).Any()).ToArray();
+            var injectableFields = fields.Where(field => field.GetCustomAttributes(container.injectAttributeType).Any());
 
             foreach (var field in injectableFields)
             {
@@ -253,7 +245,7 @@ namespace SimpleContainer
         {
             var type = instance.GetType();
             var properties = type.GetProperties(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
-            var injectableProperties = properties.Where(property => property.GetCustomAttributes(container.injectAttributeType).Any()).ToArray();
+            var injectableProperties = properties.Where(property => property.GetCustomAttributes(container.injectAttributeType).Any());
 
             foreach (var property in injectableProperties)
             {
@@ -273,24 +265,25 @@ namespace SimpleContainer
         {
             var type = instance.GetType();
             var methods = type.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
-            var injectableMethods = methods.Where(method => method.GetCustomAttributes(container.injectAttributeType).Any()).ToArray();
+            var injectableMethods = methods.Where(method => method.GetCustomAttributes(container.injectAttributeType).Any());
 
             foreach (var method in injectableMethods)
             {
                 if (CheckNeedsInjectIntoMember(method, instance))
                 {
-                    var args = new List<object>();
                     var parameters = method.GetParameters();
+                    var args = new object[parameters.Length];
 
-                    foreach (var parameter in parameters)
+                    for (var i = 0; i < parameters.Length; i++)
                     {
+                        var parameter = parameters[i];
                         var values = container.ResolveMultiple(parameter.ParameterType);
                         var collected = CollectValue(parameter.ParameterType, values);
 
-                        args.Add(collected.Value);
+                        args[i] = collected.Value;
                     }
 
-                    method.Invoke(instance, args.ToArray());
+                    method.Invoke(instance, args);
 
                     MarkMemberInjectedInto(method, instance);
                 }

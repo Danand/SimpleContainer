@@ -174,9 +174,9 @@ namespace SimpleContainer
 
             resolver.Initialize(
                 container:      this,
-                resultTypes:    mergedResultTypes.ToArray(),
+                resultTypes:    mergedResultTypes,
                 scope:          scope,
-                instances:      mergedInstances.ToArray(),
+                instances:      mergedInstances,
                 args:           args);
 
             return resolver;
