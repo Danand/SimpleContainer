@@ -16,6 +16,7 @@ namespace SimpleContainer
 
         private readonly Dispatcher dispatcher = new Dispatcher();
         private readonly Dictionary<Type, Resolver> bindings = new Dictionary<Type, Resolver>();
+        private readonly HashSet<object> initializedInstances = new HashSet<object>();
 
         private Container() { }
 
@@ -67,7 +68,7 @@ namespace SimpleContainer
                 var cachedInstances = binding.Value.GetCachedInstances();
 
                 foreach (var cachedInstance in cachedInstances)
-                    binding.Value.InjectIntoInstance(cachedInstance.Value);
+                    binding.Value.InjectIntoInstance(cachedInstance);
             }
         }
 
@@ -102,7 +103,7 @@ namespace SimpleContainer
 
 #endif
 
-        internal IEnumerable<InstanceWrapper> GetAllCached()
+        internal IEnumerable<object> GetAllCached()
         {
             return bindings.SelectMany(resolver => resolver.Value.GetCachedInstances());
         }
@@ -142,14 +143,13 @@ namespace SimpleContainer
             return resolver;
         }
 
-        private void InitializeInstances(IEnumerable<InstanceWrapper> instances)
+        private void InitializeInstances(IEnumerable<object> instances)
         {
             foreach (var instance in instances)
             {
-                if (instance.Value is IInitializible initializible && !instance.IsInitialized)
+                if (instance is IInitializible initializible && initializedInstances.Add(instance))
                 {
                     initializible.Initialize();
-                    instance.IsInitialized = true;
                 }
             }
         }

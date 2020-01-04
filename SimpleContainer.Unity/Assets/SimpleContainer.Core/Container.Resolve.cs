@@ -55,7 +55,7 @@ namespace SimpleContainer
 
             InitializeInstances(instances);
 
-            return instances.Select(instance => instance.Value).ToArray();
+            return instances.Select(instance => instance).ToArray();
         }
 
         public TContract GetCached<TContract>()
@@ -65,7 +65,7 @@ namespace SimpleContainer
             if (!bindings.TryGetValue(contractType, out var resolver))
                 throw new TypeNotRegisteredException(contractType, GetBindingsString(bindings));
 
-            return (TContract)resolver.GetCachedInstances().First()?.Value;
+            return (TContract)resolver.GetCachedInstances().First();
         }
 
         public TContract[] GetCachedMultiple<TContract>()
@@ -75,7 +75,7 @@ namespace SimpleContainer
             if (!bindings.TryGetValue(contractType, out var resolver))
                 throw new TypeNotRegisteredException(contractType, GetBindingsString(bindings));
 
-            return resolver.GetCachedInstances().Select(wrapper => (TContract)wrapper.Value).ToArray();
+            return resolver.GetCachedInstances().Select(wrapper => (TContract)wrapper).ToArray();
         }
 
         public void InjectInto(object instance)
@@ -86,7 +86,7 @@ namespace SimpleContainer
 
         public IEnumerable<object> GetAllCachedInstances()
         {
-            return GetAllCached().Select(wrapper => wrapper.Value);
+            return GetAllCached().Select(wrapper => wrapper);
         }
 
         internal object[] ResolveMultiple(Type contractType)

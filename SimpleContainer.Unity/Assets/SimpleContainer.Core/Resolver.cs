@@ -19,7 +19,7 @@ namespace SimpleContainer
         private Scope scope;
         private Type[] resultTypes;
         private object[] prePassedArgs;
-        private HashSet<InstanceWrapper> instances = new HashSet<InstanceWrapper>();
+        private HashSet<object> instances = new HashSet<object>();
         private Func<Resolver> method;
 
         public Resolver(IActivator activator, IConstructorCacher constructorCacher)
@@ -33,7 +33,7 @@ namespace SimpleContainer
             get { return resultTypes; }
         }
 
-        internal HashSet<InstanceWrapper> Instances
+        internal HashSet<object> Instances
         {
             get { return instances; }
         }
@@ -53,11 +53,11 @@ namespace SimpleContainer
 
             if (instances != null)
             {
-                this.instances = new HashSet<InstanceWrapper>(instances.Select(instance => new InstanceWrapper(instance)));
+                this.instances = new HashSet<object>(instances.Select(instance => instance));
             }
         }
 
-        public ICollection<InstanceWrapper> GetInstances(object[] args)
+        public ICollection<object> GetInstances(object[] args)
         {
             var resultArgs = prePassedArgs.Length > args.Length ? prePassedArgs : args;
 
@@ -101,13 +101,13 @@ namespace SimpleContainer
                 container:      other,
                 resultTypes:    resultTypes,
                 scope:          scope,
-                instances:      instances.Select(instance => instance.Value).ToArray(),
+                instances:      instances.Select(instance => instance).ToArray(),
                 args:           prePassedArgs);
 
             return resolver;
         }
 
-        internal IEnumerable<InstanceWrapper> GetCachedInstances()
+        internal IEnumerable<object> GetCachedInstances()
         {
             return instances;
         }
@@ -172,36 +172,36 @@ namespace SimpleContainer
             return parentType.IsAssignableFrom(childType);
         }
 
-        private void DisposeInstance(InstanceWrapper instance, ICollection<InstanceWrapper> instances)
+        private void DisposeInstance(object instance, ICollection<object> instances)
         {
-            if (instance.Value is IDisposable disposable)
+            if (instance is IDisposable disposable)
             {
                 instances.Remove(instance);
                 disposable.Dispose();
             }
         }
 
-        private InstanceWrapper[] CreateInstances(Type[] types, object[] args)
+        private object[] CreateInstances(Type[] types, object[] args)
         {
             var typesLength = types.Length;
-            var result = new InstanceWrapper[typesLength];
+            var result = new object[typesLength];
 
             for (var i = 0; i < typesLength; i++)
             {
-                InstanceWrapper wrapper;
+                object instance;
 
                 if (method == null)
-                    wrapper = CreateInstanceFromActivator(types[i], args);
+                    instance = CreateInstanceFromActivator(types[i], args);
                 else
-                    wrapper = CreateInstanceFromMethod();
+                    instance = CreateInstanceFromMethod();
 
-                result[i] = wrapper;
+                result[i] = instance;
             }
 
             return result;
         }
 
-        private InstanceWrapper CreateInstanceFromActivator(Type type, object[] args)
+        private object CreateInstanceFromActivator(Type type, object[] args)
         {
             var suitableConstructor = constructorCacher.GetConstructor(type);
             var resolvedArgs = ResolveArgs(suitableConstructor, args);
@@ -209,14 +209,14 @@ namespace SimpleContainer
 
             InjectIntoInstance(instance);
 
-            return new InstanceWrapper(instance);
+            return instance;
         }
 
-        private InstanceWrapper CreateInstanceFromMethod()
+        private object CreateInstanceFromMethod()
         {
             var instance = method.Invoke();
             InjectIntoInstance(instance);
-            return new InstanceWrapper(instance);
+            return instance;
         }
 
         private bool CheckNeedsInjectIntoMember(MemberInfo member, object instance)

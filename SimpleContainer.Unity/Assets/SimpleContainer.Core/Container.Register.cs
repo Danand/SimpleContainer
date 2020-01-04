@@ -165,7 +165,7 @@ namespace SimpleContainer
 
             var mergedInstances = new List<object>();
 
-            mergedInstances.AddRange(foundBinding.Instances.Select(wrapper => wrapper.Value));
+            mergedInstances.AddRange(foundBinding.Instances);
 
             if (instance != null)
                 mergedInstances.Add(instance);
