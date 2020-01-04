@@ -8,6 +8,7 @@ namespace SimpleContainer
 {
     public sealed partial class Container
     {
+        [Obsolete("Don't use a signal bus!")]
         public void RegisterEvent<TEventArgs>()
             where TEventArgs : IEventArgs
         {
@@ -19,6 +20,7 @@ namespace SimpleContainer
             dispatcher.RegisterEvent(this, action);
         }
 
+        [Obsolete("Don't use a signal bus!")]
         public void RegisterEvent<TEventHandler, TEventArgs>()
         {
             Action<TEventHandler, TEventArgs> action = (handler, args) =>
@@ -34,11 +36,13 @@ namespace SimpleContainer
             dispatcher.RegisterEvent(this, action);
         }
 
+        [Obsolete("Don't use a signal bus!")]
         public void RegisterEvent<TEventHandler, TEventArgs>(Action<TEventHandler, TEventArgs> action)
         {
             dispatcher.RegisterEvent(this, action);
         }
 
+        [Obsolete("Don't use a signal bus!")]
         public void SendEvent<TEventArgs>(TEventArgs eventArgs)
         {
             dispatcher.Send(eventArgs);

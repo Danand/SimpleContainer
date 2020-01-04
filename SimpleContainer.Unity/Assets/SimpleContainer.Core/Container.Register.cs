@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using SimpleContainer.Activators;
 using SimpleContainer.Exceptions;
 using SimpleContainer.Factories;
 
@@ -132,7 +131,7 @@ namespace SimpleContainer
         {
             if (bindings.TryGetValue(contractType, out var foundBinding))
             {
-                var resolver = MergeResolver(contractType, scope, instance, resultTypes, args, foundBinding);
+                var resolver = MergeResolver(scope, instance, resultTypes, args, foundBinding);
                 bindings.Remove(contractType);
                 bindings.Add(contractType, resolver);
             }
@@ -145,18 +144,19 @@ namespace SimpleContainer
 
         private Resolver CreateResolver(Scope scope, object instance, Type[] resultTypes, object[] args)
         {
-            var resolver = new Resolver(
+            var resolver = Resolve<Resolver>();
+
+            resolver.Initialize(
                 container:      this,
-                activator:      new ActivatorExpression(),
                 resultTypes:    resultTypes,
                 scope:          scope,
-                instances:      instance == null ? null : new[] {instance},
+                instances:      instance == null ? null : new [] { instance },
                 args:           args);
 
             return resolver;
         }
 
-        private Resolver MergeResolver(Type contractType, Scope scope, object instance, Type[] resultTypes, object[] args, Resolver foundBinding)
+        private Resolver MergeResolver(Scope scope, object instance, Type[] resultTypes, object[] args, Resolver foundBinding)
         {
             var mergedResultTypes = new List<Type>();
 
@@ -165,17 +165,18 @@ namespace SimpleContainer
 
             var mergedInstances = new List<object>();
 
-            mergedInstances.AddRange(foundBinding.Instances.Select(wrapper => wrapper.Value));
+            mergedInstances.AddRange(foundBinding.Instances);
 
             if (instance != null)
                 mergedInstances.Add(instance);
 
-            var resolver = new Resolver(
+            var resolver = Resolve<Resolver>();
+
+            resolver.Initialize(
                 container:      this,
-                activator:      new ActivatorExpression(),
-                resultTypes:    mergedResultTypes.ToArray(),
+                resultTypes:    mergedResultTypes,
                 scope:          scope,
-                instances:      mergedInstances.ToArray(),
+                instances:      mergedInstances,
                 args:           args);
 
             return resolver;

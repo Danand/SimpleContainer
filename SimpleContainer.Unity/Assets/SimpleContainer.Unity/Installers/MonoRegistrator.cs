@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace SimpleContainer.Unity
+namespace SimpleContainer.Unity.Installers
 {
     public sealed class MonoRegistrator : MonoInstaller
     {

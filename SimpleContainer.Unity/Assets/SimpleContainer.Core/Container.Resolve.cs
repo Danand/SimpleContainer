@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using SimpleContainer.Activators;
 using SimpleContainer.Exceptions;
 using SimpleContainer.Interfaces;
 
@@ -56,7 +55,7 @@ namespace SimpleContainer
 
             InitializeInstances(instances);
 
-            return instances.Select(instance => instance.Value).ToArray();
+            return instances.Select(instance => instance).ToArray();
         }
 
         public TContract GetCached<TContract>()
@@ -66,7 +65,7 @@ namespace SimpleContainer
             if (!bindings.TryGetValue(contractType, out var resolver))
                 throw new TypeNotRegisteredException(contractType, GetBindingsString(bindings));
 
-            return (TContract)resolver.GetCachedInstances().First()?.Value;
+            return (TContract)resolver.GetCachedInstances().First();
         }
 
         public TContract[] GetCachedMultiple<TContract>()
@@ -76,7 +75,7 @@ namespace SimpleContainer
             if (!bindings.TryGetValue(contractType, out var resolver))
                 throw new TypeNotRegisteredException(contractType, GetBindingsString(bindings));
 
-            return resolver.GetCachedInstances().Select(wrapper => (TContract)wrapper.Value).ToArray();
+            return resolver.GetCachedInstances().Select(wrapper => (TContract)wrapper).ToArray();
         }
 
         public void InjectInto(object instance)
@@ -87,7 +86,7 @@ namespace SimpleContainer
 
         public IEnumerable<object> GetAllCachedInstances()
         {
-            return GetAllCached().Select(wrapper => wrapper.Value);
+            return GetAllCached().Select(wrapper => wrapper);
         }
 
         internal object[] ResolveMultiple(Type contractType)
@@ -101,10 +100,8 @@ namespace SimpleContainer
 
         private IInstaller ResolveInstaller(Type installerType)
         {
-            IActivator activator = new ActivatorExpression();
-            var constructor = installerType.GetConstructor(new Type[0]);
-
-            return (IInstaller)activator.CreateInstance(constructor, new object[0]);
+            IActivator activator = Resolve<IActivator>();
+            return (IInstaller)activator.CreateInstance(installerType);
         }
     }
 }

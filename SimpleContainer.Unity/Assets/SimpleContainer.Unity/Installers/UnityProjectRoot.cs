@@ -1,11 +1,8 @@
 ﻿using System;
 
-using SimpleContainer.Unity.Events;
-using SimpleContainer.Unity.Installers;
-
 using UnityEngine;
 
-namespace SimpleContainer.Unity
+namespace SimpleContainer.Unity.Installers
 {
     public class UnityProjectRoot : MonoBehaviour
     {
@@ -16,8 +13,6 @@ namespace SimpleContainer.Unity
         async void Awake()
         {
             container = Container.Create();
-
-            container.Install(new MonoCallbacksInstaller());
 
             foreach (MonoInstaller installer in installers)
                 container.Install(installer);
@@ -50,11 +45,6 @@ namespace SimpleContainer.Unity
         void OnDestroy()
         {
             ((IDisposable)container).Dispose();
-        }
-
-        void Update()
-        {
-            container.SendEvent(new UpdateArgs());
         }
     }
 }

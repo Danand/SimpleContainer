@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -12,20 +13,40 @@ namespace SimpleContainer.Activators
 
         private const string ARGS_NAME = "args";
 
+        private readonly IActivator activator;
+        private readonly IConstructorCacher constructorCacher;
         private readonly Dictionary<ConstructorInfo, ExpressionActivator> activators = new Dictionary<ConstructorInfo, ExpressionActivator>();
+
+        public ActivatorExpression(IConstructorCacher constructorCacher)
+        {
+            activator = this;
+            this.constructorCacher = constructorCacher;
+        }
+
+        object IActivator.CreateInstance(Type type)
+        {
+            var constructor = constructorCacher.GetConstructor(type);
+            return activator.CreateInstance(constructor, new object[0]);
+        }
+
+        object IActivator.CreateInstance(Type type, object[] args)
+        {
+            var constructor = constructorCacher.GetConstructor(type);
+            return activator.CreateInstance(constructor, args);
+        }
 
         object IActivator.CreateInstance(ConstructorInfo constructor, object[] args)
         {
-            if (!activators.TryGetValue(constructor, out var activator))
+            if (!activators.TryGetValue(constructor, out var expressionActivator))
             {
-                activator = GetActivator(constructor);
-                activators.Add(constructor, activator);
+                expressionActivator = GetActivator(constructor);
+                activators.Add(constructor, expressionActivator);
             }
 
-            return activator.Invoke(args);
+            return expressionActivator.Invoke(args);
         }
 
-        private static ExpressionActivator GetActivator(ConstructorInfo constructor)
+        private ExpressionActivator GetActivator(ConstructorInfo constructor)
         {
             var parameters = constructor.GetParameters();
             var parameterExpression = Expression.Parameter(typeof(object[]), ARGS_NAME);

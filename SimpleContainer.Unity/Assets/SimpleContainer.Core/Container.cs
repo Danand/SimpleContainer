@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
+using SimpleContainer.Activators;
 using SimpleContainer.Attributes;
 using SimpleContainer.Exceptions;
 using SimpleContainer.Interfaces;
@@ -11,16 +12,19 @@ namespace SimpleContainer
 {
     public sealed partial class Container : IDisposable
     {
-        internal readonly Dictionary<Type, ConstructorInfo> cachedConstructors = new Dictionary<Type, ConstructorInfo>();
-
         internal Type injectAttributeType = typeof(InjectAttribute);
 
         private readonly Dispatcher dispatcher = new Dispatcher();
         private readonly Dictionary<Type, Resolver> bindings = new Dictionary<Type, Resolver>();
+        private readonly HashSet<object> initializedInstances = new HashSet<object>();
+
+        private Container() { }
 
         public static Container Create()
         {
-            return new Container();
+            var container = new Container();
+            container.InstallResolver();
+            return container;
         }
 
         public void Install(params IInstaller[] installers)
@@ -64,7 +68,7 @@ namespace SimpleContainer
                 var cachedInstances = binding.Value.GetCachedInstances();
 
                 foreach (var cachedInstance in cachedInstances)
-                    binding.Value.InjectIntoInstance(cachedInstance.Value);
+                    binding.Value.InjectIntoInstance(cachedInstance);
             }
         }
 
@@ -80,6 +84,7 @@ namespace SimpleContainer
             }
         }
 #else
+
         public void ThrowIfNotResolved()
         {
             var exceptions = new List<Exception>();
@@ -95,9 +100,10 @@ namespace SimpleContainer
             if (exceptions.Count > 0)
                 throw new AggregateException(exceptions);
         }
+
 #endif
 
-        internal IEnumerable<InstanceWrapper> GetAllCached()
+        internal IEnumerable<object> GetAllCached()
         {
             return bindings.SelectMany(resolver => resolver.Value.GetCachedInstances());
         }
@@ -108,14 +114,42 @@ namespace SimpleContainer
                 resolver.DisposeInstances();
         }
 
-        private void InitializeInstances(IEnumerable<InstanceWrapper> instances)
+        private void InstallResolver()
+        {
+            var resolver = CreateInitialResolver();
+
+            resolver.Initialize(
+                container:      this,
+                resultTypes:    new Type[] { typeof(Resolver) }, 
+                scope:          Scope.Transient,
+                instances:      null,
+                args:           new object[0]);
+
+            bindings.Add(typeof(Resolver), resolver);
+
+            resolver.SetMethod(CreateInitialResolver);
+
+            Register<IConstructorCacher, ConstructorCacher>(Scope.Singleton);
+            Register<IActivator, ActivatorReflection>(Scope.Singleton);
+
+            resolver.RemoveMethod();
+        }
+
+        private Resolver CreateInitialResolver()
+        {
+            var constructorCacher = new ConstructorCacher();
+            var resolver = new Resolver(new ActivatorReflection(constructorCacher), constructorCacher);
+
+            return resolver;
+        }
+
+        private void InitializeInstances(IEnumerable<object> instances)
         {
             foreach (var instance in instances)
             {
-                if (instance.Value is IInitializible initializible && !instance.IsInitialized)
+                if (instance is IInitializible initializible && initializedInstances.Add(instance))
                 {
                     initializible.Initialize();
-                    instance.IsInitialized = true;
                 }
             }
         }

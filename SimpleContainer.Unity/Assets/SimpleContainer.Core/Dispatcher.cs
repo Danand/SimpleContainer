@@ -8,6 +8,7 @@ using SimpleContainer.Interfaces;
 
 namespace SimpleContainer
 {
+    [Obsolete("Don't use a signal bus!")]
     public class Dispatcher
     {
         private readonly Dictionary<Type, List<Action<object>>> events = new Dictionary<Type, List<Action<object>>>();
@@ -51,13 +52,13 @@ namespace SimpleContainer
 
             foreach (var cachedInstance in allCachedInstances)
             {
-                if (eventHandlerType.IsInstanceOfType(cachedInstance.Value))
+                if (eventHandlerType.IsInstanceOfType(cachedInstance))
                 {
-                    action.Invoke((TEventHandler)cachedInstance.Value, (TEventArgs)args);
+                    action.Invoke((TEventHandler)cachedInstance, (TEventArgs)args);
                 }
-                else if (eventHandlerAnyType.IsInstanceOfType(cachedInstance.Value))
+                else if (eventHandlerAnyType.IsInstanceOfType(cachedInstance))
                 {
-                    ((IEventHandlerAny)cachedInstance.Value).OnEvent(anyArgs);
+                    ((IEventHandlerAny)cachedInstance).OnEvent(anyArgs);
                 }
             }
         }
