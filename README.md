@@ -22,13 +22,13 @@ Add in `Packages/manifest.json` to `dependencies`:
 4. Run.
 
 ## Best practices
-1. **Do not** use `DontDestroyOnLoad()` to pass container through different scenes. **Use** `LoadSceneMode.Single` for "immortal" objects (e.g. managers, services, etc.), and `LoadSceneMode.Single` for presentation layer (e.g. gameplay, UI, etc.). Quite good alternative is to use separate `UnityProjectRoot` per each loaded scene.
+1. **Do not** use `DontDestroyOnLoad()` to pass container through different scenes. **Use** `LoadSceneMode.Single` for "immortal" objects (e.g. managers, services, etc.), and `LoadSceneMode.Additive` for presentation layer (e.g. gameplay, UI, etc.). Quite good alternative is to use separate `UnityProjectRoot` per each loaded scene.
 2. Prefer constructor injection over any other. Yeah, that means less usage of `MonoBehaviour` dependencies.
 3. **Do not** put dependencies on container. It will be perfect, if you did not have any `using SimpleContainer;` in your needy classes.
 4. **Use** custom `Inject` attribute (example below).
 5. You may move your installers to a separate assembly (via `.asmdef`) for stronger container usage protection.
 
-## Example installer
+## Installer example
 ```csharp
 public sealed class GameInstaller : MonoInstaller
 {
@@ -72,8 +72,11 @@ If you really want to register `MonoBehaviour` from the component of itself, use
 * use separate `feature/your-feature` branch for each pull request
 * run `./generate-metas.sh` after adding/removing any file at `SimpleContainer.Unity/Assets/SimpleContainer.Core`
 * you can work both with Unity and .NET Core solution
+  * `./SimpleContainer.sln` – .NET Core solution, includes NUnit test project
+  * `./SimpleContainer.Unity/` – Unity project folder, contains shared code of core classes and Unity-specific implementation
 
 ## Roadmap
 - [x] Clean up repository
+- [ ] Set up CI
 - [ ] Optimize resolving
-- [ ] Refactor public methods
+- [ ] Refactor container interface
