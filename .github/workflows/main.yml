@@ -1,0 +1,33 @@
+name: Build and test
+
+on:
+  push:
+    branches: 
+      - master
+
+jobs:
+  test:
+    runs-on: macos-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+      
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+        
+    - name: Setup NuGet
+      uses: nuget/setup-nuget@v1
+        
+    - name: Restore NuGet packages
+      shell: sh
+      run: nuget restore SimpleContainer.sln
+      
+    - name: Build
+      shell: sh
+      run: dotnet build SimpleContainer.sln
+      
+    - name: Test
+      shell: sh
+      run: |
+        ~/.nuget/packages/nunit.consolerunner/3.10.0/tools/nunit3-console ./bin/Debug/SimpleContainer.Tests.dll
