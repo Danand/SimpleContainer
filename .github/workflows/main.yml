@@ -30,4 +30,4 @@ jobs:
       
     - name: Test
       shell: cmd
-      run: "./packages/nunit.consolerunner/3.10.0/tools/nunit3-console.exe" "./bin/Debug/SimpleContainer.Tests.dll"
+      run: ./packages/nunit.consolerunner/3.10.0/tools/nunit3-console.exe ./bin/Debug/SimpleContainer.Tests.dll
