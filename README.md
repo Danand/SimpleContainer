@@ -79,6 +79,6 @@ If you really want to register `MonoBehaviour` from the component of itself, use
 
 ## Roadmap
 - [x] Clean up repository
-- [ ] Set up CI
+- [x] Set up CI
 - [ ] Optimize resolving
 - [ ] Refactor container interface
