@@ -30,4 +30,7 @@ jobs:
       
     - name: Test
       shell: sh
-      run: ./run-tests.sh
+      run: |
+        runner="./packages/NUnit.ConsoleRunner.3.10.0/tools/nunit3-console"
+        assembly="./bin/Debug/SimpleContainer.Tests.dll"
+        $runner $assembly
