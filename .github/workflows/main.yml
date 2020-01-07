@@ -33,4 +33,6 @@ jobs:
       run: |
         runner="./packages/NUnit.ConsoleRunner.3.10.0/tools/nunit3-console"
         assembly="./bin/Debug/SimpleContainer.Tests.dll"
+        # Debug test runner folder contents:
+        ls "./packages/NUnit.ConsoleRunner.3.10.0/tools"
         $runner $assembly
