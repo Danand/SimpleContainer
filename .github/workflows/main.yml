@@ -8,7 +8,7 @@ on:
 
 jobs:
   test:
-    runs-on: macos-latest
+    runs-on: windows-latest
 
     steps:
     - name: Checkout
@@ -21,20 +21,13 @@ jobs:
       uses: nuget/setup-nuget@v1
         
     - name: Restore NuGet packages
-      shell: sh
+      shell: cmd
       run: nuget restore SimpleContainer.sln
       
     - name: Build
-      shell: sh
+      shell: cmd
       run: dotnet build SimpleContainer.sln
       
     - name: Test
-      shell: sh
-      run: |
-        runner="./packages/nunit.consolerunner/3.10.0/tools/nunit3-console"
-        assembly="./bin/Debug/SimpleContainer.Tests.dll"
-        # Debug solution folder contents:
-        ls -al
-        # Debug test runner folder contents:
-        ls "./packages/nunit.consolerunner/3.10.0/tools"
-        $runner $assembly
+      shell: cmd
+      run: "./packages/nunit.consolerunner/3.10.0/tools/nunit3-console.exe" "./bin/Debug/SimpleContainer.Tests.dll"
