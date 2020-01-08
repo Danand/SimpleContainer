@@ -7,8 +7,8 @@
     <Authors>Danand</Authors>
     <Product>SimpleContainer</Product>
     <Description>Simple DI container with fair constructor injection, factory resolving and binding events.</Description>
-    <PackageProjectUrl>https://gitlab.com/Danand/SimpleContainer.git</PackageProjectUrl>
-    <RepositoryUrl>https://gitlab.com/Danand/SimpleContainer.git</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/Danand/SimpleContainer.git</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/Danand/SimpleContainer.git</RepositoryUrl>
     <RepositoryType>Git</RepositoryType>
     <PackageTags>DI, IoC</PackageTags>
     <NeutralLanguage>en</NeutralLanguage>
