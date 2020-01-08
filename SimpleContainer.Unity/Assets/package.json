@@ -10,8 +10,5 @@
     "type": "git",
     "url": "https://gitlab.com/Danand/SimpleContainer.git"
   },
-  "keywords": [
-    "DI", 
-    "IoC"
-  ], 
+  "keywords": [ "DI", "IoC" ]
 }
