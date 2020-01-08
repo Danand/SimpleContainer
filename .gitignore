@@ -339,3 +339,6 @@ ASALocalRun/
 *.pidb
 *.booproj
 *.pidb.meta
+
+# Project specific
+/SimpleContainer.Unity/*.csproj
