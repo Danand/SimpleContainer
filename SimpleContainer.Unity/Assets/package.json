@@ -1,11 +1,16 @@
 {
   "name": "com.danand.simplecontainer",
+  "category": "DI", 
   "displayName": "Simple Container",
   "description": "Minimal and proper IoC-container for Unity.",
-  "version": "0.6.8",
+  "version": "0.6.9",
   "unity": "2019.3",
   "repository": {
     "type": "git",
     "url": "https://gitlab.com/Danand/SimpleContainer.git"
-  }
+  },
+  "keywords": [
+    "DI", 
+    "IoC"
+  ], 
 }
