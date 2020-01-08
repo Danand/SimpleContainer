@@ -23,6 +23,9 @@ mv_to_prefix README.md "${prefix}"
 mv_to_prefix LICENSE.md "${prefix}"
 mv_to_prefix CHANGELOG.md "${prefix}"
 
+git rm --cached "SimpleContainer.Unity/Assets/SimpleContainer/SimpleContainer.Core.csproj"
+git rm --cached "SimpleContainer.Unity/Assets/SimpleContainer/SimpleContainer.Core.csproj.meta"
+
 git commit -m "Add package details for ${tag}"
 
 git subtree split --prefix="${prefix}" ${tag} --squash -b ${release_branch}
