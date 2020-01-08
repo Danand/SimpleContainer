@@ -4,7 +4,16 @@
 
 # FUNCTIONS:
 mv_to_prefix () {
-  mv "$1" "$2" && git add "$2/$1"
+  git mv "$1" "$2" 
+}
+
+reveal_meta () {
+  placeholder_meta="$2/.$1.meta"
+  real_meta="$2/$1.meta"
+  
+  if [[ -f "${placeholder_meta}" ]]; then
+    git mv "${placeholder_meta}" "${real_meta}"
+  fi
 }
 
 # EXECUTION:
@@ -20,8 +29,11 @@ source_branch=$(git rev-parse --abbrev-ref HEAD)
 release_branch="release-package-unity/${tag}"
 
 mv_to_prefix README.md "${prefix}"
+reveal_meta README.md "${prefix}"
 mv_to_prefix LICENSE.md "${prefix}"
+reveal_meta LICENSE.md "${prefix}"
 mv_to_prefix CHANGELOG.md "${prefix}"
+reveal_meta CHANGELOG.md "${prefix}"
 
 git rm --cached "SimpleContainer.Unity/Assets/SimpleContainer/SimpleContainer.Core.csproj"
 git rm --cached "SimpleContainer.Unity/Assets/SimpleContainer/SimpleContainer.Core.csproj.meta"
