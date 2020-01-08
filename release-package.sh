@@ -4,7 +4,7 @@
 
 # FUNCTIONS:
 mv_to_prefix () {
-  mv README.md "$1" && git add "$1"
+  mv "$1" "$2" && git add "$2/$1"
 }
 
 # EXECUTION:
@@ -33,3 +33,4 @@ git tag ${package_tag}
 git push origin -u ${release_branch}
 git push origin ${package_tag}
 git checkout ${source_branch} --force
+git reset --hard HEAD~1
