@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28307.960
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleContainer.Core", "SimpleContainer.Unity\Assets\SimpleContainer.Core\SimpleContainer.Core.csproj", "{A760CBE5-8716-4764-832C-521A945BB2A1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleContainer.Core", "SimpleContainer.Unity\Assets\SimpleContainer\SimpleContainer.Core.csproj", "{A760CBE5-8716-4764-832C-521A945BB2A1}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleContainer.Tests", "SimpleContainer.Tests\SimpleContainer.Tests.csproj", "{388AAFF7-53A3-4C9B-BADE-3D55F6779DBE}"
 	ProjectSection(ProjectDependencies) = postProject

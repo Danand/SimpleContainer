@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SimpleContainer.Unity\Assets\SimpleContainer.Core\SimpleContainer.Core.csproj" />
+    <ProjectReference Include="..\SimpleContainer.Unity\Assets\SimpleContainer\SimpleContainer.Core.csproj" />
   </ItemGroup>
 
 </Project>
