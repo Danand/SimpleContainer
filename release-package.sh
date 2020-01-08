@@ -8,6 +8,12 @@ mv_to_prefix () {
 }
 
 # EXECUTION:
+if [[ "$2" == "--local" ]]; then
+  local=true
+else
+  local=false
+fi
+
 tag="$1"
 prefix="SimpleContainer.Unity/Assets"
 source_branch=$(git rev-parse --abbrev-ref HEAD)
@@ -30,7 +36,11 @@ git commit --amend -m "Release Unity package ${tag}"
 package_tag="${tag}-package-unity"
 
 git tag ${package_tag}
-git push origin -u ${release_branch}
-git push origin ${package_tag}
+
+if ! $local; then
+  git push origin -u ${release_branch}
+  git push origin ${package_tag}
+fi
+
 git checkout ${source_branch} --force
 git reset --hard HEAD~1
