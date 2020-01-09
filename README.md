@@ -8,19 +8,25 @@ The point is the usage of DI-container in a proper way.
 ### From remote repository
 Add in `Packages/manifest.json` to `dependencies`:
 ```javascript
-"com.danand.simplecontainer": "https://github.com/Danand/SimpleContainer.git#0.6.9-package-unity"
+"com.danand.simplecontainer": "https://github.com/Danand/SimpleContainer.git#0.6.9-package-unity",
 ```
 
-### From local repository
-Add in `Packages/manifest.json` to `dependencies`:
-```javascript
-"com.danand.simplecontainer": "file:D:/repos/SimpleContainer/SimpleContainer.Unity/Assets"
-```
+<details>
+	<summary>From local repository</summary>
+	
+	"com.danand.simplecontainer": "file:///D/repos/SimpleContainer/.git#0.6.9-package-unity",
+</details>
+
+<details>
+	<summary>From local working copy</summary>
+	
+	"com.danand.simplecontainer": "file:D:/repos/SimpleContainer/SimpleContainer.Unity/Assets",
+</details>
 
 ## How to use
 1. Add `UnityProjectRoot` component to any object in hierarchy.
-2. Implement your own `MonoInstaller` and add it as component too.
-3. Reference `MonoInstaller` to `UnityProjectRoot`.
+2. Implement your own `MonoInstaller` and add it as component too ([example below](#installer-example)).
+3. Reference `MonoInstaller` to `UnityProjectRoot` via inspector.
 4. Run.
 
 ## Best practices
@@ -29,6 +35,7 @@ Add in `Packages/manifest.json` to `dependencies`:
 3. **Do not** put dependencies on container. It will be perfect, if you did not have any `using SimpleContainer;` in your needy classes.
 4. **Use** custom `Inject` attribute (example below).
 5. You may move your installers to a separate assembly (via `.asmdef`) for stronger container usage protection.
+6. If you really want to inject into `MonoBehaviour` without explicit registration – use `MonoRegistrator`.
 
 ## Installer example
 ```csharp
@@ -68,7 +75,6 @@ public sealed class GameInstaller : MonoInstaller
     }
 }
 ```
-If you really want to register `MonoBehaviour` from the component of itself, use `MonoRegistrator`.
 
 ## How to contribute
 * use separate `feature/your-feature` branch for each pull request
