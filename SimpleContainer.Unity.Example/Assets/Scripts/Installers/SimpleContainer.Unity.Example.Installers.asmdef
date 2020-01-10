@@ -1,0 +1,16 @@
+{
+    "name": "SimpleContainer.Unity.Example.Installers",
+    "references": [
+        "GUID:63998e837d4540742963243e626d5985",
+        "GUID:442529758223e404dbdf03ab6fac5f53",
+        "GUID:9e8104e04ae77d946b71087a6c576cbd"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": []
+}
