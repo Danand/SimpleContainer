@@ -8,8 +8,8 @@ namespace SimpleContainer.Unity.Example.Dependent.CultureInfoProviders
     {
         string ICultureInfoFormatter.FormatDateTime(DateTime dateTime)
         {
-            TimeSpan span = (DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc));
-            return span.TotalSeconds.ToString("N0");
+            TimeSpan timeSpan = dateTime - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            return timeSpan.TotalSeconds.ToString("N0");
         }
     }
 }

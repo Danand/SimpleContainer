@@ -9,7 +9,7 @@ namespace SimpleContainer.Unity.Example.Dependent.CultureInfoProviders
     {
         string ICultureInfoFormatter.FormatDateTime(DateTime dateTime)
         {
-            return DateTime.Now.ToString("F", new CultureInfo("ja-JP"));
+            return dateTime.ToString("F", new CultureInfo("ja-JP"));
         }
     }
 }
