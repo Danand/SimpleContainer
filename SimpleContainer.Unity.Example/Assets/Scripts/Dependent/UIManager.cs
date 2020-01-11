@@ -10,6 +10,8 @@ using UnityEngine.UI;
 using SimpleContainer.Unity.Example.Dependent.Interfaces;
 using SimpleContainer.Unity.Example.Extensions;
 
+using ILogger = SimpleContainer.Unity.Example.Dependent.Interfaces.ILogger;
+
 namespace SimpleContainer.Unity.Example.Dependent
 {
     public sealed class UIManager : MonoBehaviour
@@ -26,6 +28,9 @@ namespace SimpleContainer.Unity.Example.Dependent
 
         [Inject]
         public ICultureInfoFormatter CultureInfoFormatter { get; set; }
+
+        [Inject]
+        public ILogger Logger { get; set; }
 
         private DateTime DateTimeNow => DateTime.UtcNow;
 
@@ -59,6 +64,7 @@ namespace SimpleContainer.Unity.Example.Dependent
 
         private void OnDropdownValueChanged(int value)
         {
+            Logger.LogInfo($"Timezone index changed to {value}");
             timeZoneIndex = value;
             ShowFormattedTime(DateTime.UtcNow);
         }

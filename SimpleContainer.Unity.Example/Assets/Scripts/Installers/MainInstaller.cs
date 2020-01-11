@@ -1,10 +1,12 @@
 ﻿using System.Threading.Tasks;
 
+using SimpleContainer.Unity.Installers;
+
 using SimpleContainer.Unity.Example.Dependent;
 using SimpleContainer.Unity.Example.Dependent.CultureInfoProviders;
 using SimpleContainer.Unity.Example.Dependent.Interfaces;
+using SimpleContainer.Unity.Example.Dependent.Loggers;
 using SimpleContainer.Unity.Example.Dependent.TimeZoneProviders;
-using SimpleContainer.Unity.Installers;
 
 namespace SimpleContainer.Unity.Example.Installers
 {
@@ -24,6 +26,7 @@ namespace SimpleContainer.Unity.Example.Installers
             container.Register<ITimeZoneProvider, TimeZoneProviderBLDRN>(Scope.Singleton);
             container.Register<ITimeZoneProvider, TimeZoneProviderBTTF>(Scope.Singleton);
 
+            container.Register<ILogger, LoggerDefault>(Scope.Singleton);
             container.Register<ICultureInfoFormatter, CultureInfoFormatterJP>(Scope.Singleton);
         }
 
