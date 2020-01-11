@@ -34,9 +34,10 @@ Add in `Packages/manifest.json` to `dependencies`:
 
 ## How to use
 1. Add `UnityProjectRoot` component to any object in hierarchy.
-2. Implement your own `MonoInstaller` and add it as component too ([example below](#installer-example)).
-3. Reference `MonoInstaller` to `UnityProjectRoot` via inspector.
-4. Run.
+2. Reference your installer assembly to a `SimpleContainer.Core` and `SimpleContainer.Unity` assemblies via Assembly Definitions ([what's this](https://docs.unity3d.com/Manual/ScriptCompilationAssemblyDefinitionFiles.html)).
+3. Implement your own `MonoInstaller` and add it as component too ([example below](#installer-example)).
+4. Reference `MonoInstaller` to `UnityProjectRoot` via inspector.
+5. Run.
 
 ## Best practices
 1. **Do not** use `DontDestroyOnLoad()` to pass container through different scenes. **Use** `LoadSceneMode.Single` for "immortal" objects (e.g. managers, services, etc.), and `LoadSceneMode.Additive` for presentation layer (e.g. gameplay, UI, etc.). Quite good alternative is to use separate `UnityProjectRoot` per each loaded scene.
@@ -46,44 +47,8 @@ Add in `Packages/manifest.json` to `dependencies`:
 5. You may move your installers to a separate assembly (via `.asmdef`) for stronger container usage protection.
 6. If you really want to inject into `MonoBehaviour` without explicit registration – use `MonoRegistrator`.
 
-## Installer example
-```csharp
-public sealed class GameInstaller : MonoInstaller
-{
-    public SettingsRepositoryAsset settingsRepository;
-    public MainMenuLayout mainMenuLayout;
-    public DailyGoalLayout dailyGoalLayout;
-
-    public override void Install(Container container)
-    {
-	// CUSTOM ATTRIBUTE:
-	container.RegisterAttribute<Project.InjectAttribute>();
-	
-        // SETTINGS INSTANCES:
-        container.Register<ISettingsRepository>(Scope.Singleton, settingsRepository);
-
-        // UI LAYOUT REFERENCES:
-        container.Register(Scope.Singleton, mainMenuLayout);
-        container.Register(Scope.Singleton, dailyGoalLayout);
-
-        // SINGLETONES:
-        container.Register<ILocalizationRepository, LocalizationRepositoryFromFile>(Scope.Singleton);
-        container.Register<ITimeProvider, TimeProviderSystemJST>(Scope.Singleton);
-    }
-
-    public override Task ResolveAsync(Container container)
-    {
-        // NON-LAZY RESOLVING (order-sensitive):
-        container.Resolve<ILocalizationRepository>();
-        return Task.CompletedTask;
-    }
-
-    public override async Task AfterResolveAsync(Container container)
-    {
-        // Do initialization stuff or something.
-    }
-}
-```
+## Example
+See [example project](SimpleContainer.Unity.Example) included into this repository. Also you may open it in Unity and run.
 
 ## How to contribute
 * use separate `feature/your-feature` branch for each pull request
