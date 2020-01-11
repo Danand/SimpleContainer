@@ -34,8 +34,8 @@ Add in `Packages/manifest.json` to `dependencies`:
 
 ## How to use
 1. Add `UnityProjectRoot` component to any object in hierarchy.
-2. Reference your installer assembly to a `SimpleContainer.Core` and `SimpleContainer.Unity` assemblies via Assembly Definitions ([what's this](https://docs.unity3d.com/Manual/ScriptCompilationAssemblyDefinitionFiles.html)).
-3. Implement your own `MonoInstaller` and add it as component too ([example below](#installer-example)).
+2. Reference `SimpleContainer.Core` and `SimpleContainer.Unity` assemblies to your installer assembly via [Assembly Definitions](https://docs.unity3d.com/Manual/ScriptCompilationAssemblyDefinitionFiles.html)).
+3. Implement your own `MonoInstaller` and add it as component too ([example project below](#example)).
 4. Reference `MonoInstaller` to `UnityProjectRoot` via inspector.
 5. Run.
 
@@ -48,7 +48,7 @@ Add in `Packages/manifest.json` to `dependencies`:
 6. If you really want to inject into `MonoBehaviour` without explicit registration – use `MonoRegistrator`.
 
 ## Example
-See [example project](SimpleContainer.Unity.Example) included into this repository. Also you may open it in Unity and run.
+See [example project](SimpleContainer.Unity.Example) included into this repository. Also you may open it with Unity and run.
 
 ## How to contribute
 * use separate `feature/your-feature` branch for each pull request
