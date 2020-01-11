@@ -2,11 +2,13 @@
 
 using System;
 using System.Linq;
+using System.Threading;
 
 using UnityEngine;
 using UnityEngine.UI;
 
 using SimpleContainer.Unity.Example.Dependent.Interfaces;
+using SimpleContainer.Unity.Example.Extensions;
 
 namespace SimpleContainer.Unity.Example.Dependent
 {
@@ -15,13 +17,17 @@ namespace SimpleContainer.Unity.Example.Dependent
         public Dropdown dropdownImplementation;
         public Text labelTime;
 
-        private int implementationIndex;
+        private readonly CancellationTokenSource cts = new CancellationTokenSource();
+
+        private int timeZoneIndex;
 
         [Inject]
         public ITimeZoneProvider[] TimeZoneProviders { get; set; }
 
         [Inject]
         public ICultureInfoFormatter CultureInfoFormatter { get; set; }
+
+        private DateTime DateTimeNow => DateTime.UtcNow;
 
         void OnEnable()
         {
@@ -31,6 +37,11 @@ namespace SimpleContainer.Unity.Example.Dependent
         void OnDisable()
         {
             dropdownImplementation.onValueChanged.RemoveListener(OnDropdownValueChanged);
+        }
+
+        void OnDestroy()
+        {
+            cts.Cancel();
         }
 
         /// <summary>
@@ -43,21 +54,21 @@ namespace SimpleContainer.Unity.Example.Dependent
             dropdownImplementation.ClearOptions();
             dropdownImplementation.AddOptions(options);
 
-            OnClickReload();
-        }
-
-        public void OnClickReload()
-        {
-            var dateTime = DateTime.UtcNow;
-            var movedDateTime = TimeZoneProviders[implementationIndex].MoveDateTime(dateTime);
-            var dateTimeString = CultureInfoFormatter.FormatDateTime(movedDateTime);
-
-            labelTime.text = dateTimeString;
+            _ = this.ReactAsync(manager => manager.DateTimeNow, ShowFormattedTime, cts);
         }
 
         private void OnDropdownValueChanged(int value)
         {
-            implementationIndex = value;
+            timeZoneIndex = value;
+            ShowFormattedTime(DateTime.UtcNow);
+        }
+
+        private void ShowFormattedTime(DateTime dateTime)
+        {
+            var movedDateTime = TimeZoneProviders[timeZoneIndex].MoveDateTime(dateTime);
+            var dateTimeString = CultureInfoFormatter.FormatDateTime(movedDateTime);
+
+            labelTime.text = dateTimeString;
         }
     }
 }
