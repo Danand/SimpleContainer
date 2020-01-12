@@ -1,5 +1,6 @@
 # SimpleContainer
 ![](https://github.com/danand/SimpleContainer/workflows/Build%20and%20test/badge.svg)
+[![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/danand/SimpleContainer/blob/master/LICENSE.md)
 
 The point is the usage of DI-container in a proper way.
 
