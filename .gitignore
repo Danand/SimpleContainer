@@ -343,3 +343,5 @@ ASALocalRun/
 # Project specific
 /SimpleContainer.Unity/*.csproj
 /SimpleContainer.Unity/*.sln
+/SimpleContainer.Unity.Example/*.csproj
+/SimpleContainer.Unity.Example/*.sln
