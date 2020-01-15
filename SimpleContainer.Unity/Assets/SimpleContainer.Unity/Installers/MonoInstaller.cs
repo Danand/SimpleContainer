@@ -10,8 +10,6 @@ namespace SimpleContainer.Unity.Installers
     {
         public abstract void Install(Container container);
 
-        public virtual void Resolve(Container container) { }
-
         public virtual Task ResolveAsync(Container container)
         {
             return Task.CompletedTask;
