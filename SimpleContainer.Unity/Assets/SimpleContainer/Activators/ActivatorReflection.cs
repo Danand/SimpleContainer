@@ -5,7 +5,7 @@ using SimpleContainer.Interfaces;
 
 namespace SimpleContainer.Activators
 {
-    internal class ActivatorReflection : IActivator
+    internal sealed class ActivatorReflection : IActivator
     {
         private readonly IConstructorCacher constructorCacher;
 

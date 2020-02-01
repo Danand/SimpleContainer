@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace SimpleContainer
 {
-    internal class ArrayArgumentConverter
+    internal sealed class ArrayArgumentConverter
     {
         public object[] Convert(Type contractType, object[] args)
         {
