@@ -51,5 +51,17 @@ namespace SimpleContainer.Tests
             Assert.AreEqual(3, reds.Length);
             CollectionAssert.AllItemsAreUnique(reds);
         }
+
+        [Test]
+        public void Register_String_Singleton_NotThrow()
+        {
+            var container = Container.Create();
+
+            container.Register(nameof(IColor), nameof(ColorRed), Scope.Singleton);
+
+            container.ThrowIfNotResolved();
+
+            Assert.Pass();
+        }
     }
 }
