@@ -28,6 +28,19 @@ prefix="SimpleContainer.Unity/Assets"
 source_branch=$(git rev-parse --abbrev-ref HEAD)
 release_branch="release-package-unity/${tag}"
 
+git tag ${tag} --force
+
+tag_previous=$(git tag | grep -v "package" | tail -n 2 | head -n 1)
+source ./get-changelog.sh
+printf "\n" >> CHANGELOG.md
+get_heading ${tag} >> CHANGELOG.md
+get_body ${tag_previous} ${tag} >> CHANGELOG.md
+printf "\n" >> CHANGELOG.md
+
+git add CHANGELOG.md
+git commit -m "Update CHANGELOG.md with version ${tag}"
+git tag ${tag} --force
+
 mv_to_prefix README.md "${prefix}"
 reveal_meta README.md "${prefix}"
 mv_to_prefix LICENSE.md "${prefix}"
