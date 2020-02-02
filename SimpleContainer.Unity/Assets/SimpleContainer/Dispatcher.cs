@@ -9,7 +9,7 @@ using SimpleContainer.Interfaces;
 namespace SimpleContainer
 {
     [Obsolete("Don't use a signal bus!")]
-    public class Dispatcher
+    public sealed class Dispatcher
     {
         private readonly Dictionary<Type, List<Action<object>>> events = new Dictionary<Type, List<Action<object>>>();
 

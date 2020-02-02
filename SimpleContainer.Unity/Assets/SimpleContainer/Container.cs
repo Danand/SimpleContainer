@@ -129,8 +129,7 @@ namespace SimpleContainer
 
             resolver.SetMethod(CreateInitialResolver);
 
-            Register<IConstructorCacher, ConstructorCacher>(Scope.Singleton);
-            Register<IActivator, ActivatorReflection>(Scope.Singleton);
+            Install(new InternalInstaller());
 
             resolver.RemoveMethod();
         }

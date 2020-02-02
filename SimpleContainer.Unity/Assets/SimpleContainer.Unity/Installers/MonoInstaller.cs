@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 
 using SimpleContainer.Interfaces;
+using SimpleContainer.Unity.Roots;
 
 using UnityEngine;
 
@@ -29,7 +30,7 @@ namespace SimpleContainer.Unity.Installers
         }
 
         /// <summary>
-        /// The point where all resolvings at <see cref="UnityProjectRoot.Awake()"/> is guaranteed.
+        /// The point where all resolvings at <see cref="UnityProjectRootBase.Awake()"/> is guaranteed.
         /// </summary>
         public virtual Task AfterResolveAsync(Container container)
         {
