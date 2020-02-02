@@ -58,7 +58,7 @@ namespace SimpleContainer.Tests
             var container = Container.Create();
 
             container.Register(nameof(IColor), nameof(ColorRed), Scope.Singleton);
-
+            container.Resolve<IColor>();
             container.ThrowIfNotResolved();
 
             Assert.Pass();

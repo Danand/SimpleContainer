@@ -10,7 +10,7 @@ namespace SimpleContainer
         {
             container.Register<IConstructorCacher, ConstructorCacher>(Scope.Singleton);
             container.Register<IActivator, ActivatorReflection>(Scope.Singleton);
-            container.Register<ITypeLoader, TypeLoaderReflection>(Scope.Singleton);
+            container.Register<ITypeLoader, TypeLoaderReflection>(Scope.Singleton, new TypeLoaderReflection());
         }
     }
 }
