@@ -4,6 +4,8 @@
 
 tag="$1"
 
+cd "$(dirname "$0")/.."
+
 if [[ "$2" == "--local" ]]; then
   local=true
 else

@@ -28,10 +28,12 @@ prefix="SimpleContainer.Unity/Assets"
 source_branch=$(git rev-parse --abbrev-ref HEAD)
 release_branch="release-package-unity/${tag}"
 
+cd "$(dirname "$0")/.."
+
 git tag ${tag} --force
 
 tag_previous=$(git tag | grep -v "package" | tail -n 2 | head -n 1)
-source ./get-changelog.sh
+source ./scripts/get-changelog.sh
 printf "\n" >> CHANGELOG.md
 get_heading ${tag} >> CHANGELOG.md
 get_body ${tag_previous} ${tag} >> CHANGELOG.md
