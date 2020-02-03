@@ -189,7 +189,6 @@ namespace SimpleContainer.Tests
             Assert.AreEqual(food, cached.Food);
         }
 
-
         [Test]
         public void Resolve_IntoRegistered_Transient()
         {
