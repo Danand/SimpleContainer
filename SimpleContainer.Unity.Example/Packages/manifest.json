@@ -44,8 +44,8 @@
   },
   "lock": {
     "com.danand.simplecontainer": {
-      "hash": "ac8659fd84f0a265d50c5c61459feea9291fb440",
-      "revision": "0.6.9-package-unity"
+      "hash": "be5d22f81e0c050b33982ae7b3ad40122de73d8e",
+      "revision": "0.7.0-package-unity"
     }
   }
 }
