@@ -53,7 +53,7 @@ See [example project](SimpleContainer.Unity.Example) included into this reposito
 
 ## How to contribute
 * use separate `feature/your-feature` branch for each pull request
-* run `./generate-metas.sh` after adding/removing any file at `SimpleContainer.Unity/Assets/SimpleContainer`
+* run `./scripts/generate-metas.sh` after adding/removing any file at `SimpleContainer.Unity/Assets/SimpleContainer`
 * .NET Core solution consists of:
   * `SimpleContainer.Unity\Assets\SimpleContainer\SimpleContainer.Core.csproj` – core classes
   * `SimpleContainer.Tests\SimpleContainer.Tests.csproj` - .NET Core project tests
