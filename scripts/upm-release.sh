@@ -38,6 +38,7 @@ tag_previous=$(git tag | grep -v "package" | tail -n 2 | head -n 1)
 source ./scripts/get-changelog.sh
 printf "\n" >> CHANGELOG.md
 get_heading ${tag} >> CHANGELOG.md
+printf "\n" >> CHANGELOG.md
 get_body ${tag_previous} ${tag} >> CHANGELOG.md
 printf "\n" >> CHANGELOG.md
 
