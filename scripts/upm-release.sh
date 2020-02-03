@@ -17,6 +17,8 @@ reveal_meta () {
 }
 
 # EXECUTION:
+set -e
+
 if [[ "$2" == "--local" ]]; then
   local=true
 else
