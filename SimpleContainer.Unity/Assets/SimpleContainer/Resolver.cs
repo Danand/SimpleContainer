@@ -225,7 +225,7 @@ namespace SimpleContainer
         {
             var type = instance.GetType();
             var fields = type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
-            var injectableFields = fields.Where(field => field.GetCustomAttributes(container.injectAttributeType).Any());
+            var injectableFields = fields.Where(field => container.injectAttributeTypes.Any(injectAttributeType => field.GetCustomAttributes(injectAttributeType).Any()));
 
             foreach (var field in injectableFields)
             {
@@ -245,7 +245,7 @@ namespace SimpleContainer
         {
             var type = instance.GetType();
             var properties = type.GetProperties(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
-            var injectableProperties = properties.Where(property => property.GetCustomAttributes(container.injectAttributeType).Any());
+            var injectableProperties = properties.Where(property => container.injectAttributeTypes.Any(injectAttributeType => property.GetCustomAttributes(injectAttributeType).Any()));
 
             foreach (var property in injectableProperties)
             {
@@ -265,7 +265,7 @@ namespace SimpleContainer
         {
             var type = instance.GetType();
             var methods = type.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
-            var injectableMethods = methods.Where(method => method.GetCustomAttributes(container.injectAttributeType).Any());
+            var injectableMethods = methods.Where(method => container.injectAttributeTypes.Any(injectAttributeType => method.GetCustomAttributes(injectAttributeType).Any()));
 
             foreach (var method in injectableMethods)
             {

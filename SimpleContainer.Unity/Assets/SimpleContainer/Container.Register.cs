@@ -119,7 +119,7 @@ namespace SimpleContainer
         public void RegisterAttribute<TInjectAttribute>()
             where TInjectAttribute : Attribute
         {
-            injectAttributeType = typeof(TInjectAttribute);
+            injectAttributeTypes.Add(typeof(TInjectAttribute));
         }
 
         public bool CheckRegistered<TContract>()

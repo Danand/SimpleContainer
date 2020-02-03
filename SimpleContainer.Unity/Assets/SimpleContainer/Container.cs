@@ -12,7 +12,7 @@ namespace SimpleContainer
 {
     public sealed partial class Container : IDisposable
     {
-        internal Type injectAttributeType = typeof(InjectAttribute);
+        internal readonly HashSet<Type> injectAttributeTypes = new HashSet<Type> { typeof(InjectAttribute) };
 
         private readonly Dispatcher dispatcher = new Dispatcher();
         private readonly Dictionary<Type, Resolver> bindings = new Dictionary<Type, Resolver>();
@@ -58,7 +58,8 @@ namespace SimpleContainer
             foreach (var binding in other.bindings)
                 bindings[binding.Key] = binding.Value.CopyToContainer(this);
 
-            injectAttributeType = other.injectAttributeType;
+            foreach (var injectAttributeType in other.injectAttributeTypes )
+                injectAttributeTypes.Add(injectAttributeType);
         }
 
         public void InjectIntoRegistered()

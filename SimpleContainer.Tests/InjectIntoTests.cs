@@ -68,6 +68,24 @@ namespace SimpleContainer.Tests
         }
 
         [Test]
+        public void Inject_IntoProperty_Public_Attributes()
+        {
+            var container = Container.Create();
+            
+            container.RegisterAttribute<InjectAAttribute>();
+            container.RegisterAttribute<InjectBAttribute>();
+
+            container.Register<MahouShoujo>(Scope.Singleton);
+            container.Register<IMagic, MagicPink>(Scope.Singleton);
+            container.Register<IMagic, MagicDark>(Scope.Singleton);
+
+            var actual = container.Resolve<MahouShoujo>();
+
+            Assert.NotNull(actual.MagicFirst);
+            Assert.NotNull(actual.MagicSecond);
+        }
+
+        [Test]
         public void Inject_IntoProperty_Public_Multiple()
         {
             var container = Container.Create();
