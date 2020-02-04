@@ -6,3 +6,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [0.6.9] - 2020-01-08
 Initial published release.
+
+## [0.7.0] - 2020-02-04
+* Add example project
+* Add `TypeNotResolvedException` explanation to message
+* Remove redundant method `Resolve()`
+* Implement late binding
+* Add multiple `Inject` attributes registration
+* Add message generation for pull requests
+
+
+## [0.7.0] - 2020-02-04
+* Add example project
+* Add `TypeNotResolvedException` explanation to message
+* Remove redundant method `Resolve()`
+* Implement late binding
+* Add multiple `Inject` attributes registration
+* Add message generation for pull requests
+

@@ -7,7 +7,7 @@ using SimpleContainer.Interfaces;
 
 namespace SimpleContainer.Activators
 {
-    internal class ActivatorExpression : IActivator
+    internal sealed class ActivatorExpression : IActivator
     {
         private delegate object ExpressionActivator(params object[] args);
 

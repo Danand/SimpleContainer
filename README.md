@@ -9,14 +9,14 @@ The point is the usage of DI-container in a proper way.
 ### From remote repository
 Add in `Packages/manifest.json` to `dependencies`:
 ```javascript
-"com.danand.simplecontainer": "https://github.com/Danand/SimpleContainer.git#0.6.9-package-unity",
+"com.danand.simplecontainer": "https://github.com/Danand/SimpleContainer.git#0.7.0-package-unity",
 ```
 
 ### From local path
 <details>
 	<summary>From local repository</summary>
 	
-	"com.danand.simplecontainer": "file:///D/repos/SimpleContainer/.git#0.6.9-package-unity",
+	"com.danand.simplecontainer": "file:///D/repos/SimpleContainer/.git#0.7.0-package-unity",
 </details>
 
 <details>
@@ -52,16 +52,7 @@ Add in `Packages/manifest.json` to `dependencies`:
 See [example project](SimpleContainer.Unity.Example) included into this repository. Also you may open it with Unity and run.
 
 ## How to contribute
-* use separate `feature/your-feature` branch for each pull request
-* run `./generate-metas.sh` after adding/removing any file at `SimpleContainer.Unity/Assets/SimpleContainer`
-* .NET Core solution consists of:
-  * `SimpleContainer.Unity\Assets\SimpleContainer\SimpleContainer.Core.csproj` – core classes
-  * `SimpleContainer.Tests\SimpleContainer.Tests.csproj` - .NET Core project tests
-* notice that core classes are shared both by Unity and .NET Core project
-* you can work both with Unity and .NET Core solution
-  * `./SimpleContainer.sln` – .NET Core solution, includes NUnit test project
-  * `./SimpleContainer.Unity/` – Unity project folder, contains shared code of core classes and Unity-specific implementation
-* use local folder or local repository for development and debugging the UPM package ([how](#from-local-path))
+See [contribution note](CONTRIBUTING.md).
 
 ## Roadmap
 - [x] Clean up repository

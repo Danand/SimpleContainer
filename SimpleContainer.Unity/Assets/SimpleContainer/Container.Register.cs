@@ -4,6 +4,7 @@ using System.Linq;
 
 using SimpleContainer.Exceptions;
 using SimpleContainer.Factories;
+using SimpleContainer.Interfaces;
 
 namespace SimpleContainer
 {
@@ -79,6 +80,15 @@ namespace SimpleContainer
             Register(contractType, resultType, scope, null);
         }
 
+        public void Register(string contractTypeName, string resultTypeName, Scope scope)
+        {
+            var typeLoader = Resolve<ITypeLoader>();
+            var contractType = typeLoader.Load(contractTypeName);
+            var resultType = typeLoader.Load(resultTypeName);
+
+            Register(contractType, resultType, scope, null);
+        }
+
         public void Register(
             Type            contractType,
             Type            resultType,
@@ -109,7 +119,7 @@ namespace SimpleContainer
         public void RegisterAttribute<TInjectAttribute>()
             where TInjectAttribute : Attribute
         {
-            injectAttributeType = typeof(TInjectAttribute);
+            injectAttributeTypes.Add(typeof(TInjectAttribute));
         }
 
         public bool CheckRegistered<TContract>()

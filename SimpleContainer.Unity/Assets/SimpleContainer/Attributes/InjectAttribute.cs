@@ -2,5 +2,5 @@
 
 namespace SimpleContainer.Attributes
 {
-    public class InjectAttribute : Attribute { }
+    public sealed class InjectAttribute : Attribute { }
 }

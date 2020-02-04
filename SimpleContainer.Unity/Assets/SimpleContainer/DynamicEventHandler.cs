@@ -4,7 +4,7 @@ using SimpleContainer.Interfaces;
 
 namespace SimpleContainer
 {
-    internal class DynamicEventHandler<TEventArgs> : IEventHandler<TEventArgs>
+    internal sealed class DynamicEventHandler<TEventArgs> : IEventHandler<TEventArgs>
         where TEventArgs : IEventArgs
     {
         private readonly Action<TEventArgs> callback;

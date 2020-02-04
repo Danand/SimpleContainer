@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using SimpleContainer.Unity.Roots;
+
+using UnityEngine;
 
 namespace SimpleContainer.Unity.Installers
 {
@@ -11,7 +13,7 @@ namespace SimpleContainer.Unity.Installers
         {
             if (laterThanRoot)
             {
-                var projectRoot = FindObjectOfType<UnityProjectRoot>();
+                var projectRoot = FindObjectOfType<UnityProjectRootBase>();
                 projectRoot.LateInstall(this);
             }
         }
