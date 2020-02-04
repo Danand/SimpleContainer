@@ -52,16 +52,7 @@ Add in `Packages/manifest.json` to `dependencies`:
 See [example project](SimpleContainer.Unity.Example) included into this repository. Also you may open it with Unity and run.
 
 ## How to contribute
-* use separate `feature/your-feature` branch for each pull request
-* run `./generate-metas.sh` after adding/removing any file at `SimpleContainer.Unity/Assets/SimpleContainer`
-* .NET Core solution consists of:
-  * `SimpleContainer.Unity\Assets\SimpleContainer\SimpleContainer.Core.csproj` – core classes
-  * `SimpleContainer.Tests\SimpleContainer.Tests.csproj` - .NET Core project tests
-* notice that core classes are shared both by Unity and .NET Core project
-* you can work both with Unity and .NET Core solution
-  * `./SimpleContainer.sln` – .NET Core solution, includes NUnit test project
-  * `./SimpleContainer.Unity/` – Unity project folder, contains shared code of core classes and Unity-specific implementation
-* use local folder or local repository for development and debugging the UPM package ([how](#from-local-path))
+See [contribution note](CONTRIBUTING.md).
 
 ## Roadmap
 - [x] Clean up repository

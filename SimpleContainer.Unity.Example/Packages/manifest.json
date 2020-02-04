@@ -41,11 +41,5 @@
     "com.unity.modules.vr": "1.0.0",
     "com.unity.modules.wind": "1.0.0",
     "com.unity.modules.xr": "1.0.0"
-  },
-  "lock": {
-    "com.danand.simplecontainer": {
-      "hash": "ac8659fd84f0a265d50c5c61459feea9291fb440",
-      "revision": "0.6.9-package-unity"
-    }
   }
 }
