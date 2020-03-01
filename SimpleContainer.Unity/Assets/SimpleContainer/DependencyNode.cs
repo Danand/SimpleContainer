@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 
 namespace SimpleContainer
 {
@@ -13,6 +15,20 @@ namespace SimpleContainer
 
         public object Instance { get; set; }
 
-        public IList<DependencyNode> ChildNodes { get; } = new List<DependencyNode>();
+        public Dictionary<ConstructorInfo, IList<DependencyNode>> ConstructorDependencies { get; set; }
+
+        public Dictionary<PropertyInfo, IList<DependencyNode>> PropertyDependencies { get; set; }
+
+        public Dictionary<FieldInfo, IList<DependencyNode>> FieldDependencies { get; set; }
+
+        public Dictionary<MethodInfo, IList<DependencyNode>> MethodDependencies { get; set; }
+
+        public IEnumerable<DependencyNode> GetAllDependencies()
+        {
+            return ConstructorDependencies.Values.SelectMany(dep => dep)
+                                                 /*.Concat(PropertyDependencies.Values.SelectMany(dep => dep))
+                                                 .Concat(FieldDependencies.Values.SelectMany(dep => dep))
+                                                 .Concat(MethodDependencies.Values.SelectMany(dep => dep))*/;
+        }
     }
 }
