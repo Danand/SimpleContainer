@@ -26,9 +26,9 @@ namespace SimpleContainer
         public IEnumerable<DependencyNode> GetAllDependencies()
         {
             return ConstructorDependencies.Values.SelectMany(dep => dep)
-                                                 /*.Concat(PropertyDependencies.Values.SelectMany(dep => dep))
+                                                 .Concat(PropertyDependencies.Values.SelectMany(dep => dep))
                                                  .Concat(FieldDependencies.Values.SelectMany(dep => dep))
-                                                 .Concat(MethodDependencies.Values.SelectMany(dep => dep))*/;
+                                                 .Concat(MethodDependencies.Values.SelectMany(dep => dep));
         }
     }
 }

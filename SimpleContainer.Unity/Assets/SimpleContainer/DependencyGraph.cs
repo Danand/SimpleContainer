@@ -38,8 +38,18 @@ namespace SimpleContainer
 
             foreach (var rootNode in RootNodes)
             {
-                LinkDependenciesRecursive(rootNode, RootNodes);
+                LinkDependencies(rootNode, RootNodes);
             }
+        }
+
+        public void Resolve()
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetBindingsString()
+        {
+            return "WIP";
         }
 
         private void CollectDependencies(DependencyNode node)
@@ -48,6 +58,21 @@ namespace SimpleContainer
             node.PropertyDependencies = GetPropertyDependencies(node);
             node.FieldDependencies = GetFieldDependencies(node);
             node.MethodDependencies = GetMethodDependencies(node);
+        }
+
+        private void LinkDependencies(DependencyNode node, IList<DependencyNode> rootNodes)
+        {
+            foreach (var dependency in node.GetAllDependencies())
+            {
+                var foundResolution = rootNodes.FirstOrDefault(rootNode => rootNode.ContractType == dependency.ContractType);
+
+                if (foundResolution == null)
+                    throw new TypeNotRegisteredException(dependency.ContractType, GetBindingsString());
+
+                dependency.ResultType = foundResolution.ResultType;
+                dependency.Scope = foundResolution.Scope;
+                dependency.Instance = foundResolution.Instance;
+            }
         }
 
         private Dictionary<ConstructorInfo, IList<DependencyNode>> GetConstructorDependencies(DependencyNode node)
@@ -160,31 +185,6 @@ namespace SimpleContainer
             }
 
             return result;
-        }
-
-        private void LinkDependenciesRecursive(DependencyNode node, IList<DependencyNode> rootNodes)
-        {
-            foreach (var dependency in node.GetAllDependencies())
-            {
-                var foundResolution = rootNodes.FirstOrDefault(rootNode => rootNode.ContractType == dependency.ContractType);
-
-                if (foundResolution == null)
-                    throw new TypeNotRegisteredException(dependency.ContractType, GetBindingsString());
-
-                dependency.ResultType = foundResolution.ResultType;
-                dependency.Scope = foundResolution.Scope;
-                dependency.Instance = foundResolution.Instance;
-            }
-        }
-
-        public void Resolve()
-        {
-            throw new NotImplementedException();
-        }
-
-        private string GetBindingsString()
-        {
-            return "WIP";
         }
     }
 }
