@@ -62,18 +62,39 @@ namespace SimpleContainer
 
         private void LinkDependencies(DependencyNode node, IList<DependencyNode> rootNodes)
         {
-            // TODO: link element type dependencies.
-            foreach (var dependency in node.GetAllDependencies())
+            foreach (var dependency in node.GetAllDependencies().ToArray())
             {
-                var foundResolution = rootNodes.FirstOrDefault(rootNode => rootNode.ContractType == dependency.ContractType);
+                var foundResolvings = rootNodes.Where(rootNode => rootNode.ContractType == dependency.ContractType).ToArray();
 
-                if (foundResolution == null)
+                if (foundResolvings.Length == 0)
                     throw new TypeNotRegisteredException(dependency.ContractType, GetBindingsString());
 
-                dependency.ResultType = foundResolution.ResultType;
-                dependency.Scope = foundResolution.Scope;
-                dependency.Instance = foundResolution.Instance;
+                dependency.ResultType = foundResolvings[0].ResultType;
+                dependency.Scope = foundResolvings[0].Scope;
+                dependency.Instance = foundResolvings[0].Instance;
+
+                if (dependency.KeyType.HasElementType)
+                {
+                    for (var i = 1; i < foundResolvings.Length; i++)
+                    {
+                        var resolving = foundResolvings[i];
+
+                        AddSibling(dependency, new DependencyNode
+                        {
+                            ContractType = resolving.ContractType,
+                            ResultType = resolving.ResultType,
+                            KeyType = resolving.ContractType,
+                            Instance = resolving.Instance
+                        });
+                    }
+                }
             }
+        }
+
+        public void AddSibling(DependencyNode node, DependencyNode sibling)
+        {
+            sibling.Siblings = node.Siblings;
+            node.Siblings.Add(sibling);
         }
 
         private Dictionary<ConstructorInfo, IList<DependencyNode>> GetConstructorDependencies(DependencyNode node)
@@ -100,7 +121,9 @@ namespace SimpleContainer
 
                     dependencies.Add(new DependencyNode
                     {
-                        ContractType = type
+                        ContractType = type,
+                        KeyType = parameter.ParameterType,
+                        Siblings = dependencies
                     });
                 }
             }
@@ -125,7 +148,9 @@ namespace SimpleContainer
 
                 dependencies.Add(new DependencyNode
                 {
-                    ContractType = type
+                    ContractType = type,
+                    KeyType = property.PropertyType,
+                    Siblings = dependencies
                 });
             }
 
@@ -149,7 +174,9 @@ namespace SimpleContainer
 
                 dependencies.Add(new DependencyNode
                 {
-                    ContractType = type
+                    ContractType = type,
+                    KeyType = field.FieldType,
+                    Siblings = dependencies
                 });
             }
 
@@ -180,7 +207,9 @@ namespace SimpleContainer
 
                     dependencies.Add(new DependencyNode
                     {
-                        ContractType = type
+                        ContractType = type,
+                        KeyType = parameter.ParameterType,
+                        Siblings = dependencies
                     });
                 }
             }

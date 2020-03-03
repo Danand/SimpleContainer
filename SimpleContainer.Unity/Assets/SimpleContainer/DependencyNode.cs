@@ -13,7 +13,11 @@ namespace SimpleContainer
 
         public Type ResultType { get; set; }
 
+        public Type KeyType { get; set; }
+
         public object Instance { get; set; }
+
+        public IList<DependencyNode> Siblings { get; set; }
 
         public Dictionary<ConstructorInfo, IList<DependencyNode>> ConstructorDependencies { get; set; }
 
