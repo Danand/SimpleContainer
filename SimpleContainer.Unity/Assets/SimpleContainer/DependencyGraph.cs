@@ -62,6 +62,7 @@ namespace SimpleContainer
 
         private void LinkDependencies(DependencyNode node, IList<DependencyNode> rootNodes)
         {
+            // TODO: link element type dependencies.
             foreach (var dependency in node.GetAllDependencies())
             {
                 var foundResolution = rootNodes.FirstOrDefault(rootNode => rootNode.ContractType == dependency.ContractType);

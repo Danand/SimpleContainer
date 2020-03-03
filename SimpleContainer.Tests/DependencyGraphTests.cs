@@ -10,10 +10,16 @@ namespace SimpleContainer.Tests
         [Test]
         public void Register_Pass()
         {
-            var graph = new DependencyGraph(Container.Create());
+            Container container = Container.Create();
+
+            container.RegisterAttribute<InjectAAttribute>();
+
+            var graph = new DependencyGraph(container);
 
             graph.Register<IPunk, Cyberpunk>(Scope.Singleton, null);
             graph.Register<ITechnology, TechnologyAI>(Scope.Singleton, null);
+            graph.Register<IAIPart, AIPartConsciousness>(Scope.Singleton, null);
+            graph.Register<IAIPart, AIPartSemiconduction>(Scope.Singleton, null);
 
             graph.Link();
             graph.Resolve();
