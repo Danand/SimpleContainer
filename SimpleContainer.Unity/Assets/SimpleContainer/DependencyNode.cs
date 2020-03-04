@@ -7,32 +7,22 @@ namespace SimpleContainer
 {
     public sealed class DependencyNode
     {
-        public Scope Scope { get; set; }
-
         public Type ContractType { get; set; }
 
         public Type ResultType { get; set; }
 
-        public Type KeyType { get; set; }
-
         public object Instance { get; set; }
 
-        public IList<DependencyNode> Siblings { get; set; }
+        public Scope Scope { get; set; }
 
-        public Dictionary<ConstructorInfo, IList<DependencyNode>> ConstructorDependencies { get; set; }
+        public ConstructorInfo Constructor { get; set; }
 
-        public Dictionary<PropertyInfo, IList<DependencyNode>> PropertyDependencies { get; set; }
+        public DependencyDictionary ConstructorDependencies { get; set; }
 
-        public Dictionary<FieldInfo, IList<DependencyNode>> FieldDependencies { get; set; }
+        public Dictionary<PropertyInfo, DependencyLink> PropertyDependencies { get; set; }
 
-        public Dictionary<MethodInfo, IList<DependencyNode>> MethodDependencies { get; set; }
+        public Dictionary<FieldInfo, DependencyLink> FieldDependencies { get; set; }
 
-        public IEnumerable<DependencyNode> GetAllDependencies()
-        {
-            return ConstructorDependencies.Values.SelectMany(dep => dep)
-                                                 .Concat(PropertyDependencies.Values.SelectMany(dep => dep))
-                                                 .Concat(FieldDependencies.Values.SelectMany(dep => dep))
-                                                 .Concat(MethodDependencies.Values.SelectMany(dep => dep));
-        }
+        public Dictionary<MethodInfo, DependencyDictionary> MethodDependencies { get; set; }
     }
 }
