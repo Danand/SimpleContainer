@@ -22,7 +22,6 @@ namespace SimpleContainer.Tests
             graph.Register<IAIPart, AIPartSemiconduction>(Scope.Singleton, null);
 
             graph.Link();
-            graph.Resolve();
 
             Assert.Pass();
         }

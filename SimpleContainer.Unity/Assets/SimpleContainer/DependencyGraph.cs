@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
+using SimpleContainer.Exceptions;
+
 namespace SimpleContainer
 {
     public sealed class DependencyGraph
@@ -29,10 +31,45 @@ namespace SimpleContainer
 
         public void Link()
         {
+            foreach (var rootNode in RootNodes)
+            {
+                CollectDependencies(rootNode);
+            }
 
+            foreach (var rootNode in RootNodes)
+            {
+                LinkDependencies(rootNode, RootNodes);
+            }
         }
 
-        public void Resolve()
+        private void LinkDependencies(DependencyNode node, IList<DependencyNode> rootNodes)
+        {
+            foreach (var link in node.AllDependencies)
+            {
+                var foundNodes = rootNodes.Where(rootNode => rootNode.ContractType == link.ContractType).ToArray();
+
+                if (foundNodes.Length == 0)
+                    throw new TypeNotRegisteredException(link.ContractType, GetBindingsString());
+
+                DependencyLink currentLink = link;
+
+                for (var i = 0; i < foundNodes.Length; i++)
+                {
+                    var foundNode = foundNodes[i];
+
+                    currentLink.Node = foundNode;
+
+                    if (foundNodes.Length > i + 1)
+                    {
+                        currentLink.NextLink = currentLink.NextLink ?? DependencyLink.Create(link.KeyType);
+                    }
+
+                    currentLink = currentLink.NextLink;
+                }
+            }
+        }
+
+        public void Resolve<TContract>()
         {
             throw new NotImplementedException();
         }
@@ -49,11 +86,6 @@ namespace SimpleContainer
             node.PropertyDependencies = GetPropertyDependencies(node);
             node.FieldDependencies = GetFieldDependencies(node);
             node.MethodDependencies = GetMethodDependencies(node);
-        }
-
-        private void LinkDependencies(DependencyNode node, IList<DependencyNode> rootNodes)
-        {
-            
         }
 
         private DependencyDictionary GetConstructorDependencies(DependencyNode node)

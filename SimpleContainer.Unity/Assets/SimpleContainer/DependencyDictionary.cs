@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SimpleContainer
 {
-    public sealed class DependencyDictionary
+    public sealed class DependencyDictionary : IEnumerable<DependencyLink>
     {
         private readonly Dictionary<Type, DependencyLink> links = new Dictionary<Type, DependencyLink>();
 
@@ -29,9 +31,27 @@ namespace SimpleContainer
             }
         }
 
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
+        public IEnumerator<DependencyLink> GetEnumerator()
+        {
+            foreach (var link in links.Values)
+            {
+                yield return link;
+            }
+        }
+
         public void Add(Type type)
         {
-            links.Add(DependencyLink.Create(type, null));
+            links.Add(type, DependencyLink.Create(type, null));
+        }
+
+        public void Add(Type type, DependencyNode node)
+        {
+            links.Add(type, DependencyLink.Create(type, node));
         }
     }
 }
