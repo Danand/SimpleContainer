@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 
 using SimpleContainer.Exceptions;
+using SimpleContainer.Extensions;
 
 namespace SimpleContainer
 {
@@ -40,6 +41,11 @@ namespace SimpleContainer
             {
                 LinkDependencies(rootNode, RootNodes);
             }
+
+            foreach (var rootNode in RootNodes)
+            {
+                ThrowIfCircularDependency(rootNode);
+            }
         }
 
         private void LinkDependencies(DependencyNode node, IList<DependencyNode> rootNodes)
@@ -67,6 +73,15 @@ namespace SimpleContainer
                     currentLink = currentLink.NextLink;
                 }
             }
+        }
+
+        private void ThrowIfCircularDependency(DependencyNode node)
+        {
+            var hasCircularDependency = node.AllDependencies.Flatten(link => link.Node.AllDependencies)
+                                                            .Any(link => link.ContractType == node.ContractType);
+
+            if (hasCircularDependency)
+                throw new CircularDependencyException(node.ContractType, GetBindingsString());
         }
 
         public void Resolve<TContract>()
