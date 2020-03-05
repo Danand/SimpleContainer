@@ -84,45 +84,28 @@ namespace SimpleContainer
 
             foreach (var property in properties)
             {
-                var type = property.PropertyType.HasElementType
-                               ? property.PropertyType.GetElementType()
-                               : property.PropertyType;
-
-                result.Add(property, DependencyLink.Create(type));
+                result.Add(property, DependencyLink.Create(property.PropertyType));
             }
 
             return result;
         }
 
-        private Dictionary<FieldInfo, Dictionary<Type, DependencyNode>> GetFieldDependencies(DependencyNode node)
+        private Dictionary<FieldInfo, DependencyLink> GetFieldDependencies(DependencyNode node)
         {
-            var result = new Dictionary<FieldInfo, Dictionary<Type, DependencyNode>>();
+            var result = new Dictionary<FieldInfo, DependencyLink>();
             var fields = node.ResultType.GetFields().Where(field => container.injectAttributeTypes.Any(attributeType => field.GetCustomAttribute(attributeType) != null));
 
             foreach (var field in fields)
             {
-                var dependencies = new List<DependencyNode>();
-
-                result.Add(field, dependencies);
-
-                var type = field.FieldType.HasElementType
-                               ? field.FieldType.GetElementType()
-                               : field.FieldType;
-
-                dependencies.Add(new DependencyNode
-                {
-                    ContractType = type,
-                    KeyType = field.FieldType,
-                    Siblings = dependencies
-                });
+                result.Add(field, DependencyLink.Create(field.FieldType));
             }
 
             return result;
         }
 
-        private Dictionary<MethodInfo, Dictionary<Type, DependencyNode>> GetMethodDependencies(DependencyNode node)
+        private Dictionary<MethodInfo, DependencyDictionary> GetMethodDependencies(DependencyNode node)
         {
-            var result = new Dictionary<MethodInfo, Dictionary<Type, DependencyNode>>();
+            var result = new Dictionary<MethodInfo, DependencyDictionary>();
             var methods = node.ResultType.GetMethods().Where(field => container.injectAttributeTypes.Any(attributeType => field.GetCustomAttribute(attributeType) != null));
 
             foreach (var method in methods)
@@ -132,22 +115,13 @@ namespace SimpleContainer
                 if (parameters.Length == 0)
                     continue;
 
-                var dependencies = new List<DependencyNode>();
+                DependencyDictionary dependencyDictionary = new DependencyDictionary();
 
-                result.Add(method, dependencies);
+                result.Add(method, dependencyDictionary);
 
                 foreach (var parameter in parameters)
                 {
-                    var type = parameter.ParameterType.HasElementType
-                                   ? parameter.ParameterType.GetElementType()
-                                   : parameter.ParameterType;
-
-                    dependencies.Add(new DependencyNode
-                    {
-                        ContractType = type,
-                        KeyType = parameter.ParameterType,
-                        Siblings = dependencies
-                    });
+                    dependencyDictionary.Add(parameter.ParameterType);
                 }
             }
 
