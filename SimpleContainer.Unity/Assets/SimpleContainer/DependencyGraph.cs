@@ -50,7 +50,9 @@ namespace SimpleContainer
 
         private void LinkDependencies(DependencyNode node, IList<DependencyNode> rootNodes)
         {
-            foreach (var link in node.AllDependencies)
+            var links = node.GetAllDependencies().ToArray();
+
+            foreach (var link in links)
             {
                 var foundNodes = rootNodes.Where(rootNode => rootNode.ContractType == link.ContractType).ToArray();
 
@@ -77,7 +79,7 @@ namespace SimpleContainer
 
         private void ThrowIfCircularDependency(DependencyNode node)
         {
-            var hasCircularDependency = node.AllDependencies.Flatten(link => link.Node.AllDependencies)
+            var hasCircularDependency = node.GetAllDependencies().Flatten(link => link.Node.GetAllDependencies())
                                                             .Any(link => link.ContractType == node.ContractType);
 
             if (hasCircularDependency)

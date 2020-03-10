@@ -25,28 +25,43 @@ namespace SimpleContainer
 
         public Dictionary<MethodInfo, DependencyDictionary> MethodDependencies { get; set; }
 
-        public IEnumerable<DependencyLink> AllDependencies
+        public IEnumerable<DependencyLink> GetAllDependencies()
         {
-            get
+            foreach (var link in IterateSiblingLinks(ConstructorDependencies))
             {
-                foreach (var link in ConstructorDependencies)
-                {
-                    yield return link;
-                }
+                yield return link;
+            }
 
-                foreach (var link in PropertyDependencies.Values)
-                {
-                    yield return link;
-                }
+            foreach (var link in IterateSiblingLinks(PropertyDependencies.Values))
+            {
+                yield return link;
+            }
 
-                foreach (var link in FieldDependencies.Values)
-                {
-                    yield return link;
-                }
+            foreach (var link in IterateSiblingLinks(FieldDependencies.Values))
+            {
+                yield return link;
+            }
 
-                foreach (var link in MethodDependencies.Values.SelectMany(link => link))
+            foreach (var link in IterateSiblingLinks(MethodDependencies.Values.SelectMany(link => link)))
+            {
+                yield return link;
+            }
+        }
+
+        private IEnumerable<DependencyLink> IterateSiblingLinks(IEnumerable<DependencyLink> links)
+        {
+            foreach (var link in links)
+            {
+                var currentLink = link;
+
+                yield return currentLink;
+
+                currentLink = currentLink.NextLink;
+
+                while (currentLink != null)
                 {
-                    yield return link;
+                    yield return currentLink;
+                    currentLink = currentLink.NextLink;
                 }
             }
         }
