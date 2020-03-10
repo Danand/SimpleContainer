@@ -11,6 +11,8 @@ namespace SimpleContainer
     public sealed class DependencyGraph
     {
         private readonly Container container;
+        private readonly HashSet<object> injectedIntoInstances = new HashSet<object>();
+        private readonly HashSet<int> injectedIntoMembers = new HashSet<int>();
 
         public DependencyGraph(Container container)
         {
@@ -93,23 +95,84 @@ namespace SimpleContainer
             if (foundNode == null)
                 throw new TypeNotRegisteredException(contractType, GetBindingsString());
 
-            if (foundNode.Scope == Scope.Singleton && foundNode.Instance != null)
-                return foundNode.Instance;
+            if (foundNode.Scope == Scope.Transient || foundNode.Instance == null)
+                foundNode.Instance = Instantiate(foundNode);
 
-            foundNode.Instance = Instantiate(foundNode);
+            InjectIntoInstance(foundNode);
+
+            ReflectionUtils.CastNonGeneric(foundNode.Instance, contractType);
 
             return foundNode.Instance;
+        }
+
+        public string GetBindingsString()
+        {
+            return "WIP";
+        }
+
+        internal void InjectIntoInstance(DependencyNode node)
+        {
+            if (injectedIntoInstances.Add(node.Instance))
+            {
+                InjectIntoProperties(node);
+                InjectIntoFields(node);
+                InjectIntoMethods(node);
+            }
+        }
+
+        private void InjectIntoProperties(DependencyNode node)
+        {
+            foreach (var pair in node.PropertyDependencies)
+            {
+                if (CheckNeedsInjectIntoMember(pair.Key, node.Instance))
+                {
+                    var value = Resolve(pair.Value.ContractType);
+                    pair.Key.SetValue(node.Instance, value);
+                    MarkMemberInjectedInto(pair.Key, node.Instance);
+                }
+            }
+        }
+
+        private void InjectIntoFields(DependencyNode node)
+        {
+            foreach (var pair in node.FieldDependencies)
+            {
+                if (CheckNeedsInjectIntoMember(pair.Key, node.Instance))
+                {
+                    var value = Resolve(pair.Value.ContractType);
+                    pair.Key.SetValue(node.Instance, value);
+                    MarkMemberInjectedInto(pair.Key, node.Instance);
+                }
+            }
+        }
+
+        private void InjectIntoMethods(DependencyNode node)
+        {
+            foreach (var pair in node.MethodDependencies)
+            {
+                if (CheckNeedsInjectIntoMember(pair.Key, node.Instance))
+                {
+                    var args = pair.Value.Select(link => Resolve(link.ContractType)).ToArray();
+                    pair.Key.Invoke(node.Instance, args);
+                    MarkMemberInjectedInto(pair.Key, node.Instance);
+                }
+            }
+        }
+
+        private bool CheckNeedsInjectIntoMember(MemberInfo member, object instance)
+        {
+            return !injectedIntoMembers.Contains(member.GetHashCode() + instance.GetHashCode());
+        }
+
+        private void MarkMemberInjectedInto(MemberInfo member, object instance)
+        {
+            injectedIntoMembers.Add(member.GetHashCode() + instance.GetHashCode());
         }
 
         private object Instantiate(DependencyNode node)
         {
             var args = node.ConstructorDependencies.Select(link => Resolve(link.ContractType)).ToArray();
             return node.Constructor.Invoke(args);
-        }
-
-        public string GetBindingsString()
-        {
-            return "WIP";
         }
 
         private void CollectDependencies(DependencyNode node)

@@ -47,7 +47,7 @@ namespace SimpleContainer.Tests
         }
 
         [Test]
-        public void Resolve_Pass()
+        public void Resolve_NotNull()
         {
             Container container = Container.Create();
 
