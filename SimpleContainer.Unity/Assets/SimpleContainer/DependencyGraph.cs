@@ -86,9 +86,25 @@ namespace SimpleContainer
                 throw new CircularDependencyException(node.ContractType, GetBindingsString());
         }
 
-        public void Resolve<TContract>()
+        public object Resolve(Type contractType)
         {
-            throw new NotImplementedException();
+            var foundNode = RootNodes.FirstOrDefault(node => node.ContractType == contractType);
+            
+            if (foundNode == null)
+                throw new TypeNotRegisteredException(contractType, GetBindingsString());
+
+            if (foundNode.Scope == Scope.Singleton && foundNode.Instance != null)
+                return foundNode.Instance;
+
+            foundNode.Instance = Instantiate(foundNode);
+
+            return foundNode.Instance;
+        }
+
+        private object Instantiate(DependencyNode node)
+        {
+            var args = node.ConstructorDependencies.Select(link => Resolve(link.ContractType)).ToArray();
+            return node.Constructor.Invoke(args);
         }
 
         public string GetBindingsString()
