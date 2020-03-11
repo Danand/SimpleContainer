@@ -5,6 +5,7 @@ using System.Reflection;
 
 using SimpleContainer.Exceptions;
 using SimpleContainer.Extensions;
+using SimpleContainer.Utils;
 
 namespace SimpleContainer
 {
@@ -50,6 +51,46 @@ namespace SimpleContainer
             }
         }
 
+        public object Resolve(Type keyType)
+        {
+            var contractType = keyType.HasElementType ? keyType.GetElementType() : keyType;
+            var foundNodes = RootNodes.Where(node => node.ContractType == contractType).ToArray();
+
+            if (foundNodes.Length == 0)
+                throw new TypeNotRegisteredException(contractType, GetBindingsString());
+
+            foreach (var foundNode in foundNodes)
+            {
+                if (foundNode.Scope == Scope.Transient || foundNode.Instance == null)
+                    foundNode.Instance = Instantiate(foundNode);
+
+                InjectIntoInstance(foundNode);
+            }
+
+            if (keyType.HasElementType)
+            {
+                var instances = foundNodes.Select(node => ReflectionUtils.CastNonGeneric(node.Instance, contractType)).ToArray();
+                return ReflectionUtils.CastNonGenericArray(contractType, instances);
+            }
+
+            return foundNodes[0].Instance;
+        }
+
+        internal string GetBindingsString()
+        {
+            return "WIP";
+        }
+
+        internal void InjectIntoInstance(DependencyNode node)
+        {
+            if (injectedIntoInstances.Add(node.Instance))
+            {
+                InjectIntoProperties(node);
+                InjectIntoFields(node);
+                InjectIntoMethods(node);
+            }
+        }
+
         private void LinkDependencies(DependencyNode node, IList<DependencyNode> rootNodes)
         {
             var links = node.GetAllDependencies().ToArray();
@@ -82,43 +123,12 @@ namespace SimpleContainer
         private void ThrowIfCircularDependency(DependencyNode node)
         {
             var hasCircularDependency = node.GetAllDependencies().Flatten(link => link.Node.GetAllDependencies())
-                                                            .Any(link => link.ContractType == node.ContractType);
+                                            .Any(link => link.ContractType == node.ContractType);
 
             if (hasCircularDependency)
                 throw new CircularDependencyException(node.ContractType, GetBindingsString());
         }
 
-        public object Resolve(Type contractType)
-        {
-            var foundNode = RootNodes.FirstOrDefault(node => node.ContractType == contractType);
-            
-            if (foundNode == null)
-                throw new TypeNotRegisteredException(contractType, GetBindingsString());
-
-            if (foundNode.Scope == Scope.Transient || foundNode.Instance == null)
-                foundNode.Instance = Instantiate(foundNode);
-
-            InjectIntoInstance(foundNode);
-
-            ReflectionUtils.CastNonGeneric(foundNode.Instance, contractType);
-
-            return foundNode.Instance;
-        }
-
-        public string GetBindingsString()
-        {
-            return "WIP";
-        }
-
-        internal void InjectIntoInstance(DependencyNode node)
-        {
-            if (injectedIntoInstances.Add(node.Instance))
-            {
-                InjectIntoProperties(node);
-                InjectIntoFields(node);
-                InjectIntoMethods(node);
-            }
-        }
 
         private void InjectIntoProperties(DependencyNode node)
         {
@@ -126,7 +136,7 @@ namespace SimpleContainer
             {
                 if (CheckNeedsInjectIntoMember(pair.Key, node.Instance))
                 {
-                    var value = Resolve(pair.Value.ContractType);
+                    var value = Resolve(pair.Value.KeyType);
                     pair.Key.SetValue(node.Instance, value);
                     MarkMemberInjectedInto(pair.Key, node.Instance);
                 }
@@ -139,7 +149,7 @@ namespace SimpleContainer
             {
                 if (CheckNeedsInjectIntoMember(pair.Key, node.Instance))
                 {
-                    var value = Resolve(pair.Value.ContractType);
+                    var value = Resolve(pair.Value.KeyType);
                     pair.Key.SetValue(node.Instance, value);
                     MarkMemberInjectedInto(pair.Key, node.Instance);
                 }
@@ -152,7 +162,7 @@ namespace SimpleContainer
             {
                 if (CheckNeedsInjectIntoMember(pair.Key, node.Instance))
                 {
-                    var args = pair.Value.Select(link => Resolve(link.ContractType)).ToArray();
+                    var args = pair.Value.Select(link => Resolve(link.KeyType)).ToArray();
                     pair.Key.Invoke(node.Instance, args);
                     MarkMemberInjectedInto(pair.Key, node.Instance);
                 }
@@ -171,7 +181,7 @@ namespace SimpleContainer
 
         private object Instantiate(DependencyNode node)
         {
-            var args = node.ConstructorDependencies.Select(link => Resolve(link.ContractType)).ToArray();
+            var args = node.ConstructorDependencies.Select(link => Resolve(link.KeyType)).ToArray();
             return node.Constructor.Invoke(args);
         }
 
