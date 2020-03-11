@@ -16,7 +16,6 @@ namespace SimpleContainer
 
         private readonly Dispatcher dispatcher = new Dispatcher();
         private readonly Dictionary<Type, Resolver> bindings = new Dictionary<Type, Resolver>();
-        private readonly HashSet<object> initializedInstances = new HashSet<object>();
 
         private Container() { }
 
@@ -141,17 +140,6 @@ namespace SimpleContainer
             var resolver = new Resolver(new ActivatorReflection(constructorCacher), constructorCacher);
 
             return resolver;
-        }
-
-        private void InitializeInstances(IEnumerable<object> instances)
-        {
-            foreach (var instance in instances)
-            {
-                if (instance is IInitializible initializible && initializedInstances.Add(instance))
-                {
-                    initializible.Initialize();
-                }
-            }
         }
 
         private string GetBindingsString(Dictionary<Type, Resolver> bindings)
