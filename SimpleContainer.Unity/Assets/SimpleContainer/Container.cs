@@ -72,19 +72,6 @@ namespace SimpleContainer
             }
         }
 
-#if NET35
-        public void ThrowIfNotResolved()
-        {
-            foreach (var binding in bindings)
-            {
-                var cachedInstances = binding.Value.GetCachedInstances();
-
-                if (!cachedInstances.GetEnumerator().MoveNext())
-                    throw new TypeNotResolvedException(binding.Key);
-            }
-        }
-#else
-
         public void ThrowIfNotResolved()
         {
             var exceptions = new List<Exception>();
@@ -100,8 +87,6 @@ namespace SimpleContainer
             if (exceptions.Count > 0)
                 throw new AggregateException(exceptions);
         }
-
-#endif
 
         internal IEnumerable<object> GetAllCached()
         {
