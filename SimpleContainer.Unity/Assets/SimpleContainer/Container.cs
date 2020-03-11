@@ -3,26 +3,29 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-using SimpleContainer.Activators;
 using SimpleContainer.Attributes;
 using SimpleContainer.Exceptions;
 using SimpleContainer.Interfaces;
 
 namespace SimpleContainer
 {
-    public sealed partial class Container : IDisposable
+    public sealed partial class Container
     {
-        internal readonly HashSet<Type> injectAttributeTypes = new HashSet<Type> { typeof(InjectAttribute) };
-
         private readonly Dispatcher dispatcher = new Dispatcher();
-        private readonly Dictionary<Type, Resolver> bindings = new Dictionary<Type, Resolver>();
 
         private Container() { }
+
+        internal DependencyManager DependencyManager { get; set; }
+
+        internal HashSet<Type> InjectAttributeTypes { get; set; } = new HashSet<Type> { typeof(InjectAttribute) };
 
         public static Container Create()
         {
             var container = new Container();
-            container.InstallResolver();
+            var dependencyManager = new DependencyManager(container);
+
+            container.DependencyManager = dependencyManager;
+
             return container;
         }
 
@@ -54,21 +57,20 @@ namespace SimpleContainer
 
         public void OverrideFrom(Container other)
         {
-            foreach (var binding in other.bindings)
-                bindings[binding.Key] = binding.Value.CopyToContainer(this);
-
-            foreach (var injectAttributeType in other.injectAttributeTypes )
-                injectAttributeTypes.Add(injectAttributeType);
-        }
-
-        public void InjectIntoRegistered()
-        {
-            foreach (var binding in bindings)
+            foreach (var rootNode in other.DependencyManager.RootNodes)
             {
-                var cachedInstances = binding.Value.GetCachedInstances();
+                var nodeToRemove = DependencyManager.RootNodes.FirstOrDefault(node => node.ContractType == rootNode.ContractType);
 
-                foreach (var cachedInstance in cachedInstances)
-                    binding.Value.InjectIntoInstance(cachedInstance);
+                if (nodeToRemove != null)
+                {
+                    DependencyManager.RootNodes.Remove(nodeToRemove);
+                    DependencyManager.RootNodes.Add(rootNode);
+                }
+            }
+
+            foreach (var injectAttributeType in other.InjectAttributeTypes)
+            {
+                InjectAttributeTypes.Add(injectAttributeType);
             }
         }
 
@@ -76,12 +78,10 @@ namespace SimpleContainer
         {
             var exceptions = new List<Exception>();
 
-            foreach (var binding in bindings)
+            foreach (var rootNode in DependencyManager.RootNodes)
             {
-                var cachedInstances = binding.Value.GetCachedInstances();
-
-                if (!cachedInstances.GetEnumerator().MoveNext())
-                    exceptions.Add(new TypeNotResolvedException(binding.Key));
+                if (rootNode.Instance == null)
+                    exceptions.Add(new TypeNotResolvedException(rootNode.ContractType));
             }
 
             if (exceptions.Count > 0)
@@ -90,46 +90,7 @@ namespace SimpleContainer
 
         internal IEnumerable<object> GetAllCached()
         {
-            return bindings.SelectMany(resolver => resolver.Value.GetCachedInstances());
-        }
-
-        void IDisposable.Dispose()
-        {
-            foreach (var resolver in bindings.Values)
-                resolver.DisposeInstances();
-        }
-
-        private void InstallResolver()
-        {
-            var resolver = CreateInitialResolver();
-
-            resolver.Initialize(
-                container:      this,
-                resultTypes:    new Type[] { typeof(Resolver) }, 
-                scope:          Scope.Transient,
-                instances:      null,
-                args:           new object[0]);
-
-            bindings.Add(typeof(Resolver), resolver);
-
-            resolver.SetMethod(CreateInitialResolver);
-
-            Install(new InternalInstaller());
-
-            resolver.RemoveMethod();
-        }
-
-        private Resolver CreateInitialResolver()
-        {
-            var constructorCacher = new ConstructorCacher();
-            var resolver = new Resolver(new ActivatorReflection(constructorCacher), constructorCacher);
-
-            return resolver;
-        }
-
-        private string GetBindingsString(Dictionary<Type, Resolver> bindings)
-        {
-            return string.Join($",{Environment.NewLine}", bindings.Keys.Select(key => key.Name));
+            return DependencyManager.RootNodes.Select(rootNode => rootNode.Instance);
         }
     }
 }

@@ -29,8 +29,7 @@ namespace SimpleContainer
 
         internal void RegisterEvent<TEventHandler, TEventArgs>(Container container, Action<TEventHandler, TEventArgs> action)
         {
-            if (!container.CheckRegistered<Dispatcher>())
-                container.Register(Scope.Singleton, this);
+            container.Register(Scope.Singleton, this);
 
             var eventArgsType = typeof(TEventArgs);
 

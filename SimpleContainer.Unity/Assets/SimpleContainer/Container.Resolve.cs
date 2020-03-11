@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using SimpleContainer.Exceptions;
 using SimpleContainer.Interfaces;
 
 namespace SimpleContainer
@@ -30,15 +29,10 @@ namespace SimpleContainer
 
         public object Resolve(Type contractType)
         {
-            return Resolve(contractType, new object[0]);
-        }
-
-        public object Resolve(Type contractType, params object[] args)
-        {
             var contractIsArray = contractType.IsArray;
             var elementType = contractIsArray ? contractType.GetElementType() : contractType;
 
-            var instances = ResolveAll(elementType, args);
+            var instances = ResolveAll(elementType);
 
             if (contractIsArray)
                 return instances;
@@ -46,14 +40,9 @@ namespace SimpleContainer
             return instances[0];
         }
 
-        public object[] ResolveAll(Type contractType, params object[] args)
+        public object[] ResolveAll(Type contractType)
         {
-            if (!bindings.TryGetValue(contractType, out var resolver))
-                throw new TypeNotRegisteredException(contractType, GetBindingsString(bindings));
-
             var instances = resolver.GetInstances(args);
-
-            InitializeInstances(instances);
 
             return instances.Select(instance => instance).ToArray();
         }
@@ -61,21 +50,13 @@ namespace SimpleContainer
         public TContract GetCached<TContract>()
         {
             var contractType = typeof(TContract);
-
-            if (!bindings.TryGetValue(contractType, out var resolver))
-                throw new TypeNotRegisteredException(contractType, GetBindingsString(bindings));
-
             return (TContract)resolver.GetCachedInstances().First();
         }
 
         public TContract[] GetCachedMultiple<TContract>()
         {
             var contractType = typeof(TContract);
-
-            if (!bindings.TryGetValue(contractType, out var resolver))
-                throw new TypeNotRegisteredException(contractType, GetBindingsString(bindings));
-
-            return resolver.GetCachedInstances().Select(wrapper => (TContract)wrapper).ToArray();
+            return resolver.GetCachedInstances().Select(instance => (TContract)instance).ToArray();
         }
 
         public void InjectInto(object instance)

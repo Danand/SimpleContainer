@@ -217,7 +217,7 @@ namespace SimpleContainer
         private Dictionary<PropertyInfo, DependencyLink> GetPropertyDependencies(DependencyNode node)
         {
             var result = new Dictionary<PropertyInfo, DependencyLink>();
-            var properties = node.ResultType.GetProperties().Where(property => container.injectAttributeTypes.Any(attributeType => property.GetCustomAttribute(attributeType) != null));
+            var properties = node.ResultType.GetProperties().Where(property => container.InjectAttributeTypes.Any(attributeType => property.GetCustomAttribute(attributeType) != null));
 
             foreach (var property in properties)
             {
@@ -230,7 +230,7 @@ namespace SimpleContainer
         private Dictionary<FieldInfo, DependencyLink> GetFieldDependencies(DependencyNode node)
         {
             var result = new Dictionary<FieldInfo, DependencyLink>();
-            var fields = node.ResultType.GetFields().Where(field => container.injectAttributeTypes.Any(attributeType => field.GetCustomAttribute(attributeType) != null));
+            var fields = node.ResultType.GetFields().Where(field => container.InjectAttributeTypes.Any(attributeType => field.GetCustomAttribute(attributeType) != null));
 
             foreach (var field in fields)
             {
@@ -243,7 +243,7 @@ namespace SimpleContainer
         private Dictionary<MethodInfo, DependencyDictionary> GetMethodDependencies(DependencyNode node)
         {
             var result = new Dictionary<MethodInfo, DependencyDictionary>();
-            var methods = node.ResultType.GetMethods().Where(field => container.injectAttributeTypes.Any(attributeType => field.GetCustomAttribute(attributeType) != null));
+            var methods = node.ResultType.GetMethods().Where(field => container.InjectAttributeTypes.Any(attributeType => field.GetCustomAttribute(attributeType) != null));
 
             foreach (var method in methods)
             {
