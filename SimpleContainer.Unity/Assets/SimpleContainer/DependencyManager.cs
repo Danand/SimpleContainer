@@ -9,13 +9,13 @@ using SimpleContainer.Utils;
 
 namespace SimpleContainer
 {
-    public sealed class DependencyGraph
+    public sealed class DependencyManager
     {
         private readonly Container container;
         private readonly HashSet<object> injectedIntoInstances = new HashSet<object>();
         private readonly HashSet<int> injectedIntoMembers = new HashSet<int>();
 
-        public DependencyGraph(Container container)
+        public DependencyManager(Container container)
         {
             this.container = container;
         }

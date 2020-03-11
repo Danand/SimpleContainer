@@ -15,7 +15,7 @@ namespace SimpleContainer.Tests
 
             container.RegisterAttribute<InjectAAttribute>();
 
-            var graph = new DependencyGraph(container);
+            var graph = new DependencyManager(container);
 
             graph.Register<IPunk, Cyberpunk>(Scope.Singleton, null);
             graph.Register<ITechnology, TechnologyAI>(Scope.Singleton, null);
@@ -35,7 +35,7 @@ namespace SimpleContainer.Tests
 
             container.RegisterAttribute<InjectAAttribute>();
 
-            var graph = new DependencyGraph(container);
+            var graph = new DependencyManager(container);
 
             graph.Register<IPunk, Cyberpunk>(Scope.Singleton, null);
             graph.Register<ITechnology, TechnologyAINetwork>(Scope.Singleton, null);
@@ -53,7 +53,7 @@ namespace SimpleContainer.Tests
 
             container.RegisterAttribute<InjectAAttribute>();
 
-            var graph = new DependencyGraph(container);
+            var graph = new DependencyManager(container);
 
             graph.Register<IPunk, Cyberpunk>(Scope.Singleton, null);
             graph.Register<ITechnology, TechnologyAI>(Scope.Singleton, null);
