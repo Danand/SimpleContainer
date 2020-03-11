@@ -120,6 +120,21 @@ namespace SimpleContainer
             }
         }
 
+        private void CollectDependencies(DependencyNode node)
+        {
+            node.Constructor = node.ResultType.GetConstructors()[0];
+            node.ConstructorDependencies = GetConstructorDependencies(node);
+            node.PropertyDependencies = GetPropertyDependencies(node);
+            node.FieldDependencies = GetFieldDependencies(node);
+            node.MethodDependencies = GetMethodDependencies(node);
+        }
+
+        private object Instantiate(DependencyNode node)
+        {
+            var args = node.ConstructorDependencies.Select(link => Resolve(link.KeyType)).ToArray();
+            return node.Constructor.Invoke(args);
+        }
+
         private void ThrowIfCircularDependency(DependencyNode node)
         {
             var hasCircularDependency = node.GetAllDependencies().Flatten(link => link.Node.GetAllDependencies())
@@ -128,7 +143,6 @@ namespace SimpleContainer
             if (hasCircularDependency)
                 throw new CircularDependencyException(node.ContractType, GetBindingsString());
         }
-
 
         private void InjectIntoProperties(DependencyNode node)
         {
@@ -177,21 +191,6 @@ namespace SimpleContainer
         private void MarkMemberInjectedInto(MemberInfo member, object instance)
         {
             injectedIntoMembers.Add(member.GetHashCode() + instance.GetHashCode());
-        }
-
-        private object Instantiate(DependencyNode node)
-        {
-            var args = node.ConstructorDependencies.Select(link => Resolve(link.KeyType)).ToArray();
-            return node.Constructor.Invoke(args);
-        }
-
-        private void CollectDependencies(DependencyNode node)
-        {
-            node.Constructor = node.ResultType.GetConstructors()[0];
-            node.ConstructorDependencies = GetConstructorDependencies(node);
-            node.PropertyDependencies = GetPropertyDependencies(node);
-            node.FieldDependencies = GetFieldDependencies(node);
-            node.MethodDependencies = GetMethodDependencies(node);
         }
 
         private DependencyDictionary GetConstructorDependencies(DependencyNode node)
