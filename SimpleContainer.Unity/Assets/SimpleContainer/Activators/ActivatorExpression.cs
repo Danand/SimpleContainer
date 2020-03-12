@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -11,36 +10,14 @@ namespace SimpleContainer.Activators
     {
         private delegate object ExpressionActivator(params object[] args);
 
-        private const string ARGS_NAME = "args";
-
-        private readonly IActivator activator;
-        private readonly IConstructorCacher constructorCacher;
-        private readonly Dictionary<ConstructorInfo, ExpressionActivator> activators = new Dictionary<ConstructorInfo, ExpressionActivator>();
-
-        public ActivatorExpression(IConstructorCacher constructorCacher)
-        {
-            activator = this;
-            this.constructorCacher = constructorCacher;
-        }
-
-        object IActivator.CreateInstance(Type type)
-        {
-            var constructor = constructorCacher.GetConstructor(type);
-            return activator.CreateInstance(constructor, new object[0]);
-        }
-
-        object IActivator.CreateInstance(Type type, object[] args)
-        {
-            var constructor = constructorCacher.GetConstructor(type);
-            return activator.CreateInstance(constructor, args);
-        }
+        private readonly Dictionary<ConstructorInfo, ExpressionActivator> expressionActivators = new Dictionary<ConstructorInfo, ExpressionActivator>();
 
         object IActivator.CreateInstance(ConstructorInfo constructor, object[] args)
         {
-            if (!activators.TryGetValue(constructor, out var expressionActivator))
+            if (!expressionActivators.TryGetValue(constructor, out var expressionActivator))
             {
                 expressionActivator = GetActivator(constructor);
-                activators.Add(constructor, expressionActivator);
+                expressionActivators.Add(constructor, expressionActivator);
             }
 
             return expressionActivator.Invoke(args);
@@ -49,7 +26,7 @@ namespace SimpleContainer.Activators
         private ExpressionActivator GetActivator(ConstructorInfo constructor)
         {
             var parameters = constructor.GetParameters();
-            var parameterExpression = Expression.Parameter(typeof(object[]), ARGS_NAME);
+            var parameterExpression = Expression.Parameter(typeof(object[]), "args");
             var argsExpression = new Expression[parameters.Length];
 
             for (var i = 0; i < parameters.Length; i++)

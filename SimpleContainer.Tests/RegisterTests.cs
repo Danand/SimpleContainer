@@ -53,7 +53,7 @@ namespace SimpleContainer.Tests
         }
 
         [Test]
-        public void Register_String_Singleton_NotThrow()
+        public void Register_String_Singleton_NotThrows()
         {
             var container = Container.Create();
 

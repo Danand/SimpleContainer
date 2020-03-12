@@ -23,8 +23,6 @@ namespace SimpleContainer.Tests
             graph.Register<IAIPart, AIPartSemiconduction>(Scope.Singleton, null);
             graph.Register<INeural, NeuralComputer>(Scope.Singleton, null);
 
-            graph.Link();
-
             Assert.Pass();
         }
 
@@ -60,8 +58,6 @@ namespace SimpleContainer.Tests
             graph.Register<IAIPart, AIPartConsciousness>(Scope.Singleton, null);
             graph.Register<IAIPart, AIPartSemiconduction>(Scope.Singleton, null);
             graph.Register<INeural, NeuralComputer>(Scope.Singleton, null);
-
-            graph.Link();
 
             var actual = graph.Resolve(typeof(IPunk));
 

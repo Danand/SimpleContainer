@@ -16,6 +16,8 @@ namespace SimpleContainer
 
         internal DependencyManager DependencyManager { get; set; }
 
+        internal IInternalDependencies InternalDependencies { get; set; }
+
         internal HashSet<Type> InjectAttributeTypes { get; set; } = new HashSet<Type>();
 
         public static Container Create()
@@ -24,6 +26,8 @@ namespace SimpleContainer
             var dependencyManager = new DependencyManager(container);
 
             container.DependencyManager = dependencyManager;
+            container.Install(new InternalInstaller());
+            container.InternalDependencies = container.Resolve<IInternalDependencies>();
 
             return container;
         }
@@ -31,7 +35,9 @@ namespace SimpleContainer
         public void Install(params IInstaller[] installers)
         {
             foreach (var installer in installers)
+            {
                 installer.Install(this);
+            }
         }
 
         public void Install(params Type[] installerTypes)
@@ -84,7 +90,9 @@ namespace SimpleContainer
             }
 
             if (exceptions.Count > 0)
+            {
                 throw new AggregateException(exceptions);
+            }
         }
 
         internal IEnumerable<object> GetAllCached()

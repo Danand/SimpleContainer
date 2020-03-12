@@ -1,7 +1,6 @@
 ﻿using System;
 
 using SimpleContainer.Exceptions;
-using SimpleContainer.Interfaces;
 
 namespace SimpleContainer
 {
@@ -71,9 +70,8 @@ namespace SimpleContainer
 
         public void Register(string contractTypeName, string resultTypeName, Scope scope)
         {
-            var typeLoader = Resolve<ITypeLoader>();
-            var contractType = typeLoader.Load(contractTypeName);
-            var resultType = typeLoader.Load(resultTypeName);
+            var contractType = InternalDependencies.TypeLoader.Load(contractTypeName);
+            var resultType = InternalDependencies.TypeLoader.Load(resultTypeName);
 
             Register(contractType, resultType, scope, null);
         }

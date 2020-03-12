@@ -15,6 +15,8 @@ namespace SimpleContainer
         private readonly HashSet<object> injectedIntoInstances = new HashSet<object>();
         private readonly HashSet<int> injectedIntoMembers = new HashSet<int>();
 
+        private bool isLinked;
+
         public DependencyManager(Container container)
         {
             this.container = container;
@@ -24,23 +26,29 @@ namespace SimpleContainer
 
         public void Register<TContract, TResult>(Scope scope, TResult instance)
         {
+            isLinked = false;
+
             RootNodes.Add(new DependencyNode
             {
                 ContractType = typeof(TContract),
                 ResultType = typeof(TResult),
                 Scope = scope,
-                Instance = instance
+                Instance = instance,
+                CachedInstances = { instance }
             });
         }
 
         public void Register(Type contractType, Type resultType, Scope scope, object instance)
         {
+            isLinked = false;
+
             RootNodes.Add(new DependencyNode
             {
                 ContractType = contractType,
                 ResultType = resultType,
                 Scope = scope,
-                Instance = instance
+                Instance = instance,
+                CachedInstances = { instance }
             });
         }
 
@@ -60,10 +68,15 @@ namespace SimpleContainer
             {
                 ThrowIfCircularDependency(rootNode);
             }
+
+            isLinked = true;
         }
 
         public object Resolve(Type keyType)
         {
+            if (!isLinked)
+                Link();
+
             var contractType = keyType.HasElementType ? keyType.GetElementType() : keyType;
             var foundNodes = RootNodes.Where(node => node.ContractType == contractType).ToArray();
 
@@ -103,7 +116,9 @@ namespace SimpleContainer
 
         public object[] GetCachedInstances(Type contractType)
         {
-            return RootNodes.Where(node => node.ContractType == contractType).SelectMany(node => node.CachedInstances).ToArray();
+            return RootNodes.Where(node => node.ContractType == contractType)
+                            .SelectMany(node => node.CachedInstances)
+                            .ToArray();
         }
 
         public void InjectIntoRegistered()
@@ -178,13 +193,17 @@ namespace SimpleContainer
         private object Instantiate(DependencyNode node)
         {
             var args = node.ConstructorDependencies.Select(link => Resolve(link.KeyType)).ToArray();
-            return node.Constructor.Invoke(args);
+
+            if (container.InternalDependencies == null)
+                return node.Constructor.Invoke(args);
+
+            return container.InternalDependencies.Activator.CreateInstance(node.Constructor, args);
         }
 
         private void ThrowIfCircularDependency(DependencyNode node)
         {
             var hasCircularDependency = node.GetAllDependencies().Flatten(link => link.Node.GetAllDependencies())
-                                            .Any(link => link.ContractType == node.ContractType);
+                                                                 .Any(link => link.ContractType == node.ContractType);
 
             if (hasCircularDependency)
                 throw new CircularDependencyException(node.ContractType, GetBindingsString());
