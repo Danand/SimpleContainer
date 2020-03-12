@@ -6,7 +6,7 @@ using SimpleContainer.Tests.DummyTypes;
 namespace SimpleContainer.Tests
 {
     [TestFixture]
-    public class DependencyGraphTests
+    public class DependencyManagerTests
     {
         [Test]
         public void Link_Pass()
