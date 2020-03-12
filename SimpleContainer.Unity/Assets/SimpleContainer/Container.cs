@@ -11,8 +11,6 @@ namespace SimpleContainer
 {
     public sealed partial class Container
     {
-        private readonly Dispatcher dispatcher = new Dispatcher();
-
         private Container() { }
 
         internal DependencyManager DependencyManager { get; set; }
