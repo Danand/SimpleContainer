@@ -94,7 +94,7 @@ namespace SimpleContainer
 
         public void InjectIntoRegistered()
         {
-            throw new NotImplementedException();
+            DependencyManager.InjectIntoRegistered();
         }
     }
 }

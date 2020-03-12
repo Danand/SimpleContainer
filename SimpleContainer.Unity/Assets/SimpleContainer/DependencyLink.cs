@@ -2,7 +2,7 @@
 
 namespace SimpleContainer
 {
-    public sealed class DependencyLink
+    internal sealed class DependencyLink
     {
         public Type KeyType { get; set; }
 

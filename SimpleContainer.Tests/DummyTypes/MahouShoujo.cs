@@ -2,7 +2,7 @@
 {
     public sealed class MahouShoujo
     {
-        [InjectA]
+        [Inject]
         public IMagic MagicFirst;
 
         [InjectOther]

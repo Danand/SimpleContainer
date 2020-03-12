@@ -6,7 +6,7 @@ using SimpleContainer.Interfaces;
 
 namespace SimpleContainer
 {
-    public sealed class ConstructorCacher : IConstructorCacher
+    internal sealed class ConstructorCacher : IConstructorCacher
     {
         private readonly Dictionary<Type, ConstructorInfo> cachedConstructors = new Dictionary<Type, ConstructorInfo>();
 

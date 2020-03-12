@@ -9,7 +9,7 @@ using SimpleContainer.Utils;
 
 namespace SimpleContainer
 {
-    public sealed class DependencyManager
+    internal sealed class DependencyManager
     {
         private readonly Container container;
         private readonly HashSet<object> injectedIntoInstances = new HashSet<object>();
@@ -28,6 +28,17 @@ namespace SimpleContainer
             {
                 ContractType = typeof(TContract),
                 ResultType = typeof(TResult),
+                Scope = scope,
+                Instance = instance
+            });
+        }
+
+        public void Register(Type contractType, Type resultType, Scope scope, object instance)
+        {
+            RootNodes.Add(new DependencyNode
+            {
+                ContractType = contractType,
+                ResultType = resultType,
                 Scope = scope,
                 Instance = instance
             });
@@ -62,7 +73,11 @@ namespace SimpleContainer
             foreach (var foundNode in foundNodes)
             {
                 if (foundNode.Scope == Scope.Transient || foundNode.Instance == null)
+                {
                     foundNode.Instance = Instantiate(foundNode);
+                }
+
+                foundNode.CachedInstances.Add(foundNode.Instance);
 
                 InjectIntoInstance(foundNode);
             }
@@ -76,9 +91,40 @@ namespace SimpleContainer
             return foundNodes[0].Instance;
         }
 
-        internal string GetBindingsString()
+        public string GetBindingsString()
         {
             return "WIP";
+        }
+
+        public object GetCachedInstance(Type contractType)
+        {
+            return RootNodes.First(node => node.ContractType == contractType).CachedInstances.First();
+        }
+
+        public object[] GetCachedInstances(Type contractType)
+        {
+            return RootNodes.Where(node => node.ContractType == contractType).SelectMany(node => node.CachedInstances).ToArray();
+        }
+
+        public void InjectIntoRegistered()
+        {
+            foreach (var rootNode in RootNodes)
+            {
+                foreach (object cachedInstance in rootNode.CachedInstances)
+                {
+                    InjectIntoInstance(cachedInstance);
+                }
+            }
+        }
+
+        public void InjectIntoInstance(object instance)
+        {
+            var foundNodes = RootNodes.Where(node => node.ResultType == instance.GetType()).ToArray();
+
+            foreach (var foundNode in foundNodes)
+            {
+                InjectIntoInstance(foundNode);
+            }
         }
 
         internal void InjectIntoInstance(DependencyNode node)

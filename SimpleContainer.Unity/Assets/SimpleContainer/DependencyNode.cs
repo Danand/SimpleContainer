@@ -5,13 +5,15 @@ using System.Reflection;
 
 namespace SimpleContainer
 {
-    public sealed class DependencyNode
+    internal sealed class DependencyNode
     {
         public Type ContractType { get; set; }
 
         public Type ResultType { get; set; }
 
         public object Instance { get; set; }
+
+        public HashSet<object> CachedInstances { get; } = new HashSet<object>();
 
         public Scope Scope { get; set; }
 

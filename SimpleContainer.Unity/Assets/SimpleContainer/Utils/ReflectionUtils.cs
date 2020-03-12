@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Linq;
 using System.Reflection;
 
 namespace SimpleContainer.Utils
 {
-    public static class ReflectionUtils
+    internal static class ReflectionUtils
     {
         public static object CastNonGeneric(object source, Type type)
         {

@@ -27,7 +27,10 @@ namespace SimpleContainer
 
         public void Register<TContract>(params Type[] resultTypes)
         {
-            Register(typeof(TContract), Scope.Transient, resultTypes);
+            foreach (Type resultType in resultTypes)
+            {
+                Register(typeof(TContract), resultType, Scope.Transient, null);
+            }
         }
 
         public void Register<TContract, TResult>()
@@ -81,7 +84,7 @@ namespace SimpleContainer
             Scope           scope,
             object          instance)
         {
-
+            DependencyManager.Register(contractType, resultType, scope, instance);
         }
 
         public void RegisterAttribute<TInjectAttribute>()

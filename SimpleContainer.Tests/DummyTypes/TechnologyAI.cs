@@ -2,7 +2,7 @@
 {
     public sealed class TechnologyAI : ITechnology
     {
-        [InjectA]
+        [Inject]
         public IAIPart[] Parts { get; set; }
     }
 }

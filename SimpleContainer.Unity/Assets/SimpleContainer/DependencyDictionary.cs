@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace SimpleContainer
 {
-    public sealed class DependencyDictionary : IEnumerable<DependencyLink>
+    internal sealed class DependencyDictionary : IEnumerable<DependencyLink>
     {
         private readonly Dictionary<Type, DependencyLink> links = new Dictionary<Type, DependencyLink>();
 
