@@ -26,30 +26,38 @@ namespace SimpleContainer
 
         public void Register<TContract, TResult>(Scope scope, TResult instance)
         {
-            isLinked = false;
+            MarkNotLinked();
 
-            RootNodes.Add(new DependencyNode
+            var node = new DependencyNode
             {
                 ContractType = typeof(TContract),
                 ResultType = typeof(TResult),
                 Scope = scope,
-                Instance = instance,
-                CachedInstances = { instance }
-            });
+                Instance = instance
+            };
+
+            if (instance != null)
+                node.CachedInstances.Add(instance);
+
+            RootNodes.Add(node);
         }
 
         public void Register(Type contractType, Type resultType, Scope scope, object instance)
         {
-            isLinked = false;
+            MarkNotLinked();
 
-            RootNodes.Add(new DependencyNode
+            var node = new DependencyNode
             {
                 ContractType = contractType,
                 ResultType = resultType,
                 Scope = scope,
-                Instance = instance,
-                CachedInstances = { instance }
-            });
+                Instance = instance
+            };
+
+            if (instance != null)
+                node.CachedInstances.Add(instance);
+
+            RootNodes.Add(node);
         }
 
         public void Link()
@@ -74,8 +82,7 @@ namespace SimpleContainer
 
         public object Resolve(Type keyType)
         {
-            if (!isLinked)
-                Link();
+            LinkIfNeeded();
 
             var contractType = keyType.HasElementType ? keyType.GetElementType() : keyType;
             var foundNodes = RootNodes.Where(node => node.ContractType == contractType).ToArray();
@@ -181,6 +188,17 @@ namespace SimpleContainer
             }
         }
 
+        private void LinkIfNeeded()
+        {
+            if (!isLinked)
+                Link();
+        }
+
+        private void MarkNotLinked()
+        {
+            isLinked = false;
+        }
+
         private void CollectDependencies(DependencyNode node)
         {
             node.Constructor = node.ResultType.GetConstructors()[0];
@@ -211,6 +229,8 @@ namespace SimpleContainer
 
         private void InjectIntoProperties(DependencyNode node)
         {
+            LinkIfNeeded();
+
             foreach (var pair in node.PropertyDependencies)
             {
                 if (CheckNeedsInjectIntoMember(pair.Key, node.Instance))

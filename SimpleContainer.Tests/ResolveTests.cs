@@ -181,7 +181,7 @@ namespace SimpleContainer.Tests
 
             container.RegisterAttribute<InjectAttribute>();
 
-            container.Register<IPetFood>(Scope.Singleton, food);
+            container.Register<IPetFood, CatFood>(Scope.Singleton, food);
             container.Register(Scope.Singleton, petshop);
 
             container.InjectIntoRegistered();
@@ -201,7 +201,7 @@ namespace SimpleContainer.Tests
 
             container.RegisterAttribute<InjectAttribute>();
 
-            container.Register<IPetFood>(Scope.Singleton, food);
+            container.Register<IPetFood, CatFood>(Scope.Singleton, food);
             container.Register(Scope.Transient, petshopOne);
             container.Register(Scope.Transient, petshopTwo);
 
