@@ -15,12 +15,3 @@ Initial published release.
 * Add multiple `Inject` attributes registration
 * Add message generation for pull requests
 
-
-## [0.7.0] - 2020-02-04
-* Add example project
-* Add `TypeNotResolvedException` explanation to message
-* Remove redundant method `Resolve()`
-* Implement late binding
-* Add multiple `Inject` attributes registration
-* Add message generation for pull requests
-
