@@ -52,8 +52,8 @@ namespace SimpleContainer.Tests
 
             container.RegisterAttribute<InjectAttribute>();
 
-            container.Register<IColor, ColorRed>(Scope.Transient, colorRed);
-            container.Register<IColor, ColorBlue>(Scope.Transient, colorBlue);
+            container.Register<IColor>(Scope.Transient, colorRed);
+            container.Register<IColor>(Scope.Transient, colorBlue);
 
             var colors = container.ResolveAll<IColor>();
             var actualCount = colors.Length;
@@ -176,12 +176,13 @@ namespace SimpleContainer.Tests
         public void Resolve_IntoRegistered_Singleton()
         {
             var container = Container.Create();
+
             var food = new CatFood();
             var petshop = new Petshop();
 
             container.RegisterAttribute<InjectAttribute>();
 
-            container.Register<IPetFood, CatFood>(Scope.Singleton, food);
+            container.Register<IPetFood>(Scope.Singleton, food);
             container.Register(Scope.Singleton, petshop);
 
             container.InjectIntoRegistered();
@@ -195,13 +196,14 @@ namespace SimpleContainer.Tests
         public void Resolve_IntoRegistered_Transient()
         {
             var container = Container.Create();
+
             var food = new CatFood();
             var petshopOne = new Petshop();
             var petshopTwo = new Petshop();
 
             container.RegisterAttribute<InjectAttribute>();
 
-            container.Register<IPetFood, CatFood>(Scope.Singleton, food);
+            container.Register<IPetFood>(Scope.Singleton, food);
             container.Register(Scope.Transient, petshopOne);
             container.Register(Scope.Transient, petshopTwo);
 

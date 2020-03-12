@@ -16,14 +16,6 @@ namespace SimpleContainer
             Register(typeof(TResult), typeof(TResult), scope, null);
         }
 
-        public void Register<TResult>(Scope scope, TResult instance)
-        {
-            if (instance == null)
-                throw new NullInstanceException(typeof(TResult));
-
-            Register(typeof(TResult), typeof(TResult), scope, instance);
-        }
-
         public void Register<TContract>(params Type[] resultTypes)
         {
             foreach (Type resultType in resultTypes)
@@ -44,13 +36,22 @@ namespace SimpleContainer
             Register(typeof(TContract), typeof(TResult), scope, null);
         }
 
-        public void Register<TContract, TResult>(Scope scope, TResult instance)
-            where TResult : TContract
+        public void Register(Scope scope, object instance)
         {
             if (instance == null)
-                throw new NullInstanceException(typeof(TResult));
+                throw new ArgumentNullException(nameof(instance));
 
-            Register(typeof(TContract), typeof(TResult), scope, instance);
+            var resultType = instance.GetType();
+
+            Register(resultType, resultType, scope, instance);
+        }
+
+        public void Register<TContract>(Scope scope, object instance)
+        {
+            if (instance == null)
+                throw new NullInstanceException(typeof(TContract));
+
+            Register(typeof(TContract), instance.GetType(), scope, instance);
         }
 
         public void Register(Type resultType)
