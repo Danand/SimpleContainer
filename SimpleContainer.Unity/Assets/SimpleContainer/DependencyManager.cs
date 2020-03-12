@@ -113,7 +113,42 @@ namespace SimpleContainer
 
         public string GetBindingsString()
         {
-            return "WIP";
+            var result = string.Empty;
+
+            foreach (var node in RootNodes)
+            {
+                bool isCircularNode = false;
+
+                var dependencies = node.GetAllDependencies().Flatten(link => link.Node.GetAllDependencies())
+                                                            .TakeWhile(link =>
+                                                            {
+                                                                if (link.ContractType != node.ContractType)
+                                                                    return true;
+
+                                                                isCircularNode = true;
+
+                                                                return false;
+                                                            });
+
+                result += $"---- ({node.ContractType.Name}) {node.ResultType.Name}";
+
+                if (isCircularNode)
+                {
+                    result += " [CIRCULAR]";
+                }
+
+                result += Environment.NewLine;
+
+                foreach (var link in dependencies)
+                {
+                    result += $"-------- ({link.KeyType.Name}) {link.Node.ResultType.Name}";
+                    result += Environment.NewLine;
+                }
+
+                result += Environment.NewLine;
+            }
+
+            return result;
         }
 
         public object GetCachedInstance(Type contractType)

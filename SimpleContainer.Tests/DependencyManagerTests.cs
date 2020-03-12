@@ -1,4 +1,6 @@
-﻿using NUnit.Framework;
+﻿using System.Diagnostics;
+
+using NUnit.Framework;
 
 using SimpleContainer.Exceptions;
 using SimpleContainer.Tests.DummyTypes;
@@ -41,7 +43,9 @@ namespace SimpleContainer.Tests
             graph.Register<IAIPart, AIPartSemiconduction>(Scope.Singleton, null);
             graph.Register<INeural, NeuralGlobalNetwork>(Scope.Singleton, null);
 
-            Assert.Throws<CircularDependencyException>(graph.Link);
+            var throws = Assert.Throws<CircularDependencyException>(graph.Link);
+
+            Debug.WriteLine(throws.Message);
         }
 
         [Test]

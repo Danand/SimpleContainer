@@ -5,7 +5,7 @@ namespace SimpleContainer.Extensions
 {
     internal static class EnumerableExtensions
     {
-        public static IEnumerable<T> Flatten<T>(this IEnumerable<T> source, Func<T, IEnumerable<T>> getChildren)
+        public static IEnumerable<T> Flatten<T>(this IEnumerable<T> source, Func<T, IEnumerable<T>> selector)
         {
             if (source == null)
                 yield break;
@@ -21,7 +21,7 @@ namespace SimpleContainer.Extensions
                 if (current == null)
                     continue;
 
-                var children = getChildren(current);
+                var children = selector.Invoke(current);
 
                 if (children == null)
                     continue;
