@@ -5,7 +5,7 @@
         [InjectA]
         public IMagic MagicFirst;
 
-        [InjectB]
+        [InjectOther]
         public IMagic MagicSecond;
     }
 }

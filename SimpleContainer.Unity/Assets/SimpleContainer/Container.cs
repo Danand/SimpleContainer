@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
-using SimpleContainer.Attributes;
 using SimpleContainer.Exceptions;
 using SimpleContainer.Interfaces;
 
+[assembly: InternalsVisibleTo("SimpleContainer.Tests")]
 namespace SimpleContainer
 {
     public sealed partial class Container
@@ -15,7 +16,7 @@ namespace SimpleContainer
 
         internal DependencyManager DependencyManager { get; set; }
 
-        internal HashSet<Type> InjectAttributeTypes { get; set; } = new HashSet<Type> { typeof(InjectAttribute) };
+        internal HashSet<Type> InjectAttributeTypes { get; set; } = new HashSet<Type>();
 
         public static Container Create()
         {
@@ -89,6 +90,11 @@ namespace SimpleContainer
         internal IEnumerable<object> GetAllCached()
         {
             return DependencyManager.RootNodes.Select(rootNode => rootNode.Instance);
+        }
+
+        public void InjectIntoRegistered()
+        {
+            throw new NotImplementedException();
         }
     }
 }

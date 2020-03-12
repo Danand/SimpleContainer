@@ -2,5 +2,5 @@
 
 namespace SimpleContainer.Tests.DummyTypes
 {
-    public sealed class InjectAAttribute : Attribute { }
+    public sealed class InjectAttribute : Attribute { }
 }

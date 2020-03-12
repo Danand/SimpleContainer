@@ -16,6 +16,8 @@ namespace SimpleContainer.Tests
         {
             var container = Container.Create();
 
+            container.RegisterAttribute<InjectAttribute>();
+
             container.Register<IEngine, EngineBig>(Scope.Transient);
             container.Register<ICar, CarFourWheelDrive>(Scope.Transient);
 
@@ -31,6 +33,8 @@ namespace SimpleContainer.Tests
             const int EXPECTED_COUNT = 2;
 
             var container = Container.Create();
+
+            container.RegisterAttribute<InjectAttribute>();
 
             container.Register<IColor>(typeof(ColorRed), typeof(ColorBlue));
             container.Register<IColorPalette, ColorPalette>(Scope.Singleton);
@@ -48,6 +52,8 @@ namespace SimpleContainer.Tests
 
             var container = Container.Create();
 
+            container.RegisterAttribute<InjectAttribute>();
+
             container.Register<IColor, ColorRed>(Scope.Transient);
             container.Register<IColor, ColorBlue>(Scope.Transient);
             container.Register<IColorPalette, ColorPalette>(Scope.Singleton);
@@ -63,6 +69,8 @@ namespace SimpleContainer.Tests
         {
             var container = Container.Create();
 
+            container.RegisterAttribute<InjectAttribute>();
+
             container.Register<IPhysics, PhysicsPlanetEarth>(Scope.Singleton);
             container.Register<IEngine, EngineMedium>(Scope.Transient);
 
@@ -70,22 +78,6 @@ namespace SimpleContainer.Tests
             var enigneSecond = container.Resolve<IEngine>();
 
             Assert.AreSame(enigneFirst.Physics, enigneSecond.Physics);
-        }
-
-        [Test]
-        public void Inject_Factory()
-        {
-            var container = Container.Create();
-
-            container.Register<IEngine, EngineBig>(Scope.Transient);
-            container.Register<ICar, CarFourWheelDrive>(Scope.Transient);
-
-            container.RegisterFactory<CarFactory>();
-
-            var factory = container.Resolve<CarFactory>();
-            var car = factory.Create<CarFourWheelDrive>();
-
-            Assert.IsInstanceOf<EngineBig>(car.Engine);
         }
     }
 }

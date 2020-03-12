@@ -13,7 +13,7 @@ namespace SimpleContainer.Tests
         {
             Container container = Container.Create();
 
-            container.RegisterAttribute<InjectAAttribute>();
+            container.RegisterAttribute<InjectAttribute>();
 
             var graph = new DependencyManager(container);
 
@@ -33,7 +33,7 @@ namespace SimpleContainer.Tests
         {
             Container container = Container.Create();
 
-            container.RegisterAttribute<InjectAAttribute>();
+            container.RegisterAttribute<InjectAttribute>();
 
             var graph = new DependencyManager(container);
 
@@ -51,7 +51,7 @@ namespace SimpleContainer.Tests
         {
             Container container = Container.Create();
 
-            container.RegisterAttribute<InjectAAttribute>();
+            container.RegisterAttribute<InjectAttribute>();
 
             var graph = new DependencyManager(container);
 

@@ -1,6 +1,4 @@
-﻿using SimpleContainer.Attributes;
-
-namespace SimpleContainer.Tests.DummyTypes
+﻿namespace SimpleContainer.Tests.DummyTypes
 {
     public sealed class Petshop
     {
