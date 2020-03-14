@@ -8,7 +8,7 @@ namespace SimpleContainer.Tests
     public class RegisterTests
     {
         [Test]
-        public void Register_Instance_Singleton_NotThrow()
+        public void Register_Instance_Singleton_NotThrows()
         {
             var container = Container.Create();
             var instance = new ColorRed();
@@ -21,7 +21,7 @@ namespace SimpleContainer.Tests
         }
 
         [Test]
-        public void Register_Instance_Transient_NotThrow()
+        public void Register_Instance_Transient_NotThrows()
         {
             var container = Container.Create();
             var instanceBlue = new ColorBlue();

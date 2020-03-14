@@ -153,9 +153,24 @@ namespace SimpleContainer.Tests
             container.RegisterAttribute<InjectAttribute>();
             container.Register<ITimeMachine, TimeMachineDelorean>(Scope.Singleton);
 
-            Assert.Throws(typeof(TypeNotRegisteredException), () =>
+            Assert.Throws<TypeNotRegisteredException>(() =>
             {
                 container.Resolve<TimeMachineDelorean>();
+            });
+        }
+
+        [Test]
+        public void Resolve_Singleton_Constructor_Throws_TypeNotRegisteredException()
+        {
+            var container = Container.Create();
+
+            container.RegisterAttribute<InjectAttribute>();
+
+            container.Register<IAIPart, AIPartConsciousness>(Scope.Singleton);
+
+            Assert.Throws<TypeNotRegisteredException>(() =>
+            {
+                container.Resolve<IAIPart>();
             });
         }
 

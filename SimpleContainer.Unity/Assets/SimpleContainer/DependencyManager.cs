@@ -88,7 +88,7 @@ namespace SimpleContainer
             var foundNodes = RootNodes.Where(node => node.ContractType == contractType).ToArray();
 
             if (foundNodes.Length == 0)
-                throw new TypeNotRegisteredException(contractType, GetBindingsString());
+                throw new TypeNotRegisteredException(contractType, BindingsPrinter.GetBindingsString(RootNodes));
 
             foreach (var foundNode in foundNodes)
             {
@@ -109,46 +109,6 @@ namespace SimpleContainer
             }
 
             return foundNodes[0].Instance;
-        }
-
-        public string GetBindingsString()
-        {
-            var result = string.Empty;
-
-            foreach (var node in RootNodes)
-            {
-                bool isCircularNode = false;
-
-                var dependencies = node.GetAllDependencies().Flatten(link => link.Node.GetAllDependencies())
-                                                            .TakeWhile(link =>
-                                                            {
-                                                                if (link.ContractType != node.ContractType)
-                                                                    return true;
-
-                                                                isCircularNode = true;
-
-                                                                return false;
-                                                            });
-
-                result += $"---- ({node.ContractType.Name}) {node.ResultType.Name}";
-
-                if (isCircularNode)
-                {
-                    result += " [CIRCULAR]";
-                }
-
-                result += Environment.NewLine;
-
-                foreach (var link in dependencies)
-                {
-                    result += $"-------- ({link.KeyType.Name}) {link.Node.ResultType.Name}";
-                    result += Environment.NewLine;
-                }
-
-                result += Environment.NewLine;
-            }
-
-            return result;
         }
 
         public object GetCachedInstance(Type contractType)
@@ -203,7 +163,7 @@ namespace SimpleContainer
                 var foundNodes = rootNodes.Where(rootNode => rootNode.ContractType == link.ContractType).ToArray();
 
                 if (foundNodes.Length == 0)
-                    throw new TypeNotRegisteredException(link.ContractType, GetBindingsString());
+                    throw new TypeNotRegisteredException(link.ContractType, BindingsPrinter.GetBindingsString(RootNodes));
 
                 DependencyLink currentLink = link;
 
@@ -259,7 +219,7 @@ namespace SimpleContainer
                                                                  .Any(link => link.ContractType == node.ContractType);
 
             if (hasCircularDependency)
-                throw new CircularDependencyException(node.ContractType, GetBindingsString());
+                throw new CircularDependencyException(node.ContractType, BindingsPrinter.GetBindingsString(RootNodes, node));
         }
 
         private void InjectIntoProperties(DependencyNode node)
