@@ -46,12 +46,14 @@ namespace SimpleContainer
             Register(resultType, resultType, scope, instance);
         }
 
-        public void Register<TContract>(Scope scope, object instance)
+        public void Register<TContract>(Scope scope, TContract instance)
         {
             if (instance == null)
-                throw new NullInstanceException(typeof(TContract));
+                throw new ArgumentNullException(nameof(instance));
 
-            Register(typeof(TContract), instance.GetType(), scope, instance);
+            var resultType = instance.GetType();
+
+            Register(typeof(TContract), resultType, scope, instance);
         }
 
         public void Register(Type resultType)
