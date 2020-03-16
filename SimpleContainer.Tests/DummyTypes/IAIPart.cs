@@ -1,4 +1,4 @@
 ﻿namespace SimpleContainer.Tests.DummyTypes
 {
-    public sealed class MagicPink : IMagic { }
+    public interface IAIPart { }
 }

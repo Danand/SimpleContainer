@@ -15,12 +15,9 @@ Initial published release.
 * Add multiple `Inject` attributes registration
 * Add message generation for pull requests
 
-
-## [0.7.0] - 2020-02-04
-* Add example project
-* Add `TypeNotResolvedException` explanation to message
-* Remove redundant method `Resolve()`
-* Implement late binding
-* Add multiple `Inject` attributes registration
-* Add message generation for pull requests
-
+## [0.7.1] - 2020-03-16
+* Add dependency graph output on circular dependency
+* Add dependency graph output on not registered typede
+* Remove deprecated `Inject` attribute
+* Remove `Dispatcher` signal bus
+* Replace internal linking with a fully new ones

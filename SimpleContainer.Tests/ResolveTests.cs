@@ -15,6 +15,7 @@ namespace SimpleContainer.Tests
         {
             var container = Container.Create();
 
+            container.RegisterAttribute<InjectAttribute>();
             container.Register<ICar, CarTruck>(Scope.Transient);
 
             var carFirst = container.Resolve<ICar>();
@@ -30,6 +31,7 @@ namespace SimpleContainer.Tests
 
             var container = Container.Create();
 
+            container.RegisterAttribute<InjectAttribute>();
             container.Register<IColor>(typeof(ColorRed), typeof(ColorBlue));
 
             var colors = container.ResolveAll<IColor>();
@@ -48,8 +50,10 @@ namespace SimpleContainer.Tests
             var colorRed = new ColorRed();
             var colorBlue = new ColorBlue();
 
-            container.Register<IColor, ColorRed>(Scope.Transient, colorRed);
-            container.Register<IColor, ColorBlue>(Scope.Transient, colorBlue);
+            container.RegisterAttribute<InjectAttribute>();
+
+            container.Register<IColor>(Scope.Transient, colorRed);
+            container.Register<IColor>(Scope.Transient, colorBlue);
 
             var colors = container.ResolveAll<IColor>();
             var actualCount = colors.Length;
@@ -68,6 +72,8 @@ namespace SimpleContainer.Tests
             var colorRedOne = new ColorRed();
             var colorRedTwo = new ColorRed();
 
+            container.RegisterAttribute<InjectAttribute>();
+
             container.Register(Scope.Transient, colorRedOne);
             container.Register(Scope.Transient, colorRedTwo);
 
@@ -85,6 +91,7 @@ namespace SimpleContainer.Tests
 
             var container = Container.Create();
 
+            container.RegisterAttribute<InjectAttribute>();
             container.Register<IColor>(typeof(ColorRed), typeof(ColorBlue));
 
             var colors = container.ResolveAll(typeof(IColor));
@@ -100,6 +107,7 @@ namespace SimpleContainer.Tests
 
             var container = Container.Create();
 
+            container.RegisterAttribute<InjectAttribute>();
             container.Register<IColor>(typeof(ColorRed), typeof(ColorBlue));
 
             var colorsObject = container.Resolve(typeof(IColor[]));
@@ -114,6 +122,7 @@ namespace SimpleContainer.Tests
         {
             var container = Container.Create();
 
+            container.RegisterAttribute<InjectAttribute>();
             container.Register<ITimeMachine, TimeMachineDelorean>(Scope.Singleton);
 
             var machineFirst = container.Resolve<ITimeMachine>();
@@ -127,6 +136,7 @@ namespace SimpleContainer.Tests
         {
             var container = Container.Create();
 
+            container.RegisterAttribute<InjectAttribute>();
             container.Register<TimeMachineDelorean>(Scope.Singleton);
 
             var machineFirst = container.Resolve<TimeMachineDelorean>();
@@ -140,25 +150,28 @@ namespace SimpleContainer.Tests
         {
             var container = Container.Create();
 
+            container.RegisterAttribute<InjectAttribute>();
             container.Register<ITimeMachine, TimeMachineDelorean>(Scope.Singleton);
 
-            Assert.Throws(typeof(TypeNotRegisteredException), () =>
+            Assert.Throws<TypeNotRegisteredException>(() =>
             {
                 container.Resolve<TimeMachineDelorean>();
             });
         }
 
         [Test]
-        public void Resolve_Factory()
+        public void Resolve_Singleton_Constructor_Throws_TypeNotRegisteredException()
         {
             var container = Container.Create();
 
-            container.RegisterFactory<CarFactory>();
+            container.RegisterAttribute<InjectAttribute>();
 
-            var factory = container.Resolve<CarFactory>();
-            var result = factory.Create<CarTruck>();
+            container.Register<IAIPart, AIPartConsciousness>(Scope.Singleton);
 
-            Assert.IsInstanceOf<ICar>(result);
+            Assert.Throws<TypeNotRegisteredException>(() =>
+            {
+                container.Resolve<IAIPart>();
+            });
         }
 
         [Test]
@@ -169,6 +182,8 @@ namespace SimpleContainer.Tests
             var installerName = typeof(InstallerDummy).FullName;
             var assembly = typeof(InstallerDummy).Assembly;
 
+            container.RegisterAttribute<InjectAttribute>();
+
             container.Install(assembly, installerName);
         }
 
@@ -176,8 +191,11 @@ namespace SimpleContainer.Tests
         public void Resolve_IntoRegistered_Singleton()
         {
             var container = Container.Create();
+
             var food = new CatFood();
             var petshop = new Petshop();
+
+            container.RegisterAttribute<InjectAttribute>();
 
             container.Register<IPetFood>(Scope.Singleton, food);
             container.Register(Scope.Singleton, petshop);
@@ -193,9 +211,12 @@ namespace SimpleContainer.Tests
         public void Resolve_IntoRegistered_Transient()
         {
             var container = Container.Create();
+
             var food = new CatFood();
             var petshopOne = new Petshop();
             var petshopTwo = new Petshop();
+
+            container.RegisterAttribute<InjectAttribute>();
 
             container.Register<IPetFood>(Scope.Singleton, food);
             container.Register(Scope.Transient, petshopOne);

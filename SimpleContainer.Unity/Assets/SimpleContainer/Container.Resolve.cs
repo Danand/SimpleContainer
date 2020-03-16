@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using SimpleContainer.Exceptions;
 using SimpleContainer.Interfaces;
 
 namespace SimpleContainer
@@ -23,70 +22,41 @@ namespace SimpleContainer
             }
         }
 
+        public object Resolve(Type contractType)
+        {
+            return DependencyManager.Resolve(contractType);
+        }
+
         public TContract[] ResolveAll<TContract>()
         {
             return ResolveAll(typeof(TContract)).Cast<TContract>().ToArray();
         }
 
-        public object Resolve(Type contractType)
+        public object[] ResolveAll(Type contractType)
         {
-            return Resolve(contractType, new object[0]);
-        }
-
-        public object Resolve(Type contractType, params object[] args)
-        {
-            var contractIsArray = contractType.IsArray;
-            var elementType = contractIsArray ? contractType.GetElementType() : contractType;
-
-            var instances = ResolveAll(elementType, args);
-
-            if (contractIsArray)
-                return instances;
-
-            return instances[0];
-        }
-
-        public object[] ResolveAll(Type contractType, params object[] args)
-        {
-            if (!bindings.TryGetValue(contractType, out var resolver))
-                throw new TypeNotRegisteredException(contractType, GetBindingsString(bindings));
-
-            var instances = resolver.GetInstances(args);
-
-            InitializeInstances(instances);
-
-            return instances.Select(instance => instance).ToArray();
+            return (object[])DependencyManager.Resolve(contractType.MakeArrayType());
         }
 
         public TContract GetCached<TContract>()
         {
             var contractType = typeof(TContract);
-
-            if (!bindings.TryGetValue(contractType, out var resolver))
-                throw new TypeNotRegisteredException(contractType, GetBindingsString(bindings));
-
-            return (TContract)resolver.GetCachedInstances().First();
+            return (TContract)DependencyManager.GetCachedInstance(contractType);
         }
 
         public TContract[] GetCachedMultiple<TContract>()
         {
             var contractType = typeof(TContract);
-
-            if (!bindings.TryGetValue(contractType, out var resolver))
-                throw new TypeNotRegisteredException(contractType, GetBindingsString(bindings));
-
-            return resolver.GetCachedInstances().Select(wrapper => (TContract)wrapper).ToArray();
+            return DependencyManager.GetCachedInstances(contractType).Cast<TContract>().ToArray();
         }
 
         public void InjectInto(object instance)
         {
-            foreach (var binding in bindings.Values)
-                binding.InjectIntoInstance(instance);
+            DependencyManager.InjectIntoInstance(instance);
         }
 
         public IEnumerable<object> GetAllCachedInstances()
         {
-            return GetAllCached().Select(wrapper => wrapper);
+            return GetAllCached().Select(instance => instance);
         }
 
         internal object[] ResolveMultiple(Type contractType)
@@ -101,7 +71,7 @@ namespace SimpleContainer
         private IInstaller ResolveInstaller(Type installerType)
         {
             IActivator activator = Resolve<IActivator>();
-            return (IInstaller)activator.CreateInstance(installerType);
+            return (IInstaller)activator.CreateInstance(installerType.GetConstructors()[0], new object[0]);
         }
     }
 }

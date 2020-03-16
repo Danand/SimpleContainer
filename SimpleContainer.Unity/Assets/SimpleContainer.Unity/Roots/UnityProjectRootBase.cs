@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 using SimpleContainer.Unity.Installers;
 
@@ -43,11 +42,6 @@ namespace SimpleContainer.Unity.Roots
         {
             container.Install(installer);
             container.InjectIntoRegistered();
-        }
-
-        void OnDestroy()
-        {
-            ((IDisposable)container).Dispose();
         }
     }
 }
