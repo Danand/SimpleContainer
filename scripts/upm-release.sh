@@ -25,6 +25,12 @@ else
   local=false
 fi
 
+if [[ "$3" == "--skip-changelog" ]]; then
+  skip_changelog=true
+else
+  skip_changelog=false
+fi
+
 tag="$1"
 prefix="SimpleContainer.Unity/Assets"
 source_branch=$(git rev-parse --abbrev-ref HEAD)
@@ -34,17 +40,20 @@ cd "$(dirname "$0")/.."
 
 git tag ${tag} --force
 
-tag_previous=$(git tag | grep -v "package" | tail -n 2 | head -n 1)
-source ./scripts/get-changelog.sh
-printf "\n" >> CHANGELOG.md
-get_heading ${tag} >> CHANGELOG.md
-printf "\n" >> CHANGELOG.md
-get_body ${tag_previous} ${tag} >> CHANGELOG.md
-printf "\n" >> CHANGELOG.md
-
-git add CHANGELOG.md
-git commit -m "Update CHANGELOG.md with version ${tag}"
-git tag ${tag} --force
+if ! $skip_changelog; then
+  tag_previous=$(git tag | grep -v "package" | tail -n 2 | head -n 1)
+  source ./scripts/get-changelog.sh
+  printf "\n" >> CHANGELOG.md
+  get_heading ${tag} >> CHANGELOG.md
+  printf "\n" >> CHANGELOG.md
+  get_body ${tag_previous} ${tag} >> CHANGELOG.md
+  printf "\n" >> CHANGELOG.md
+  
+  git add CHANGELOG.md
+  git commit -m "Update CHANGELOG.md with version ${tag}"
+  
+  git tag ${tag} --force
+fi
 
 mv_to_prefix README.md "${prefix}"
 reveal_meta README.md "${prefix}"
