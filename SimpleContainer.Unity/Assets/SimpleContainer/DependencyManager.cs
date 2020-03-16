@@ -163,7 +163,7 @@ namespace SimpleContainer
                 var foundNodes = rootNodes.Where(rootNode => rootNode.ContractType == link.ContractType).ToArray();
 
                 if (foundNodes.Length == 0)
-                    throw new TypeNotRegisteredException(link.ContractType, BindingsPrinter.GetBindingsString(RootNodes));
+                    throw new TypeNotRegisteredException(link.ContractType, BindingsPrinter.GetBindingsString(RootNodes, notRegisteredType: link.ContractType));
 
                 DependencyLink currentLink = link;
 
@@ -219,7 +219,7 @@ namespace SimpleContainer
                                                                  .Any(link => link.ContractType == node.ContractType);
 
             if (hasCircularDependency)
-                throw new CircularDependencyException(node.ContractType, BindingsPrinter.GetBindingsString(RootNodes, node));
+                throw new CircularDependencyException(node.ContractType, BindingsPrinter.GetBindingsString(RootNodes, circularNode: node));
         }
 
         private void InjectIntoProperties(DependencyNode node)

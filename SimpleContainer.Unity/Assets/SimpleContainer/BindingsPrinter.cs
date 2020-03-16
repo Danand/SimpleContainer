@@ -9,8 +9,12 @@ namespace SimpleContainer
     {
         private const string INDENTATION = "----";
         private const string CIRCULAR = " # CIRCULAR";
+        private const string NOT_REGISTERED = " # NOT REGISTERED";
 
-        public static string GetBindingsString(IList<DependencyNode> rootNodes, DependencyNode circularNode = null)
+        public static string GetBindingsString(
+            IList<DependencyNode>   rootNodes,
+            DependencyNode          circularNode = null,
+            Type                    notRegisteredType = null)
         {
             var result = string.Empty;
 
@@ -27,7 +31,7 @@ namespace SimpleContainer
 
                 int level = 1;
 
-                result = PrintLinks(node, result, level, circularNode);
+                result = PrintLinks(node, result, level, circularNode, notRegisteredType);
 
                 result += Environment.NewLine;
             }
@@ -35,7 +39,12 @@ namespace SimpleContainer
             return result;
         }
 
-        private static string PrintLinks(DependencyNode node, string result, int level, DependencyNode circularNode)
+        private static string PrintLinks(
+            DependencyNode  node,
+            string          result,
+            int             level,
+            DependencyNode  circularNode,
+            Type            notRegisteredType)
         {
             level++;
 
@@ -45,16 +54,23 @@ namespace SimpleContainer
             {
                 result += $"{indentation} ({link.KeyType.Name})";
 
-                if (link.Node == null)
+                if (link.ContractType == notRegisteredType)
                 {
-                    result += " # NOT REGISTERED";
-                }
-                else
-                {
-                    result += $" {link.Node.ResultType.Name}";
+                    result += NOT_REGISTERED;
+                    result += Environment.NewLine;
+
+                    break;
                 }
 
-                if (link.Node != null && link.Node == circularNode)
+                if (link.Node == null)
+                {
+                    result += Environment.NewLine;
+                    break;
+                }
+
+                result += $" {link.Node.ResultType.Name}";
+
+                if (link.Node == circularNode)
                 {
                     result += CIRCULAR;
                     result += Environment.NewLine;
@@ -66,7 +82,7 @@ namespace SimpleContainer
 
                 if (link.Node != null)
                 {
-                    result = PrintLinks(link.Node, result, level, circularNode);
+                    result = PrintLinks(link.Node, result, level, circularNode, notRegisteredType);
                 }
             }
 
