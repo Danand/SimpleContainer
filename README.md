@@ -9,14 +9,14 @@ The point is the usage of DI-container in a proper way.
 ### From remote repository
 Add in `Packages/manifest.json` to `dependencies`:
 ```javascript
-"com.danand.simplecontainer": "https://github.com/Danand/SimpleContainer.git#0.7.0-package-unity",
+"com.danand.simplecontainer": "https://github.com/Danand/SimpleContainer.git#0.7.1-beta-package-unity",
 ```
 
 ### From local path
 <details>
 	<summary>From local repository</summary>
 	
-	"com.danand.simplecontainer": "file:///D/repos/SimpleContainer/.git#0.7.0-package-unity",
+	"com.danand.simplecontainer": "file:///D/repos/SimpleContainer/.git#0.7.1-beta-package-unity",
 </details>
 
 <details>
