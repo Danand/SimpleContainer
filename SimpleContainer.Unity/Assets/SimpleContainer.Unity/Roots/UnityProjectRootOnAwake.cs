@@ -2,8 +2,9 @@
 {
     public class UnityProjectRootOnAwake : UnityProjectRootBase
     {
-        async void Awake()
+        protected override async void Awake()
         {
+            base.Awake();
             await InstallAsyncInternally();
         }
     }
