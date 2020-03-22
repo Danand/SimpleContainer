@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 
 using SimpleContainer.Exceptions;
+using SimpleContainer.Installers;
 using SimpleContainer.Interfaces;
 
 [assembly: InternalsVisibleTo("SimpleContainer.Tests")]

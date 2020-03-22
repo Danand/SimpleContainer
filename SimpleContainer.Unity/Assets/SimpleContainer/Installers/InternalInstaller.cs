@@ -2,7 +2,7 @@
 using SimpleContainer.Interfaces;
 using SimpleContainer.TypeLoaders;
 
-namespace SimpleContainer
+namespace SimpleContainer.Installers
 {
     internal sealed class InternalInstaller : IInstaller
     {
