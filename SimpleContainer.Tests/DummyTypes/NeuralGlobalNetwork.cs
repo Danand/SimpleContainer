@@ -1,6 +1,6 @@
 ﻿namespace SimpleContainer.Tests.DummyTypes
 {
-    public sealed class NeuralGlobalNetwork
+    public sealed class NeuralGlobalNetwork : INeural
     {
         private readonly IPunk punk;
 

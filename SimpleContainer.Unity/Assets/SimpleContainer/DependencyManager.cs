@@ -25,6 +25,7 @@ namespace SimpleContainer
         public IList<DependencyNode> RootNodes { get; } = new List<DependencyNode>();
 
         public void Register<TContract, TResult>(Scope scope, TResult instance)
+            where TResult : TContract
         {
             MarkNotLinked();
 
@@ -44,6 +45,8 @@ namespace SimpleContainer
 
         public void Register(Type contractType, Type resultType, Scope scope, object instance)
         {
+            ThrowIfWrongTypes(contractType, resultType);
+
             MarkNotLinked();
 
             var node = new DependencyNode
@@ -220,6 +223,12 @@ namespace SimpleContainer
 
             if (hasCircularDependency)
                 throw new CircularDependencyException(node.ContractType, BindingsPrinter.GetBindingsString(RootNodes, circularNode: node));
+        }
+
+        private void ThrowIfWrongTypes(Type contractType, Type resultType)
+        {
+            if (!contractType.IsAssignableFrom(resultType))
+                throw new WrongTypesException(contractType, resultType);
         }
 
         private void InjectIntoProperties(DependencyNode node)
