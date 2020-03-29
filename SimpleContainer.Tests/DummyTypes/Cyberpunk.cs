@@ -1,6 +1,6 @@
 ﻿namespace SimpleContainer.Tests.DummyTypes
 {
-    public sealed class Cyberpunk : IPunk
+    public sealed class Cyberpunk : IPunk, ITrending
     {
         public ITechnology Technology { get; }
 
