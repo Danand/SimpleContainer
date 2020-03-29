@@ -10,11 +10,11 @@ namespace SimpleContainer.Extensions
             if (source == null)
                 yield break;
 
-            var stack = new Stack<T>(source);
+            var queue = new Queue<T>(source);
 
-            while (stack.Count > 0)
+            while (queue.Count > 0)
             {
-                var current = stack.Pop();
+                var current = queue.Dequeue();
 
                 yield return current;
 
@@ -27,7 +27,7 @@ namespace SimpleContainer.Extensions
                     continue;
 
                 foreach (var child in children)
-                    stack.Push(child);
+                    queue.Enqueue(child);
             }
         }
     }
