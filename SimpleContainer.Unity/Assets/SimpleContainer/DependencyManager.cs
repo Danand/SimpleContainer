@@ -218,8 +218,8 @@ namespace SimpleContainer
 
         private void ThrowIfCircularDependency(DependencyNode node)
         {
-            var hasCircularDependency = node.GetAllDependencies().Flatten(link => link.Node.GetAllDependencies())
-                                                                 .Any(link => link.ContractType == node.ContractType);
+            var hasCircularDependency = node.GetAllDependencies().Flatten(link => link.Node.GetAllDependencies(), (first, second) => first.ContractType == second.ContractType)
+                                                                 .Any(link => link.Node.ContractType == node.ContractType);
 
             if (hasCircularDependency)
                 throw new CircularDependencyException(node.ContractType, BindingsPrinter.GetBindingsString(RootNodes, circularNode: node));

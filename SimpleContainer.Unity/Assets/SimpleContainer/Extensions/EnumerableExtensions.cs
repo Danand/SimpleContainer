@@ -5,29 +5,30 @@ namespace SimpleContainer.Extensions
 {
     internal static class EnumerableExtensions
     {
-        public static IEnumerable<T> Flatten<T>(this IEnumerable<T> source, Func<T, IEnumerable<T>> selector)
+        public static IEnumerable<T> Flatten<T>(this IEnumerable<T>     source,
+                                                Func<T, IEnumerable<T>> selector,
+                                                Func<T, T, bool>        itemComparer,
+                                                T                       previousItem = default)
         {
             if (source == null)
-                yield break;
+                throw new ArgumentNullException(nameof(source));
 
-            var queue = new Queue<T>(source);
+            if (selector == null)
+                throw new ArgumentNullException(nameof(selector));
 
-            while (queue.Count > 0)
+            foreach (T item in source)
             {
-                var current = queue.Dequeue();
-
-                yield return current;
-
-                if (current == null)
+                if (previousItem != null && itemComparer.Invoke(previousItem, item))
                     continue;
 
-                var children = selector.Invoke(current);
+                yield return item;
 
-                if (children == null)
-                    continue;
+                var children = selector.Invoke(item);
 
-                foreach (var child in children)
-                    queue.Enqueue(child);
+                foreach (T child in children.Flatten(selector, itemComparer, item))
+                {
+                    yield return child;
+                }
             }
         }
     }
