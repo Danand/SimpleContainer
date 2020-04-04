@@ -14,14 +14,17 @@ namespace SimpleContainer.Tests
         [Test]
         public void Flatten_Circular_Pass()
         {
-            var node = new Node();
-            var nodes = new List<Node> { node };
+            var node1 = new Node();
+            var node2 = new Node();
 
-            node.Nodes = nodes;
+            var nodes = new List<Node> { node1, node2 };
+
+            node1.Nodes = new List<Node>();
+            node2.Nodes = nodes;
 
             var result = nodes.Flatten(x => x.Nodes, (x, y) => x == y).ToArray();
 
-            Assert.AreEqual(1, result.Length);
+            Assert.AreEqual(3, result.Length);
         }
     }
 }
