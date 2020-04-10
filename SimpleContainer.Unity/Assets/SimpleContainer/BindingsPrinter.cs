@@ -10,6 +10,7 @@ namespace SimpleContainer
         private const string INDENTATION = "----";
         private const string CIRCULAR = " # CIRCULAR";
         private const string NOT_REGISTERED = " # NOT REGISTERED";
+        private const int CIRCULAR_LEVEL_MAX = 10;
 
         public static string GetBindingsString(
             IList<DependencyNode>   rootNodes,
@@ -47,6 +48,9 @@ namespace SimpleContainer
             Type            notRegisteredType)
         {
             level++;
+
+            if (circularNode != null && level > CIRCULAR_LEVEL_MAX)
+                return result;
 
             var indentation = INDENTATION.Repeat(level);
 

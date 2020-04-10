@@ -218,20 +218,29 @@ namespace SimpleContainer
 
         private void ThrowIfCircularDependency(DependencyNode node)
         {
-            bool hasCircularDependency;
+            var dependencyCounter = new DependencyRegistry(RootNodes);
+            _ = FlattenDependencies(node.GetAllDependencies(), link => link.Node.GetAllDependencies(), dependencyCounter).ToArray();
+        }
 
-            try
+        private IEnumerable<DependencyLink> FlattenDependencies(
+            IEnumerable<DependencyLink>                         dependencies,
+            Func<DependencyLink, IEnumerable<DependencyLink>>   selector,
+            DependencyRegistry                                  dependencyRegistry)
+        {
+            foreach (DependencyLink dependency in dependencies)
             {
-                hasCircularDependency = node.GetAllDependencies().Flatten(link => link.Node.GetAllDependencies())
-                                                                 .Any(link => link.Node.ContractType == node.ContractType);
-            }
-            catch (Exception)
-            {
-                hasCircularDependency = true;
-            }
+                dependencyRegistry.ThrowIfRepeating(dependency);
 
-            if (hasCircularDependency)
-                throw new CircularDependencyException(node.ContractType, BindingsPrinter.GetBindingsString(RootNodes, circularNode: node));
+                yield return dependency;
+
+                var children = selector.Invoke(dependency);
+
+                foreach (DependencyLink child in FlattenDependencies(children, selector, dependencyRegistry))
+                {
+                    dependencyRegistry.ThrowIfRepeating(child);
+                    yield return child;
+                }
+            }
         }
 
         private void ThrowIfWrongTypes(Type contractType, Type resultType)
