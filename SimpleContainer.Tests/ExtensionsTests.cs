@@ -22,7 +22,7 @@ namespace SimpleContainer.Tests
             node1.Nodes = new List<Node>();
             node2.Nodes = nodes;
 
-            var result = nodes.Flatten(x => x.Nodes, (x, y) => x == y).ToArray();
+            var result = nodes.Flatten(x => x.Nodes).ToArray();
 
             Assert.AreEqual(3, result.Length);
         }

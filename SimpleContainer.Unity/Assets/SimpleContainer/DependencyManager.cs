@@ -222,7 +222,7 @@ namespace SimpleContainer
 
             try
             {
-                hasCircularDependency = node.GetAllDependencies().Flatten(link => link.Node.GetAllDependencies(), (first, second) => first.ContractType == second.ContractType)
+                hasCircularDependency = node.GetAllDependencies().Flatten(link => link.Node.GetAllDependencies())
                                                                  .Any(link => link.Node.ContractType == node.ContractType);
             }
             catch (Exception)
