@@ -7,6 +7,8 @@ namespace SimpleContainer
 {
     internal sealed class DependencyNode
     {
+        private const int CYCLES_MAX = 300;
+
         public Type ContractType { get; set; }
 
         public Type ResultType { get; set; }
@@ -29,24 +31,26 @@ namespace SimpleContainer
 
         public IEnumerable<DependencyLink> GetAllDependencies()
         {
+            var cycleCounter = 0;
+
             foreach (var link in IterateSiblingLinks(ConstructorDependencies))
             {
-                yield return link;
+                yield return Iteration(link, ref cycleCounter);
             }
 
             foreach (var link in IterateSiblingLinks(PropertyDependencies.Values))
             {
-                yield return link;
+                yield return Iteration(link, ref cycleCounter);
             }
 
             foreach (var link in IterateSiblingLinks(FieldDependencies.Values))
             {
-                yield return link;
+                yield return Iteration(link, ref cycleCounter);
             }
 
             foreach (var link in IterateSiblingLinks(MethodDependencies.Values.SelectMany(link => link)))
             {
-                yield return link;
+                yield return Iteration(link, ref cycleCounter);
             }
         }
 
@@ -66,6 +70,16 @@ namespace SimpleContainer
                     currentLink = currentLink.NextLink;
                 }
             }
+        }
+
+        private DependencyLink Iteration(DependencyLink link, ref int cycleCounter)
+        {
+            cycleCounter++;
+
+            if (cycleCounter > CYCLES_MAX)
+                throw new Exception($"{nameof(cycleCounter)} > {CYCLES_MAX}");
+
+            return link;
         }
     }
 }
