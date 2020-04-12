@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reflection;
 
 using SimpleContainer.Exceptions;
-using SimpleContainer.Extensions;
 using SimpleContainer.Utils;
 
 namespace SimpleContainer
@@ -237,9 +236,10 @@ namespace SimpleContainer
 
                 foreach (DependencyLink child in FlattenDependencies(children, selector, dependencyRegistry))
                 {
-                    dependencyRegistry.ThrowIfRepeating(child);
                     yield return child;
                 }
+
+                dependencyRegistry.Remove(dependency);
             }
         }
 

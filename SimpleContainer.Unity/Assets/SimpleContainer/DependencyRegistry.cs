@@ -25,5 +25,10 @@ namespace SimpleContainer
                 throw new CircularDependencyException(dependency.ContractType, BindingsPrinter.GetBindingsString(rootNodes, circularNode: circularNode));
             }
         }
+
+        public void Remove(DependencyLink dependency)
+        {
+            contractTypes.RemoveWhere(type => type == dependency.ContractType);
+        }
     }
 }
