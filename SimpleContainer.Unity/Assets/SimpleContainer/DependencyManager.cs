@@ -167,21 +167,26 @@ namespace SimpleContainer
                 if (foundNodes.Length == 0)
                     throw new TypeNotRegisteredException(link.ContractType, BindingsPrinter.GetBindingsString(RootNodes, notRegisteredType: link.ContractType));
 
-                DependencyLink currentLink = link;
+                AssignNodesToLinks(link, foundNodes);
+            }
+        }
 
-                for (var i = 0; i < foundNodes.Length; i++)
+        private void AssignNodesToLinks(DependencyLink link, DependencyNode[] foundNodes)
+        {
+            DependencyLink currentLink = link;
+
+            for (var i = 0; i < foundNodes.Length; i++)
+            {
+                var foundNode = foundNodes[i];
+
+                currentLink.Node = foundNode;
+
+                if (foundNodes.Length > i + 1)
                 {
-                    var foundNode = foundNodes[i];
-
-                    currentLink.Node = foundNode;
-
-                    if (foundNodes.Length > i + 1)
-                    {
-                        currentLink.NextLink = currentLink.NextLink ?? DependencyLink.Create(link.KeyType);
-                    }
-
-                    currentLink = currentLink.NextLink;
+                    currentLink.NextLink = currentLink.NextLink ?? DependencyLink.Create(link.KeyType);
                 }
+
+                currentLink = currentLink.NextLink;
             }
         }
 
