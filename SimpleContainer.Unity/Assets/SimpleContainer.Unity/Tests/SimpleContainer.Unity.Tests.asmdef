@@ -1,0 +1,20 @@
+{
+    "name": "SimpleContainer.Unity.Tests",
+    "references": [
+        "GUID:63998e837d4540742963243e626d5985",
+        "GUID:442529758223e404dbdf03ab6fac5f53"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
