@@ -78,6 +78,8 @@ namespace SimpleContainer
             {
                 InjectAttributeTypes.Add(injectAttributeType);
             }
+
+            DependencyManager.Link();
         }
 
         public void ThrowIfNotResolved()
