@@ -16,7 +16,7 @@ namespace SimpleContainer.Unity.Roots
 
         private readonly Queue<IInstaller> installersQueue = new Queue<IInstaller>();
 
-        private Container container;
+        public Container Container { get; private set; }
 
         protected virtual void Awake()
         {
@@ -38,11 +38,11 @@ namespace SimpleContainer.Unity.Roots
 
         protected async Task InstallAsyncInternally()
         {
-            container = Container.Create();
+            Container = Container.Create();
 
             while (installersQueue.Count > 0)
             {
-                container.Install(installersQueue.Dequeue());
+                Container.Install(installersQueue.Dequeue());
             }
 
             var registrators = Resources.FindObjectsOfTypeAll<MonoRegistrator>();
@@ -50,28 +50,28 @@ namespace SimpleContainer.Unity.Roots
             foreach (MonoRegistrator registrator in registrators)
             {
                 if (!registrator.laterThanRoot)
-                    container.Install(registrator);
+                    Container.Install(registrator);
             }
 
             foreach (MonoInstaller installer in installers)
             {
-                await installer.ResolveAsync(container);
+                await installer.ResolveAsync(Container);
             }
 
-            container.InjectIntoRegistered();
+            Container.InjectIntoRegistered();
 
-            container.ThrowIfNotResolved();
+            Container.ThrowIfNotResolved();
 
             foreach (MonoInstaller installer in installers)
             {
-                await installer.AfterResolveAsync(container);
+                await installer.AfterResolveAsync(Container);
             }
         }
 
         internal void InstallMonoRegistrator(MonoInstaller installer)
         {
-            container.Install(installer);
-            container.InjectIntoRegistered();
+            Container.Install(installer);
+            Container.InjectIntoRegistered();
         }
     }
 }
