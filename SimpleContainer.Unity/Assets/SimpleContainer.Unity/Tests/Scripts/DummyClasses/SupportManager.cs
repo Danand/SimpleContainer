@@ -1,6 +1,8 @@
-﻿namespace SimpleContainer.Unity.Tests.DummyClasses
+﻿using UnityEngine;
+
+namespace SimpleContainer.Unity.Tests.DummyClasses
 {
-    public class SupportManager : ISupportManager
+    public class SupportManager : MonoBehaviour, ISupportManager
     {
         public ILocalizationRepository LocalizationRepository { get; }
 

@@ -306,6 +306,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1532072852}
   - component: {fileID: 1532072851}
+  - component: {fileID: 1532072854}
+  - component: {fileID: 1532072853}
   m_Layer: 0
   m_Name: UnitySceneRoot
   m_TagString: Untagged
@@ -325,7 +327,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 591f1e26743c4b6c91ebebe8e355c984, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  installers: []
+  installers:
+  - {fileID: 1532072854}
 --- !u!4 &1532072852
 Transform:
   m_ObjectHideFlags: 0
@@ -340,3 +343,28 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1532072853
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1532072850}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1c1d2dd9a65438fa50eaf93f045ca4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1532072854
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1532072850}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 563f6b4cec67d944c8eaf93987ded4e8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  supportManager: {fileID: 1532072853}

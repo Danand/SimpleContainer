@@ -68,10 +68,10 @@ namespace SimpleContainer
                 var nodeToRemove = DependencyManager.RootNodes.FirstOrDefault(node => node.ContractType == rootNode.ContractType);
 
                 if (nodeToRemove != null)
-                {
                     DependencyManager.RootNodes.Remove(nodeToRemove);
-                    DependencyManager.RootNodes.Add(rootNode);
-                }
+
+                DependencyManager.RootNodes.Add(rootNode);
+
             }
 
             foreach (var injectAttributeType in other.InjectAttributeTypes)
