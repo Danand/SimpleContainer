@@ -29,7 +29,7 @@ namespace SimpleContainer.Tests
         }
 
         [Test]
-        public void Link_Throws_CircularDependencyException()
+        public void Link_Fields_Throws_CircularDependencyException()
         {
             Container container = Container.Create();
 
@@ -42,6 +42,24 @@ namespace SimpleContainer.Tests
             graph.Register<IAIPart, AIPartConsciousness>(Scope.Singleton, null);
             graph.Register<IAIPart, AIPartSemiconduction>(Scope.Singleton, null);
             graph.Register<INeural, NeuralGlobalNetwork>(Scope.Singleton, null);
+
+            var throws = Assert.Throws<CircularDependencyException>(graph.Link);
+
+            Debug.WriteLine(throws.Message);
+        }
+
+        [Test]
+        public void Link_Constructors_Throws_CircularDependencyException()
+        {
+            Container container = Container.Create();
+
+            container.RegisterAttribute<InjectAttribute>();
+
+            var graph = new DependencyManager(container);
+
+            graph.Register<ITrending, Cyberpunk>(Scope.Singleton, null);
+            graph.Register<ITechnology, SocialMediaBlogs>(Scope.Singleton, null);
+            graph.Register<ISocialMedia, SocialMediaBlogs>(Scope.Singleton, null);
 
             var throws = Assert.Throws<CircularDependencyException>(graph.Link);
 

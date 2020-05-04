@@ -1,8 +1,10 @@
-﻿namespace SimpleContainer.Unity.Roots
+﻿using System.Threading.Tasks;
+
+namespace SimpleContainer.Unity.Roots
 {
     public sealed class UnityProjectRootManual : UnityProjectRootBase
     {
-        public async void InstallAsync()
+        public async Task InstallAsync()
         {
             await InstallAsyncInternally();
         }

@@ -14,7 +14,7 @@ namespace SimpleContainer.Unity.Installers
             if (laterThanRoot)
             {
                 var projectRoot = FindObjectOfType<UnityProjectRootBase>();
-                projectRoot.LateInstall(this);
+                projectRoot.InstallMonoRegistrator(this);
             }
         }
 

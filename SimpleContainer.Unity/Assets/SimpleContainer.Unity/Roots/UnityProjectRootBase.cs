@@ -1,47 +1,81 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Reflection;
+using System.Threading.Tasks;
 
+using SimpleContainer.Installers;
+using SimpleContainer.Interfaces;
 using SimpleContainer.Unity.Installers;
 
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace SimpleContainer.Unity.Roots
 {
     public abstract class UnityProjectRootBase : MonoBehaviour
     {
         public MonoInstaller[] installers;
+        public UnityEvent onResolved;
 
-        private Container container;
+        private readonly Queue<IInstaller> installersQueue = new Queue<IInstaller>();
+
+        public Container Container { get; private set; }
+
+        protected virtual void Awake()
+        {
+            foreach (var monoInstaller in installers)
+            {
+                installersQueue.Enqueue(monoInstaller);
+            }
+        }
+
+        public void AddInstaller(IInstaller installer)
+        {
+            installersQueue.Enqueue(installer);
+        }
+
+        public void AddInstaller(Assembly assembly, string installerName)
+        {
+            installersQueue.Enqueue(new StringInstaller(assembly, installerName));
+        }
 
         protected async Task InstallAsyncInternally()
         {
-            container = Container.Create();
+            Container = Container.Create();
 
-            foreach (MonoInstaller installer in installers)
-                container.Install(installer);
+            while (installersQueue.Count > 0)
+            {
+                Container.Install(installersQueue.Dequeue());
+            }
 
             var registrators = Resources.FindObjectsOfTypeAll<MonoRegistrator>();
 
             foreach (MonoRegistrator registrator in registrators)
             {
                 if (!registrator.laterThanRoot)
-                    container.Install(registrator);
+                    Container.Install(registrator);
             }
 
             foreach (MonoInstaller installer in installers)
-                await installer.ResolveAsync(container);
+            {
+                await installer.ResolveAsync(Container);
+            }
 
-            container.InjectIntoRegistered();
+            Container.InjectIntoRegistered();
 
-            container.ThrowIfNotResolved();
+            Container.ThrowIfNotResolved();
 
             foreach (MonoInstaller installer in installers)
-                await installer.AfterResolveAsync(container);
+            {
+                await installer.AfterResolveAsync(Container);
+            }
+
+            onResolved?.Invoke();
         }
 
-        internal void LateInstall(MonoInstaller installer)
+        internal void InstallMonoRegistrator(MonoInstaller installer)
         {
-            container.Install(installer);
-            container.InjectIntoRegistered();
+            Container.Install(installer);
+            Container.InjectIntoRegistered();
         }
     }
 }

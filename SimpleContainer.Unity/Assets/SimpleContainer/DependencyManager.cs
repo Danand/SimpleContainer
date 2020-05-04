@@ -4,7 +4,6 @@ using System.Linq;
 using System.Reflection;
 
 using SimpleContainer.Exceptions;
-using SimpleContainer.Extensions;
 using SimpleContainer.Utils;
 
 namespace SimpleContainer
@@ -25,6 +24,7 @@ namespace SimpleContainer
         public IList<DependencyNode> RootNodes { get; } = new List<DependencyNode>();
 
         public void Register<TContract, TResult>(Scope scope, TResult instance)
+            where TResult : TContract
         {
             MarkNotLinked();
 
@@ -44,6 +44,8 @@ namespace SimpleContainer
 
         public void Register(Type contractType, Type resultType, Scope scope, object instance)
         {
+            ThrowIfWrongTypes(contractType, resultType);
+
             MarkNotLinked();
 
             var node = new DependencyNode
@@ -165,21 +167,26 @@ namespace SimpleContainer
                 if (foundNodes.Length == 0)
                     throw new TypeNotRegisteredException(link.ContractType, BindingsPrinter.GetBindingsString(RootNodes, notRegisteredType: link.ContractType));
 
-                DependencyLink currentLink = link;
+                AssignNodesToLinks(link, foundNodes);
+            }
+        }
 
-                for (var i = 0; i < foundNodes.Length; i++)
+        private void AssignNodesToLinks(DependencyLink link, DependencyNode[] foundNodes)
+        {
+            DependencyLink currentLink = link;
+
+            for (var i = 0; i < foundNodes.Length; i++)
+            {
+                var foundNode = foundNodes[i];
+
+                currentLink.Node = foundNode;
+
+                if (foundNodes.Length > i + 1)
                 {
-                    var foundNode = foundNodes[i];
-
-                    currentLink.Node = foundNode;
-
-                    if (foundNodes.Length > i + 1)
-                    {
-                        currentLink.NextLink = currentLink.NextLink ?? DependencyLink.Create(link.KeyType);
-                    }
-
-                    currentLink = currentLink.NextLink;
+                    currentLink.NextLink = currentLink.NextLink ?? DependencyLink.Create(link.KeyType);
                 }
+
+                currentLink = currentLink.NextLink;
             }
         }
 
@@ -215,11 +222,36 @@ namespace SimpleContainer
 
         private void ThrowIfCircularDependency(DependencyNode node)
         {
-            var hasCircularDependency = node.GetAllDependencies().Flatten(link => link.Node.GetAllDependencies())
-                                                                 .Any(link => link.ContractType == node.ContractType);
+            var dependencyCounter = new DependencyRegistry(RootNodes);
+            _ = FlattenDependencies(node.GetAllDependencies(), link => link.Node.GetAllDependencies(), dependencyCounter).ToArray();
+        }
 
-            if (hasCircularDependency)
-                throw new CircularDependencyException(node.ContractType, BindingsPrinter.GetBindingsString(RootNodes, circularNode: node));
+        private IEnumerable<DependencyLink> FlattenDependencies(
+            IEnumerable<DependencyLink>                         dependencies,
+            Func<DependencyLink, IEnumerable<DependencyLink>>   selector,
+            DependencyRegistry                                  dependencyRegistry)
+        {
+            foreach (DependencyLink dependency in dependencies)
+            {
+                dependencyRegistry.ThrowIfRepeating(dependency);
+
+                yield return dependency;
+
+                var children = selector.Invoke(dependency);
+
+                foreach (DependencyLink child in FlattenDependencies(children, selector, dependencyRegistry))
+                {
+                    yield return child;
+                }
+
+                dependencyRegistry.Remove(dependency);
+            }
+        }
+
+        private void ThrowIfWrongTypes(Type contractType, Type resultType)
+        {
+            if (!contractType.IsAssignableFrom(resultType))
+                throw new WrongTypesException(contractType, resultType);
         }
 
         private void InjectIntoProperties(DependencyNode node)

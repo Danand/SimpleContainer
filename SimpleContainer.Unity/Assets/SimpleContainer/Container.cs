@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 
 using SimpleContainer.Exceptions;
+using SimpleContainer.Installers;
 using SimpleContainer.Interfaces;
 
 [assembly: InternalsVisibleTo("SimpleContainer.Tests")]
@@ -67,16 +68,18 @@ namespace SimpleContainer
                 var nodeToRemove = DependencyManager.RootNodes.FirstOrDefault(node => node.ContractType == rootNode.ContractType);
 
                 if (nodeToRemove != null)
-                {
                     DependencyManager.RootNodes.Remove(nodeToRemove);
-                    DependencyManager.RootNodes.Add(rootNode);
-                }
+
+                DependencyManager.RootNodes.Add(rootNode);
+
             }
 
             foreach (var injectAttributeType in other.InjectAttributeTypes)
             {
                 InjectAttributeTypes.Add(injectAttributeType);
             }
+
+            DependencyManager.Link();
         }
 
         public void ThrowIfNotResolved()

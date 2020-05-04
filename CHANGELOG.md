@@ -15,9 +15,13 @@ Initial published release.
 * Add multiple `Inject` attributes registration
 * Add message generation for pull requests
 
-## [0.7.1] - 2020-03-16
+## [0.7.1-beta] - 2020-03-16
 * Add dependency graph output on circular dependency
 * Add dependency graph output on not registered typede
 * Remove deprecated `Inject` attribute
 * Remove `Dispatcher` signal bus
 * Replace internal linking with a fully new ones
+
+## [0.7.1-beta.1] - 2020-05-04
+* Fix circular dependencies handling
+* Implement container override behaviour
