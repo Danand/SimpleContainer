@@ -154,6 +154,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   installers:
   - {fileID: 1532072854}
+  onResolved:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!4 &1532072852
 Transform:
   m_ObjectHideFlags: 0

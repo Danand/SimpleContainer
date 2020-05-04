@@ -7,12 +7,14 @@ using SimpleContainer.Interfaces;
 using SimpleContainer.Unity.Installers;
 
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace SimpleContainer.Unity.Roots
 {
     public abstract class UnityProjectRootBase : MonoBehaviour
     {
         public MonoInstaller[] installers;
+        public UnityEvent onResolved;
 
         private readonly Queue<IInstaller> installersQueue = new Queue<IInstaller>();
 
@@ -66,6 +68,8 @@ namespace SimpleContainer.Unity.Roots
             {
                 await installer.AfterResolveAsync(Container);
             }
+
+            onResolved?.Invoke();
         }
 
         internal void InstallMonoRegistrator(MonoInstaller installer)
