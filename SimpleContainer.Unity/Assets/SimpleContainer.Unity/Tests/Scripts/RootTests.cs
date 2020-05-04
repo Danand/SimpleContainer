@@ -33,9 +33,9 @@ namespace SimpleContainer.Unity.Tests
 
             yield return sceneRoot.InstallAsync().AsEnumerator();
 
-            var supportManager = sceneRoot.Container.Resolve<ISupportManager>() as SupportManager;
+            var supportManager = (SupportManager)sceneRoot.Container.Resolve<ISupportManager>();
 
-            Assert.IsNotNull(supportManager?.LocalizationRepository);
+            Assert.NotNull(supportManager.LocalizationRepository);
         }
     }
 }

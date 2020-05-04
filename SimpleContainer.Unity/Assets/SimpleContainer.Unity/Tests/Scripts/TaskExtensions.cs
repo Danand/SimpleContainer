@@ -13,7 +13,7 @@ namespace SimpleContainer.Unity.Tests
                 throw new ArgumentNullException(nameof(source));
             }
 
-            while (!source.IsCompleted || !source.IsFaulted)
+            while (!(source.IsCompleted || source.IsFaulted))
             {
                 yield return null;
             }

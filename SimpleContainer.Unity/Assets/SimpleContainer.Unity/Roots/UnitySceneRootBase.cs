@@ -54,7 +54,6 @@ namespace SimpleContainer.Unity.Roots
                     sceneContainer.Install(registrator);
             }
 
-
             Container projectContainer =  null;
 
             var projectRoot = ComponentUtils.FindInAllLoadedScenes<UnityProjectRootBase>();

@@ -1,4 +1,4 @@
 ﻿namespace SimpleContainer.Unity.Tests.DummyClasses
 {
-    public class LocalizationRepository : ILocalizationRepository { }
+    public sealed class LocalizationRepository : ILocalizationRepository { }
 }

@@ -1,6 +1,6 @@
 ﻿namespace SimpleContainer.Unity.Tests.DummyClasses
 {
-    public class DialogueManager : IDialogueManager
+    public sealed class DialogueManager : IDialogueManager
     {
         private readonly ILocalizationRepository localizationRepository;
 
