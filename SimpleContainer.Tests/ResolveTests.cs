@@ -208,6 +208,26 @@ namespace SimpleContainer.Tests
         }
 
         [Test]
+        public void Resolve_IntoRegistered_WithParameters_Singleton()
+        {
+            var container = Container.Create();
+
+            var food = new CatFoodChips("Crunchy");
+            var petshop = new Petshop();
+
+            container.RegisterAttribute<InjectAttribute>();
+
+            container.Register<IPetFood>(Scope.Singleton, food);
+            container.Register(Scope.Singleton, petshop);
+
+            container.InjectIntoRegistered();
+
+            var cached = container.GetCached<Petshop>();
+
+            Assert.AreEqual(food, cached.Food);
+        }
+
+        [Test]
         public void Resolve_IntoRegistered_Transient()
         {
             var container = Container.Create();

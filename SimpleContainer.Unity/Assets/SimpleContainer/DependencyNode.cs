@@ -17,6 +17,8 @@ namespace SimpleContainer
 
         public Scope Scope { get; set; }
 
+        public bool IsPreInstantiated { get; set; }
+
         public ConstructorInfo Constructor { get; set; }
 
         public DependencyDictionary ConstructorDependencies { get; set; }
@@ -29,9 +31,12 @@ namespace SimpleContainer
 
         public IEnumerable<DependencyLink> GetAllDependencies()
         {
-            foreach (var link in IterateSiblingLinks(ConstructorDependencies))
+            if (ConstructorDependencies != null)
             {
-                yield return link;
+                foreach (var link in IterateSiblingLinks(ConstructorDependencies))
+                {
+                    yield return link;
+                }
             }
 
             foreach (var link in IterateSiblingLinks(PropertyDependencies.Values))

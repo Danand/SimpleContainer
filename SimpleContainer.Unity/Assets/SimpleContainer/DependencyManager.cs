@@ -33,7 +33,8 @@ namespace SimpleContainer
                 ContractType = typeof(TContract),
                 ResultType = typeof(TResult),
                 Scope = scope,
-                Instance = instance
+                Instance = instance,
+                IsPreInstantiated = instance != null
             };
 
             if (instance != null)
@@ -53,7 +54,8 @@ namespace SimpleContainer
                 ContractType = contractType,
                 ResultType = resultType,
                 Scope = scope,
-                Instance = instance
+                Instance = instance,
+                IsPreInstantiated = instance != null
             };
 
             if (instance != null)
@@ -204,7 +206,12 @@ namespace SimpleContainer
         private void CollectDependencies(DependencyNode node)
         {
             node.Constructor = node.ResultType.GetConstructors()[0];
-            node.ConstructorDependencies = GetConstructorDependencies(node);
+
+            if (!node.IsPreInstantiated)
+            {
+                node.ConstructorDependencies = GetConstructorDependencies(node);
+            }
+
             node.PropertyDependencies = GetPropertyDependencies(node);
             node.FieldDependencies = GetFieldDependencies(node);
             node.MethodDependencies = GetMethodDependencies(node);
@@ -212,6 +219,11 @@ namespace SimpleContainer
 
         private object Instantiate(DependencyNode node)
         {
+            if (node.ConstructorDependencies == null)
+            {
+                return container.InternalDependencies.Activator.CreateInstance(node.Constructor, new object[0]);
+            }
+
             var args = node.ConstructorDependencies.Select(link => Resolve(link.KeyType)).ToArray();
 
             if (container.InternalDependencies == null)
