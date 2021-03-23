@@ -4,7 +4,7 @@
   "displayName": "Simple Container",
   "author": "danand <danand@inbox.ru> (https://github.com/danand)",
   "description": "Minimal and proper IoC-container for Unity.",
-  "version": "0.7.1-beta.1",
+  "version": "0.7.1-beta.3",
   "unity": "2019.3",
   "repository": {
     "type": "git",
