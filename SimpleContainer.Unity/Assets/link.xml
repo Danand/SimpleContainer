@@ -1,0 +1,3 @@
+﻿<linker>
+	<assembly fullname="ActivatorReflection" preserve="all"></assembly>
+</linker>
