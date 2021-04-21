@@ -2,7 +2,7 @@
 
 namespace SimpleContainer.Interfaces
 {
-    internal interface IActivator
+    public interface IActivator
     {
         object CreateInstance(ConstructorInfo constructor, object[] args);
     }

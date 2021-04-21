@@ -4,7 +4,7 @@ using SimpleContainer.Interfaces;
 
 namespace SimpleContainer.Activators
 {
-    internal sealed class ActivatorReflection : IActivator
+    public sealed class ActivatorReflection : IActivator
     {
         object IActivator.CreateInstance(ConstructorInfo constructor, object[] args)
         {
