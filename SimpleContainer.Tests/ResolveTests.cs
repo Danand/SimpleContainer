@@ -249,5 +249,21 @@ namespace SimpleContainer.Tests
             CollectionAssert.AllItemsAreNotNull(cached.Select(item => item.Food));
             CollectionAssert.AllItemsAreInstancesOfType(cached.Select(item => item.Food), typeof(IPetFood));
         }
+
+        [Test]
+        public void Resolve_Throws_ConstructorNotFound()
+        {
+            var container = Container.Create();
+
+            container.RegisterAttribute<InjectAttribute>();
+            container.Register<ConstructorlessType>(Scope.Singleton);
+
+            var exception = Assert.Throws<ConstructorNotFoundException>(() =>
+            {
+                container.Resolve<ConstructorlessType>();
+            });
+
+            TestContext.WriteLine(exception);
+        }
     }
 }
