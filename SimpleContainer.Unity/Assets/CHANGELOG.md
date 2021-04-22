@@ -25,3 +25,13 @@ Initial published release.
 ## [0.7.1-beta.1] - 2020-05-04
 * Fix circular dependencies handling
 * Implement container override behaviour
+
+## [0.7.1-beta.2] - 2021-03-23
+* Fix resolving with pre-instantiated objects
+
+## [0.7.1-beta.3] - 2021-03-23
+* Fix `includePlatforms` for `Unity.Tests`
+
+## [0.7.1-beta.4] - 2021-04-22
+* Fix issues related to code stripping
+* Add exception for missing constructors
