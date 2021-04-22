@@ -8,8 +8,8 @@ namespace SimpleContainer.Installers
     {
         public void Install(Container container)
         {
-            container.Register<IActivator, ActivatorReflection>(Scope.Singleton);
-            container.Register<ITypeLoader, TypeLoaderReflection>(Scope.Singleton);
+            container.Register<IActivator>(Scope.Singleton, new ActivatorReflection());
+            container.Register<ITypeLoader>(Scope.Singleton, new TypeLoaderReflection());
             container.Register<IInternalDependencies, InternalDependencies>(Scope.Singleton);
         }
     }
