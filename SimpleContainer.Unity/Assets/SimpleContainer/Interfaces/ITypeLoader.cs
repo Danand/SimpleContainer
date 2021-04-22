@@ -2,7 +2,7 @@
 
 namespace SimpleContainer.Interfaces
 {
-    internal interface ITypeLoader
+    public interface ITypeLoader
     {
         Type Load(string typeName);
     }

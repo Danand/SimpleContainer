@@ -205,7 +205,7 @@ namespace SimpleContainer
 
         private void CollectDependencies(DependencyNode node)
         {
-            node.Constructor = node.ResultType.GetConstructors()[0];
+            node.Constructor = GetConstructor(node);
 
             if (!node.IsPreInstantiated)
             {
@@ -215,6 +215,18 @@ namespace SimpleContainer
             node.PropertyDependencies = GetPropertyDependencies(node);
             node.FieldDependencies = GetFieldDependencies(node);
             node.MethodDependencies = GetMethodDependencies(node);
+        }
+
+        private ConstructorInfo GetConstructor(DependencyNode node)
+        {
+            var constructors = node.ResultType.GetConstructors();
+
+            if (constructors.Length == 0)
+            {
+                throw new ConstructorNotFoundException(node.ResultType);
+            }
+
+            return constructors[0];
         }
 
         private object Instantiate(DependencyNode node)

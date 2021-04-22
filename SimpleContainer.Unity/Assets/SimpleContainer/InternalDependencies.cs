@@ -2,7 +2,7 @@
 
 namespace SimpleContainer
 {
-    internal sealed class InternalDependencies : IInternalDependencies
+    public sealed class InternalDependencies : IInternalDependencies
     {
         public IActivator Activator { get; }
 
