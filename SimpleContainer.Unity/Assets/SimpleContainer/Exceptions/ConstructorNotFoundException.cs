@@ -15,7 +15,7 @@ namespace SimpleContainer.Exceptions
             ProtectedInternal
         }
 
-        public ConstructorNotFoundException(Type type) : base($"Result type '{type.Name}' does not contain any public instance constructors!" +
+        public ConstructorNotFoundException(Type type) : base($"Result type '{type.FullName}' does not contain any public instance constructors!" +
                                                               $"{Environment.NewLine}" +
                                                               "Other constructors:" +
                                                               $"{Environment.NewLine}" +
